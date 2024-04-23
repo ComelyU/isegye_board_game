@@ -36,7 +36,6 @@ public class CodeItem {
     private String itemName;
     private String itemDescription;
 
-
     @OneToOne(mappedBy = "codeItem")
     private GameTagCategory gameTagCategory;
 

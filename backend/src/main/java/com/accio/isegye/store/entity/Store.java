@@ -1,6 +1,7 @@
 package com.accio.isegye.store.entity;
 
 import com.accio.isegye.common.entity.BaseTimeEntity;
+import com.accio.isegye.game.entity.Stock;
 import com.accio.isegye.menu.entity.Menu;
 import com.accio.isegye.turtle.entity.Turtle;
 import jakarta.persistence.Column;
@@ -18,10 +19,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -49,7 +52,7 @@ public class Store extends BaseTimeEntity {
     private final List<Menu> menuList = new ArrayList<>();
 
     //보드게임 재고
-//    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
-//    private final List<Stock> stockList = new ArrayList<>();
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private final List<Stock> stockList = new ArrayList<>();
 
 }
