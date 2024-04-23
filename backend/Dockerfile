@@ -1,3 +1,4 @@
+# docker buildx 이용
 FROM docker
 COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
 
