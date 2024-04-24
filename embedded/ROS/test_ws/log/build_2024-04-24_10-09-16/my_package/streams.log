@@ -1,0 +1,16 @@
+[0.389s] Invoking command in '/home/linux/S10P31A706/embedded/ROS/test_ws/src/my_package': PS1=\e[01;32m\u@\h \[\e[34m\]\w\[\e[91m\]$(parse_git_branch)\[\e[00m\]$ PYTHONPATH=/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/prefix_override:/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_package build --build-base /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/build install --record /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log --install-scripts $base/lib/my_package --single-version-externally-managed install_data
+[0.508s] /home/linux/.local/lib/python3.8/site-packages/setuptools/dist.py:717: UserWarning: Usage of dash-separated 'script-dir' will not be supported in future versions. Please use the underscore name 'script_dir' instead
+[0.508s]   warnings.warn(
+[0.524s] running egg_info
+[0.527s] writing manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+[0.527s] running build
+[0.527s] running build_py
+[0.527s] running install
+[0.527s] running install_lib
+[0.528s] running install_data
+[0.528s] running install_egg_info
+[0.529s] removing '/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages/my_package-0.0.0-py3.8.egg-info' (and everything under it)
+[0.529s] Copying ../../build/my_package/my_package.egg-info to /home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages/my_package-0.0.0-py3.8.egg-info
+[0.529s] running install_scripts
+[0.540s] writing list of installed files to '/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log'
+[0.552s] Invoked command in '/home/linux/S10P31A706/embedded/ROS/test_ws/src/my_package' returned '0': PS1=\e[01;32m\u@\h \[\e[34m\]\w\[\e[91m\]$(parse_git_branch)\[\e[00m\]$ PYTHONPATH=/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/prefix_override:/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_package build --build-base /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/build install --record /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log --install-scripts $base/lib/my_package --single-version-externally-managed install_data
