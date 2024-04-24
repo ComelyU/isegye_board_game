@@ -3,9 +3,15 @@
 # Reference sites
 # https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
-echo -e "\n"
+echo ""
 echo "[Setting...]"
-echo -e "\n"
+echo "[Note] OS version >>> Ubuntu 20.04 (Focal Fossa)"
+echo "[Note] Target ROS version >>> ROS 2 Foxy Fitzroy"
+echo ""
+echo "PRESS [ENTER] to CONTINUE THE INSTALLATION"
+echo "IF YOU WANT TO CANCEL, PRESS [CTTL + C]"
+read
+
 sudo apt update && sudo apt install locales
 sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
@@ -17,30 +23,30 @@ sudo add-apt-repository universe
 sudo apt update && sudo apt install curl -y
 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-echo -e "\n"
+echo ""
 echo "[Add ROS2 repository]"
-echo -e "\n"
+echo ""
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-echo -e "\n"
+echo ""
 echo "[Update the package]"
-echo -e "\n"
+echo ""
 sudo apt update
 
 sudo apt upgrade
 
-echo -e "\n"
+echo ""
 echo "[Install ROS2 and ROS2 Pakcage]"
-echo -e "\n"
+echo ""
 sudo apt install ros-foxy-desktop python3-argcomplete
 
 sudo apt install ros-dev-tools
 
-echo -e "\n"
+echo ""
 echo "[Install ROS2 Dev Tools]"
-echo -e "\n"
+echo ""
 sudo apt update && sudo apt install -y \
   build-essential \
   cmake \
@@ -76,7 +82,7 @@ sudo apt install --no-install-recommends -y \
 sudo apt install --no-install-recommends -y \
   libcunit1-dev
 
-echo -e "\n"
+echo ""
 echo "[how to use]"
 echo "ROS2 Build Test"
 echo "\$ source /opt/ros/foxy/setup.bash (call C:\\dev\\ros2-eloquent\\setup.bat)"
