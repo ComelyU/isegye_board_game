@@ -1,6 +1,7 @@
 package com.accio.isegye.store.entity;
 
 import com.accio.isegye.common.entity.BaseTimeEntity;
+import com.accio.isegye.customer.entity.Customer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -39,8 +40,9 @@ public class Room extends BaseTimeEntity {
     private String coordinateY;
     private int roomNumber;
     private String fcmToken;
+    private String iotId;
 
     //고객
-//    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
-//    private final List<Customer> roomList = new ArrayList<>();
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    private final List<Customer> roomList = new ArrayList<>();
 }
