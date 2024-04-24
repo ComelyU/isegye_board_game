@@ -1,0 +1,40 @@
+[0.437s] Invoking command in '/home/linux/S10P31A706/embedded/ROS/test_ws/src/my_package': PS1=\e[01;32m\u@\h \[\e[34m\]\w\[\e[91m\]$(parse_git_branch)\[\e[00m\]$ PYTHONPATH=/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/prefix_override:/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_package build --build-base /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/build install --record /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log --install-scripts $base/lib/my_package --single-version-externally-managed install_data
+[0.508s] /usr/local/lib/python3.8/dist-packages/setuptools/dist.py:472: SetuptoolsDeprecationWarning: Invalid dash-separated options
+[0.508s] !!
+[0.508s] 
+[0.508s]         ********************************************************************************
+[0.508s]         Usage of dash-separated 'script-dir' will not be supported in future
+[0.508s]         versions. Please use the underscore name 'script_dir' instead.
+[0.508s] 
+[0.508s]         By 2024-Sep-26, you need to update your project and remove deprecated calls
+[0.508s]         or your builds will no longer be supported.
+[0.508s] 
+[0.508s]         See https://setuptools.pypa.io/en/latest/userguide/declarative_config.html for details.
+[0.508s]         ********************************************************************************
+[0.508s] 
+[0.508s] !!
+[0.508s]   opt = self.warn_dash_deprecation(opt, section)
+[0.565s] running egg_info
+[0.572s] writing ../../build/my_package/my_package.egg-info/PKG-INFO
+[0.572s] writing dependency_links to ../../build/my_package/my_package.egg-info/dependency_links.txt
+[0.573s] writing entry points to ../../build/my_package/my_package.egg-info/entry_points.txt
+[0.573s] writing requirements to ../../build/my_package/my_package.egg-info/requires.txt
+[0.573s] writing top-level names to ../../build/my_package/my_package.egg-info/top_level.txt
+[0.634s] reading manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+[0.635s] writing manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+[0.635s] running build
+[0.635s] running build_py
+[0.635s] copying my_package/__init__.py -> /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/build/lib/my_package
+[0.635s] copying my_package/publisher2.py -> /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/build/lib/my_package
+[0.635s] running install
+[0.639s] running install_lib
+[0.647s] running install_data
+[0.647s] copying resource/my_package -> /home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/share/ament_index/resource_index/packages
+[0.647s] copying package.xml -> /home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/share/my_package
+[0.647s] running install_egg_info
+[0.655s] removing '/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages/my_package-0.0.0-py3.8.egg-info' (and everything under it)
+[0.655s] Copying ../../build/my_package/my_package.egg-info to /home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages/my_package-0.0.0-py3.8.egg-info
+[0.656s] running install_scripts
+[0.680s] Installing talker script to /home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/my_package
+[0.681s] writing list of installed files to '/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log'
+[0.695s] Invoked command in '/home/linux/S10P31A706/embedded/ROS/test_ws/src/my_package' returned '0': PS1=\e[01;32m\u@\h \[\e[34m\]\w\[\e[91m\]$(parse_git_branch)\[\e[00m\]$ PYTHONPATH=/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/prefix_override:/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_package build --build-base /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/build install --record /home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log --install-scripts $base/lib/my_package --single-version-externally-managed install_data

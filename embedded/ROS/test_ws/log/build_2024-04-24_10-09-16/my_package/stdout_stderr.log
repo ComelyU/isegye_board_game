@@ -1,0 +1,14 @@
+/home/linux/.local/lib/python3.8/site-packages/setuptools/dist.py:717: UserWarning: Usage of dash-separated 'script-dir' will not be supported in future versions. Please use the underscore name 'script_dir' instead
+  warnings.warn(
+running egg_info
+writing manifest file '../../build/my_package/my_package.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+running install_egg_info
+removing '/home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages/my_package-0.0.0-py3.8.egg-info' (and everything under it)
+Copying ../../build/my_package/my_package.egg-info to /home/linux/S10P31A706/embedded/ROS/test_ws/install/my_package/lib/python3.8/site-packages/my_package-0.0.0-py3.8.egg-info
+running install_scripts
+writing list of installed files to '/home/linux/S10P31A706/embedded/ROS/test_ws/build/my_package/install.log'
