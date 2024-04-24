@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +50,7 @@ public class StoreController {
         description = "{id} 값에 해당되는 매장의 이름, 시간당 요금 조회"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<StoreResponse> getStore(@Valid @RequestParam int id){
+    public ResponseEntity<StoreResponse> getStore(@Valid @PathVariable int id){
         return new ResponseEntity<>(service.getStore(id), HttpStatus.OK);
     }
 
@@ -58,7 +59,7 @@ public class StoreController {
         description = "{id} 값에 해당되는 매장의 deleted at 정보 갱신"
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> deleteStore(@Valid @RequestParam int id){
+    public ResponseEntity<Void> deleteStore(@Valid @PathVariable int id){
         service.deleteStore(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
