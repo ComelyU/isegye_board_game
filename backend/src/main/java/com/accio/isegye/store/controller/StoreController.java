@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/store")
+@RequestMapping("/api/store")
 @Tag(name = "Store", description = "Store API")
 public class StoreController {
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/turtle")
+@RequestMapping("/api/turtle")
 @Tag(name = "Turtle", description = "Turtle API")
 public class TurtleController {
 

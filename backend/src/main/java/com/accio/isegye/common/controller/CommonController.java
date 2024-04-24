@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/common")
+@RequestMapping("/api/common")
 @Tag(name = "Common", description = "Common API")
 public class CommonController {
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/menu")
+@RequestMapping("/api/menu")
 @Tag(name = "Menu", description = "Menu API")
 public class MenuController {
 
