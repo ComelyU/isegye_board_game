@@ -87,13 +87,13 @@ pipeline {
         stage('Service Stop & Service Remove') { // 서비스를 다시 컨테이너로 가져오기 전, 기존 컨테이너 삭제
             steps {
                 sshagent(credentials: ['SSH-ubuntu']) {
-                    sh """
-                    if test "`ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker ps -aq --filter ancestor=$imageName:latest"`"; then
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker stop $(docker ps -aq --filter ancestor=$imageName:latest)"
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker rm -f $(docker ps -aq --filter ancestor=$imageName:latest)"
+                    sh '''
+                    if ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "test \$(docker ps -aq --filter ancestor=$imageName:latest)"; then
+                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker stop \$(docker ps -aq --filter ancestor=$imageName:latest)"
+                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker rm -f \$(docker ps -aq --filter ancestor=$imageName:latest)"
                     ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker rmi $imageName:latest"
                     fi
-                    """
+                    '''
                 }
             }
         }
