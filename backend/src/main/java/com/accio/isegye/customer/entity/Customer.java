@@ -1,5 +1,6 @@
 package com.accio.isegye.customer.entity;
 
+import com.accio.isegye.game.entity.OrderGame;
 import com.accio.isegye.menu.entity.OrderMenu;
 import com.accio.isegye.store.entity.Room;
 import jakarta.persistence.Column;
@@ -54,8 +55,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private final List<OrderMenu> orderMenuList = new ArrayList<>();
 
-//    //주문 게임
-//    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-//    private final List<OrderGame> orderGameList = new ArrayList<>();
+    //주문 게임
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private final List<OrderGame> orderGameList = new ArrayList<>();
 
 }

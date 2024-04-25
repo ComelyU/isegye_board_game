@@ -17,10 +17,12 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -44,5 +46,5 @@ public class Room extends BaseTimeEntity {
 
     //고객
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
-    private final List<Customer> roomList = new ArrayList<>();
+    private final List<Customer> customerList = new ArrayList<>();
 }

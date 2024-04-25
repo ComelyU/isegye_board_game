@@ -9,13 +9,24 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreResponse {
+public class RoomResponse {
+    @NotNull
+    private int id;
 
     @NotNull
-    private Integer id;
+    private Integer storeId;
 
     @NotBlank
-    private String storeName;
+    private String coordinateX;
 
-    private int hourFee;
+    @NotBlank
+    private String coordinateY;
+
+    @NotNull
+    private Integer roomNumber;
+
+    private String fcmToken;
+
+    private String iotId;
+
 }

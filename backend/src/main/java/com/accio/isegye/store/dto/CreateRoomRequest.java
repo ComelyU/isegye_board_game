@@ -7,10 +7,21 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class UpdateStoreRequest {
+public class CreateRoomRequest {
 
-    @NotBlank(message = "매장 이름 필수")
-    private String storeName;
+    @NotNull
+    int storeId;
 
-    private Integer hourFee;
+    @NotBlank
+    String coordinateX;
+
+    @NotBlank
+    String coordinateY;
+
+    @NotNull
+    Integer roomNumber;
+
+    String fcmToken;
+
+    String iotId;
 }
