@@ -16,7 +16,7 @@ COPY .env .
 # 로컬 시스템의 현재 디렉토리에서 /app 디렉토리로 복사
 COPY . .
 
-# Vue.js 애플리케이션 빌드
+# Vue.js 애플리케이션 Build
 RUN npm run build
 
 # 3000 포트를 외부에 노출
