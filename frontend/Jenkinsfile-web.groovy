@@ -74,7 +74,7 @@ pipeline {
             steps {
                 dir('frontend/Web/boardgame') {
                     script {
-                        docker.withRegistry('', dockerCredential) {
+                        docker.withRegistry('', registryCredential) {
                             sh "docker buildx create --use --name mybuilder"
                             sh "docker buildx build --platform linux/amd64,linux/arm64 -t $imageName:$BUILD_NUMBER --push ."
                             sh "docker buildx build --platform linux/amd64,linux/arm64 -t $imageName:latest --push ."
