@@ -1,6 +1,12 @@
 [versions]
 activityVersion = "1.8.2"
 agp = "8.3.0"
+androidxCameraCore = "1.1.0"
+cameraCamera2 = "1.3.3"
+cameraCore = "1.3.3"
+cameraLifecycle = "1.3.3"
+cameraView = "1.0.0-alpha34"
+cameraViewVersion = "1.3.3"
 compiler = "4.12.0"
 converterGson = "2.9.0"
 firebaseBom = "32.8.0"
@@ -21,6 +27,14 @@ workRuntimeKtx = "2.9.0"
 
 [libraries]
 androidx-activity-v182 = { module = "androidx.activity:activity", version.ref = "activityVersion" }
+androidx-camera-camera-core = { module = "androidx.camera:camera-core", version.ref = "androidxCameraCore" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidxCameraCore" }
+androidx-camera-camera2-v133 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2" }
+androidx-camera-core-v133 = { module = "androidx.camera:camera-core", version.ref = "cameraCore" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidxCameraCore" }
+androidx-camera-lifecycle-v133 = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraLifecycle" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraView" }
+androidx-camera-view-v133 = { module = "androidx.camera:camera-view", version.ref = "cameraViewVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationSafeArgsGradlePlugin" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationSafeArgsGradlePlugin" }
