@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "954481273268",
+    "project_id": "isegyeboard",
+    "storage_bucket": "isegyeboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954481273268:android:baa8bd868c826981beeae1",
+        "android_client_info": {
+          "package_name": "com.example.isegyeboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbql7dO6wVYZ8KJErlm9PsYPgx5Xk5rMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
