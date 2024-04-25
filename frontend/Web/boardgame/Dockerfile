@@ -13,7 +13,7 @@ RUN npm install
 # .env 파일을 /app 디렉토리로 복사
 COPY .env .
 
-# 로컬 시스템의 현재 디렉토리에서 /app 디렉토리로 소스 코드 복사
+# 로컬 시스템의 현재 디렉토리에서 /app 디렉토리로 복사
 COPY . .
 
 # Vue.js 애플리케이션 빌드
