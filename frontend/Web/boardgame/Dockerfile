@@ -1,3 +1,6 @@
+FROM docker
+COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
+
 # node 21 alpine 이미지를 기반으로 설정
 FROM node:21-alpine
 
