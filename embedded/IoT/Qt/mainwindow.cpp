@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget* parent) :
 	appDir = QCoreApplication::applicationDirPath();
 	videoList = { "default","west","space","ocean","jungle","middle","horror","puzzle" };	//비디오리스트 
 	nowStatus = "default";
-	changeVideo(appDir + "/../src/default.mp4");   
-	
+	changeVideo(appDir + "/../src/default.mp4");
+	//changeVolume(50);
 	connect(this, &MainWindow::requestVideoChange, this, &MainWindow::changeVideo);		// 스레드에서 소켓 통신 수행
 	thread_socket = std::thread(&MainWindow::socketThread, this);
 	showFullScreen();
@@ -38,6 +38,10 @@ void MainWindow::changeVideo(const QString& videoPath) {	//영상 바꾸기
 
 	player->setPlaylist(playlist);
 	player->play();
+}
+void MainWindow::changeVolume(int volume_level) {	//영상 바꾸기
+
+	player->setVolume(volume_level);
 }
 void MainWindow::socketThread() {
 	QTcpSocket socket;
@@ -70,6 +74,9 @@ void MainWindow::socketThread() {
 				emit requestVideoChange(appDir + "/../src/" + requestData + ".mp4");
 				std::cout << "Change Complete!" << std::endl;
 			}
+			else if(requestData.toInt()>=0 && requestData.toInt()<=100){
+			    changeVolume(requestData.toInt());
+			  }
 			else
 				std::cerr << "Invalid request: " << requestData.toStdString() << std::endl;
 		}

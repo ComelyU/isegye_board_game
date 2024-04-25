@@ -39,6 +39,7 @@ private:
 	Ui::MainWindow* ui;
 
 	void changeVideo(const QString& videoPath);
+	void changeVolume(int volume_level);
 	void socketThread();
 signals:
 	void requestVideoChange(const QString& videoPath);
