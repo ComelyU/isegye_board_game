@@ -1,4 +1,4 @@
-# Node 21 Alpine 이미지를 기반으로 설정
+# node 21 alpine 이미지를 기반으로 설정
 FROM node:21-alpine
 
 # 작업 디렉토리 설정
