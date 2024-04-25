@@ -50,9 +50,9 @@ class StartFragment : Fragment() {
     private fun sendStartInfo() {
         val client = BaseApi.getInstance().create(StartApi::class.java)
 
-        val pref = requireContext().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
-        val storeId = pref.getString("storeId", null)
-        val roomNum = pref.getString("roomNum", null)
+        val sharedPreferences = requireContext().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
+        val storeId = sharedPreferences.getString("storeId", null)
+        val roomNum = sharedPreferences.getString("roomNum", null)
 
         val requestBody = mapOf(
             "storeId" to storeId,
