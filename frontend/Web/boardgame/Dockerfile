@@ -4,7 +4,7 @@ FROM node:21-alpine
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 패키지.json 및 패키지-lock.json 파일을 /app 디렉토리로 복사
+# package.json 및 package-lock.json 파일을 /app 디렉토리로 복사
 COPY package*.json ./
 
 # 프로젝트 의존성 설치
