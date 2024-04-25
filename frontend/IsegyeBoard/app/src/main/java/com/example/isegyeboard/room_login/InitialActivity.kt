@@ -5,12 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.BasicResponse
+import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.firebase.PushMessage
 import com.example.isegyeboard.main_page.MainActivity
 import com.google.android.material.textfield.TextInputEditText
@@ -73,17 +73,17 @@ class InitialActivity : AppCompatActivity() {
                         saveStoreInfo(storeId, roomNum)
                     } else {
                         Log.d("Login", "login failed $responseBody")
-                        showFailure(this@InitialActivity, "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        FailureDialog.showFailure(this@InitialActivity, "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Login", "request failed $response")
-                    showFailure(this@InitialActivity, "네트워크 오류로 실패했습니다.")
+                    FailureDialog.showFailure(this@InitialActivity, "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
                 Log.e("Login", "$t")
-                showFailure(this@InitialActivity, "요청에 실패했습니다.")
+                FailureDialog.showFailure(this@InitialActivity, "요청에 실패했습니다.")
             }
         })
     }
@@ -98,19 +98,5 @@ class InitialActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
-    }
-
-    private fun showFailure(context: Context, message: String) {
-        val builder = AlertDialog.Builder(context)
-
-        builder.setTitle("인증 실패")
-        builder.setMessage(message)
-
-        builder.setPositiveButton("확인") {dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
     }
 }

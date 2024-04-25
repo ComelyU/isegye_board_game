@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_main_page_frg_to_startFragment"
             app:destination="@id/startFragment" />
+        <action
+            android:id="@+id/action_main_page_frg_to_gamedetail"
+            app:destination="@id/gamedetail" />
     </fragment>
     <fragment
         android:id="@+id/gamelist"
@@ -43,7 +46,11 @@
         android:id="@+id/gamedetail"
         android:name="com.example.isegyeboard.game_detail.GameDetail"
         android:label="fragment_gamedetail"
-        tools:layout="@layout/fragment_gamedetail" />
+        tools:layout="@layout/fragment_gamedetail" >
+        <action
+            android:id="@+id/action_gamedetail_to_photo"
+            app:destination="@id/photo" />
+    </fragment>
     <fragment
         android:id="@+id/beverage"
         android:name="com.example.isegyeboard.beverage.Beverage"
@@ -72,4 +79,9 @@
             android:id="@+id/action_startFragment_to_main_page_frg"
             app:destination="@id/main_page_frg" />
     </fragment>
+    <fragment
+        android:id="@+id/photo"
+        android:name="com.example.isegyeboard.game_detail.Photo"
+        android:label="fragment_photo"
+        tools:layout="@layout/fragment_photo" />
 </navigation>

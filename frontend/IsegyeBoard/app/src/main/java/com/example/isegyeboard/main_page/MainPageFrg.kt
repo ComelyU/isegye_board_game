@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.BasicResponse
+import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.login.StartApi
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,37 +45,39 @@ class MainPageFrg : Fragment() {
         mediaController.setAnchorView(videoView)
         videoView.setMediaController(mediaController)
 
-        val videoPath = "android.resource://" +requireContext().packageName + "/" + R.raw.scrabble
+        val videoPath = "android.resource://" + requireContext().packageName + "/" + R.raw.scrabble
         val videoUri = Uri.parse(videoPath)
         videoView.setVideoURI(videoUri)
-        videoView.setOnPreparedListener{mp -> mp.isLooping = true}
+        videoView.setOnPreparedListener { mp -> mp.isLooping = true }
 
         videoView.start()
 
-        view.findViewById<ConstraintLayout>(R.id.toGamelistButton).setOnClickListener{
+        view.findViewById<ConstraintLayout>(R.id.toGamelistButton).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_gamelist)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.toRecommendButton).setOnClickListener{
+        view.findViewById<ConstraintLayout>(R.id.toRecommendButton).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_recommend)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.toBeverage).setOnClickListener{
+        view.findViewById<ConstraintLayout>(R.id.toBeverage).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_beverage)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.homeTutorialButton).setOnClickListener{
+        view.findViewById<ConstraintLayout>(R.id.homeTutorialButton).setOnClickListener {
 
         }
 
-        view.findViewById<ConstraintLayout>(R.id.videoSpace).setOnClickListener{
-
+        view.findViewById<ConstraintLayout>(R.id.videoSpace).setOnClickListener {
+            // 테스트용 임시 네비
+            it.findNavController().navigate(R.id.action_main_page_frg_to_gamedetail)
+            // 테스트후 삭제
         }
 
-        view.findViewById<ConstraintLayout>(R.id.button6).setOnClickListener{
+        view.findViewById<ConstraintLayout>(R.id.button6).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_order_history)
         }
-        view.findViewById<ConstraintLayout>(R.id.button7).setOnClickListener{
+        view.findViewById<ConstraintLayout>(R.id.button7).setOnClickListener {
             showOverDialog()
         }
         return view
@@ -85,10 +88,10 @@ class MainPageFrg : Fragment() {
         alertDialogBuilder.apply {
             setTitle("사용종료")
             setMessage("사용을 종료하시겠습니까?")
-            setPositiveButton("종료") {_, _ ->
+            setPositiveButton("종료") { _, _ ->
                 overConfirm()
             }
-            setNegativeButton("취소") {dialog, _ ->
+            setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()
             }
         }
@@ -99,7 +102,8 @@ class MainPageFrg : Fragment() {
     private fun overConfirm() {
         val client = BaseApi.getInstance().create(StartApi::class.java)
 
-        val sharedPreferences = requireContext().getSharedPreferences("RoomInfo",
+        val sharedPreferences = requireContext().getSharedPreferences(
+            "RoomInfo",
             Context.MODE_PRIVATE
         )
         val pref = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
@@ -112,7 +116,7 @@ class MainPageFrg : Fragment() {
         )
 
         client.deleteRoomInfo(requestBody).enqueue(object : Callback<BasicResponse> {
-            override fun onResponse(call : Call<BasicResponse>, response: Response<BasicResponse>) {
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null && responseBody.success) {
@@ -123,33 +127,18 @@ class MainPageFrg : Fragment() {
                         Log.d("Login", "login success")
                     } else {
                         Log.d("Login", "login failed $responseBody")
-                        showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Login", "request failed $response")
-                    showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
+                    FailureDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
                 Log.e("Login", "$t")
-                showFailure(requireContext(), "요청에 실패했습니다.")
+                FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
     }
-
-    private fun showFailure(context: Context, message: String) {
-        val builder = AlertDialog.Builder(context)
-
-        builder.setTitle("인증 실패")
-        builder.setMessage(message)
-
-        builder.setPositiveButton("확인") {dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
-    }
-
 }

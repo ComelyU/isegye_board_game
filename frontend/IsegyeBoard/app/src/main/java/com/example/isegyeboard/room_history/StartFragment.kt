@@ -2,20 +2,16 @@ package com.example.isegyeboard.room_history
 
 import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.isegyeboard.MainNavDirections
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.BasicResponse
+import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.login.StartApi
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,9 +50,9 @@ class StartFragment : Fragment() {
     private fun sendStartInfo() {
         val client = BaseApi.getInstance().create(StartApi::class.java)
 
-        val pref = requireContext().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
-        val storeId = pref.getString("storeId", null)
-        val roomNum = pref.getString("roomNum", null)
+        val sharedPreferences = requireContext().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
+        val storeId = sharedPreferences.getString("storeId", null)
+        val roomNum = sharedPreferences.getString("roomNum", null)
 
         val requestBody = mapOf(
             "storeId" to storeId,
@@ -72,17 +68,17 @@ class StartFragment : Fragment() {
                         Log.d("Login", "login success")
                     } else {
                         Log.d("Login", "login failed $responseBody")
-                        showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Login", "request failed $response")
-                    showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
+                    FailureDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<RoomStartResponse>, t: Throwable) {
                 Log.e("Login", "$t")
-                showFailure(requireContext(), "요청에 실패했습니다.")
+                FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
     }
@@ -94,19 +90,5 @@ class StartFragment : Fragment() {
         editor.putString("roomLogId", roomLogId.toString())
         editor.apply()
         findNavController().navigate(R.id.action_startFragment_to_main_page_frg)
-    }
-
-    private fun showFailure(context: Context, message: String) {
-        val builder = AlertDialog.Builder(context)
-
-        builder.setTitle("인증 실패")
-        builder.setMessage(message)
-
-        builder.setPositiveButton("확인") {dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
     }
 }
