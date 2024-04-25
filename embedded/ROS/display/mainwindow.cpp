@@ -12,11 +12,10 @@ MainWindow::MainWindow(QWidget* parent)
 	label = new QLabel("wait", this);
 	label->setAlignment(Qt::AlignCenter);
 	setCentralWidget(label);
-	QPushButton* pubBtn = new QPushButton("Publish", this);
-	pubBtn->setGeometry(20, 40, 100, 30);
-	connect(pubBtn, &QPushButton::clicked, this, &MainWindow::pub);
 
-	run_ros();
+	//setButton();
+	setEmoji();
+	runRos();
 
 }
 
@@ -24,10 +23,11 @@ MainWindow::~MainWindow()
 {
 	node.reset();
 	rclcpp::shutdown();
+
 	delete ui;
 }
 
-void MainWindow::run_ros(){
+void MainWindow::runRos(){
   rclcpp::init(0, nullptr);
   node = rclcpp::Node::make_shared("my_package");
 
@@ -58,5 +58,21 @@ void MainWindow::pub() {
 
 	cnt++;
 }
+void MainWindow::setEmoji(){
+  QString app_path = QCoreApplication::applicationDirPath();
+  QMovie * movie = new QMovie(app_path+"/../src/sleep.gif");
+  movie->setScaledSize(QSize(1024,600));
+  qDebug()<<app_path;
+ label->setMovie(movie);
+ movie->start();
+ //label->setStyleSheet("background-color:grey");
+ //label->setFixedSize(QSize(1024,600));
+ label->show();
+}
 
+void MainWindow::setButton(){
+  QPushButton* pubBtn = new QPushButton("Publish", this);
+  pubBtn->setGeometry(20, 40, 100, 30);
+  connect(pubBtn, &QPushButton::clicked, this, &MainWindow::pub);
 
+}
