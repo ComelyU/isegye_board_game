@@ -5,7 +5,7 @@ pipeline {
     }
 
     environment {
-        webPath = 'frontent/Web/boardgame'
+        webPath = 'frontend/Web/boardgame'
 
         gitBranch = 'develop-fe'
         gitCredential = 'demise1426-gitlab-sub'
