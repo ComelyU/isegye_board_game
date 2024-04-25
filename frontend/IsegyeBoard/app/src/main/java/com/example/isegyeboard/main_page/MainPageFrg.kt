@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.BasicResponse
+import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.login.StartApi
 import retrofit2.Call
 import retrofit2.Callback
