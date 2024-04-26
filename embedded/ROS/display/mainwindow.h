@@ -27,19 +27,22 @@ public:
 
 private:
 	Ui::MainWindow* ui;
-	int cnt;
-	QVector<QString>tutlebot_status;
+
+	QVector<QString>emoji_list;
 	QLabel* label;
 	rclcpp::Node::SharedPtr node;
-	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr subscription;
+	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr emoji_subscription;
+	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr location_subscription;
 	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
 
 	void setEmoji(QString status);
 	void setButton();
 	void pub();
-	void messageReceived(const std_msgs::msg::String::SharedPtr msg);
+	void emojiReceived(const std_msgs::msg::String::SharedPtr msg);
+	void locationReceived(const std_msgs::msg::String::SharedPtr msg);
 	void runRos();
-
+signals:
+	void emojiReceivedSignal(const QString &data);
 
 };
 
