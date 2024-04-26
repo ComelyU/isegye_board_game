@@ -1,3 +1,6 @@
+def releasePort
+def containerName
+
 pipeline {
     agent any
     tools {
@@ -16,8 +19,9 @@ pipeline {
 
         releaseServerAccount = 'ubuntu' // ssh 연결 시 사용할 user
         releaseServerUri = 'k10a706.p.ssafy.io' // 서비스 url
-
-        releasePort = '3000'
+        containerPort = '3000' // 컨테이너 포트
+        bluePort = '3000' // blue포트
+        greenPort = '3001' // green포트
 
         MATTERMOST_ENDPOINT = credentials('mattermost_endpoint')
         MATTERMOST_CHANNEL = credentials('mattermost_channel')
@@ -84,21 +88,24 @@ pipeline {
             }
         }
 
-        stage('Service Stop & Service Remove') { // 서비스를 다시 컨테이너로 가져오기 전, 기존 컨테이너 삭제
+        stage('Blue/Green Port Check') { // 서비스 중단 전 기존 컨테이너 및 이미지 삭제
             steps {
-                sshagent(credentials: ['SSH-ubuntu']) {
-                    sh '''
-                    if ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "test \$(docker ps -aq --filter ancestor=$imageName:latest)"; then
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker stop \$(docker ps -aq --filter ancestor=$imageName:latest)"
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker rm -f \$(docker ps -aq --filter ancestor=$imageName:latest)"
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "docker rmi $imageName:latest"
-                    fi
-                    '''
+                script {
+                    // curl 명령어의 결과를 확인하여 포트 번호를 결정합니다.
+                    def isBlueUp = sh(script: "curl -s --fail http://${releaseServerUri}:${bluePort}", returnStatus: true) == 0
+                    if (isBlueUp) {
+                        releasePort = greenPort
+                        containerName = 'accio-isegye-web_g'
+                    } else {
+                        releasePort = bluePort
+                        containerName = 'accio-isegye-web_b'
+                    }
+                    echo "isBlueUp : $isBlueUp, Port selected: $releasePort, container name: $containerName"
                 }
             }
         }
 
-        stage('DockerHub Pull') { // docker 이미지 가져옴
+        stage('DockerHub Pull') { // docker hub에서 이미지 pull
             steps {
                 sshagent(credentials: ['SSH-ubuntu']) {
                     sh "ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri 'sudo docker pull $imageName:latest'"
@@ -106,17 +113,29 @@ pipeline {
             }
         }
 
-        stage('Service Start') { // docker 컨테이너 만들고 실행
+        stage('Service Start') { // pull된 이미지 이용하여 docker 컨테이너 실행
             steps {
                 sshagent(credentials: ['SSH-ubuntu']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "sudo docker run -e TZ=Asia/Seoul --name accio-isegye-web -p $releasePort:$releasePort -d $imageName:latest"
+                    echo "port : ${releasePort}, container : ${containerName}"
+                        ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "sudo docker run -i -e TZ=Asia/Seoul --name ${containerName} -p ${releasePort}:${containerPort} -d ${imageName}:latest"
                     """
                 }
             }
         }
 
-        stage('Service Check & Remove Old Image') { // 연결 체크 & 예전 이미지 삭제
+        stage('Switch Nginx Port & Nginx reload') { //NginX Port 변경
+            steps {
+                sshagent(credentials: ['SSH-ubuntu']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "echo 'set \\\$fe_service_url http://${releaseServerUri}:${releasePort};' | sudo tee /home/ubuntu/data/nginx/conf.d/fe-service-url.inc > /dev/null && sudo docker exec nginx nginx -s reload"
+                    echo "Switch the reverse proxy direction of nginx to ${releasePort} 🔄"
+                    """
+                }
+            }
+        }
+
+        stage('Service Check & Kill the Old Container') { // 연결 체크 & 예전 컨테이너 삭제
             steps {
                 sshagent(credentials: ['SSH-ubuntu']) {
                     script {
@@ -124,6 +143,12 @@ pipeline {
                         for (retry_count = 0; retry_count < 20; retry_count++) {
                             def isRunning = sh(script: "curl -s --fail http://${releaseServerUri}:${releasePort}/", returnStatus: true) == 0
                             if (isRunning) {
+                                if(releasePort==bluePort){
+                                    sh "ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri 'docker rm accio-isegye-web_g -f'"
+                                }else{
+                                    sh "ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri 'docker rm accio-isegye-web_b -f'"
+                                }
+                                echo "Killed the process on the opposite server."
                                 sh "ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri 'docker image prune -f'"
                                 break
                             } else {
