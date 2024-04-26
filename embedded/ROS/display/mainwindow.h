@@ -9,6 +9,7 @@
 #include <QString>
 #include <QMovie>
 #include <QDebug>
+#include <QVector>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -27,12 +28,13 @@ public:
 private:
 	Ui::MainWindow* ui;
 	int cnt;
+	QVector<QString>tutlebot_status;
 	QLabel* label;
 	rclcpp::Node::SharedPtr node;
 	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr subscription;
 	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
 
-	void setEmoji();
+	void setEmoji(QString status);
 	void setButton();
 	void pub();
 	void messageReceived(const std_msgs::msg::String::SharedPtr msg);

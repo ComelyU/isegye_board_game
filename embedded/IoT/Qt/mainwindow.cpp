@@ -12,12 +12,12 @@ MainWindow::MainWindow(QWidget* parent) :
 	playlist = new QMediaPlaylist(player);
 	setCentralWidget(videoWidget);
 	player->setVideoOutput(videoWidget);
-	
+
 	appDir = QCoreApplication::applicationDirPath();
 	videoList = { "default","west","space","ocean","jungle","middle","horror","puzzle" };	//비디오리스트 
 	nowStatus = "default";
-	changeVideo(appDir + "/../src/default.mp4");   
-	
+	changeVideo(appDir + "/../src/default.mp4");
+
 	connect(this, &MainWindow::requestVideoChange, this, &MainWindow::changeVideo);		// 스레드에서 소켓 통신 수행
 	thread_socket = std::thread(&MainWindow::socketThread, this);
 	showFullScreen();
@@ -62,7 +62,7 @@ void MainWindow::socketThread() {
 			std::cout << "Received request: " << requestData.toStdString() << std::endl;
 
 			if (requestData == nowStatus) {		//이미 같은 테마
-				std::cout << "Already Playing" <<std::endl;
+				std::cout << "Already Playing" << std::endl;
 				continue;
 			}
 			if (std::find(videoList.begin(), videoList.end(), requestData) != videoList.end()) {	// 요청에 따라 영상 변경
