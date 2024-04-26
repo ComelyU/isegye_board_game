@@ -4,7 +4,7 @@ COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/doc
 # node 21 alpine 이미지를 기반으로 설정
 FROM node:21-alpine
 
-# 작업 디렉토리 설정
+# 작업 디렉토리를 /app으로 설정
 WORKDIR /app
 
 # package.json 및 package-lock.json 파일을 /app 디렉토리로 복사
