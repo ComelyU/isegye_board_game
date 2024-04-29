@@ -13,7 +13,7 @@ pipeline {
         imageName = "demise1426/accio-isegye-android-customer" // docker hub의 이미지 이름
         registryCredential = 'demise1426-docker' // docker hub access token
         
-        apkFileContainerPath = '/app/build/outputs/apk/release/app-release.apk'
+        apkFileContainerPath = '/app/build/outputs/apk/debug/app-debug.apk'
         apkFileLocalPath = '/home/ubuntu/apk/customer/'
         apkS3Path = 'apk/customer/'
         s3BucketName = 'accio-isegye'
@@ -21,7 +21,7 @@ pipeline {
 
         releaseServerAccount = 'ubuntu' // ssh 연결 시 사용할 user
         releaseServerUri = 'k10a706.p.ssafy.io' // 서비스 url
-        containerName = 'accio-isegye-android-manager'
+        containerName = 'accio-isegye-android-customer'
 
         MATTERMOST_ENDPOINT = credentials('mattermost_endpoint')
         MATTERMOST_CHANNEL = credentials('mattermost_channel')
@@ -38,7 +38,7 @@ pipeline {
                         }
                     }.flatten()
 
-                    // Check if changes include frontend manager app directory
+                    // Check if changes include frontend customer app directory
                     def targetChanged = changes.any { it.path.startsWith(targetPath) }
 
                     if (targetChanged) {
@@ -87,9 +87,9 @@ pipeline {
                 sshagent(credentials: ['SSH-ubuntu']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "sudo docker run --name ${containerName} -d ${imageName}:latest"
-                        ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "rm -f ${apkFileLocalPath}app-release.apk"
+                        ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "rm -f ${apkFileLocalPath}app-debug.apk"
                         ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri "sudo docker cp ${containerName}:${apkFileContainerPath} ${apkFileLocalPath}"
-                        scp -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri:${apkFileLocalPath}app-release.apk .
+                        scp -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerUri:${apkFileLocalPath}app-debug.apk .
                     """
                 }
             }
@@ -98,9 +98,9 @@ pipeline {
         stage('S3 Upload') {
             steps {
                 withCredentials([aws(credentialsId: 'AWS-IAM', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable : 'AWS_SECRET_ACCESS_KEY ')]) {
-                    sh "aws s3 cp ./app-release.apk s3://${s3BucketName}/${apkS3Path}${BUILD_NUMBER}/app-release.apk"
+                    sh "aws s3 cp ./app-debug.apk s3://${s3BucketName}/${apkS3Path}${BUILD_NUMBER}/app-debug.apk"
                     script {
-                        s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-release.apk"
+                        s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-debug.apk"
                     }
                 }
             }
