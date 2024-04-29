@@ -20,10 +20,11 @@ RUN curl -o cmdline-tools.zip "https://dl.google.com/android/repository/commandl
     mv cmdline-tools cmdline-tools-temp && \
     mkdir -p cmdline-tools/latest && \
     mv cmdline-tools-temp/* cmdline-tools/latest/ && \
-    rm -r cmdline-tools-temp && \
-    yes | sdkmanager --licenses
+    rm -r cmdline-tools-temp
 
 ENV PATH $PATH:/android-sdk/cmdline-tools/latest/bin
+
+RUN yes | sdkmanager --licenses
 
 RUN sdkmanager "platform-tools;${ANDROID_SDK_PLATFORM_TOOLS}" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_SDK_BUILD_TOOLS}"
 
