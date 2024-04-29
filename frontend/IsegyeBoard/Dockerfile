@@ -40,4 +40,5 @@ RUN chmod +x gradlew && \
 # app/build/outputs/apk/release/app-release.apk 생성(서명 필요)
 # app/build/outputs/apk/debug/app-debug.apk 생성
 
+# 컨테이너를 실행 상태로 유지하기 위함.
 ENTRYPOINT ["tail", "-f", "/dev/null"]
