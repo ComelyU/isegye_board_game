@@ -66,8 +66,7 @@ pipeline {
                     script {
                         docker.withRegistry('', registryCredential) {
                             sh "docker buildx create --use --name mybuilder"
-                            sh "docker buildx build --platform linux/amd64 -t $imageName:$BUILD_NUMBER --push ."
-                            sh "docker buildx build --platform linux/amd64 -t $imageName:latest --push ."
+                            sh "docker buildx build --platform linux/amd64 -t $imageName:$BUILD_NUMBER -t $imageName:latest --push ."
                         }
                     }
                 }
@@ -102,6 +101,20 @@ pipeline {
                     script {
                         s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-debug.apk"
                     }
+                }
+            }
+        }
+
+        stage('Docker stop & rm & rmi') {
+            steps {
+                sshagent(credentials: ['SSH-ubuntu']) {
+                    sh '''
+                    if test "`ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker ps -aq --filter ancestor=$imageName:latest"`"; then
+                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker stop $(docker ps -aq --filter ancestor=$imageName:latest)"
+                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker rm -f $(docker ps -aq --filter ancestor=$imageName:latest)"
+                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker rmi $imageName:latest"
+                    fi
+                    '''
                 }
             }
         }
