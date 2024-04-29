@@ -96,15 +96,12 @@ pipeline {
         
         stage('S3 Upload') {
             steps {
-                withCredentials([aws(credentialsId: 'AWS-IAM', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable : 'AWS_SECRET_ACCESS_KEY ')]) {
-                    sh "aws s3 cp ./app-debug.apk s3://${s3BucketName}/${apkS3Path}${BUILD_NUMBER}/app-debug.apk"
-                    script {
-                        s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-debug.apk"
-                    }
-                }
+                withAWS(credentials:'AWS-IAM') {
+		            s3Upload(file:'./app-debug.apk', bucket:"${s3BucketName}", path:"${apkS3Path}${BUILD_NUMBER}/app-debug.apk")
+				}
             }
         }
-
+        
         stage('Docker stop & rm & rmi') {
             steps {
                 sshagent(credentials: ['SSH-ubuntu']) {
