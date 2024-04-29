@@ -30,4 +30,4 @@ COPY . .
 # RUN ./gradlew assembleDebug
 RUN chmod +x gradlew && \
     ./gradlew assembleRelease
-# app/build/outputs/apk/release/app-release.apk 생성
+# app/build/outputs/apk/release/app-release.apk 에 위치
