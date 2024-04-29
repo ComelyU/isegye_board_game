@@ -18,7 +18,7 @@ RUN curl -o cmdline-tools.zip "https://dl.google.com/android/repository/commandl
     unzip cmdline-tools.zip && \
     rm cmdline-tools.zip && \
     mkdir -p cmdline-tools/latest && \
-    mv cmdline-tools/cmdline-tools/* cmdline-tools/latest/ && \
+    mv cmdline-tools/* cmdline-tools/latest/ && \
     yes | sdkmanager --licenses
 
 ENV PATH $PATH:/android-sdk/cmdline-tools/latest/bin
