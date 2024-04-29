@@ -32,7 +32,9 @@ WORKDIR /app
 
 COPY . .
 
-# RUN ./gradlew assembleDebug
+
 RUN chmod +x gradlew && \
-    ./gradlew assembleRelease
+    # ./gradlew assembleRelease
+    ./gradlew assembleDebug
 # app/build/outputs/apk/release/app-release.apk 생성
+# app/build/outputs/apk/debug/app-debug.apk 생성
