@@ -39,3 +39,5 @@ RUN chmod +x gradlew && \
     ./gradlew assembleDebug
 # app/build/outputs/apk/release/app-release.apk 생성(서명 필요)
 # app/build/outputs/apk/debug/app-debug.apk 생성
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
