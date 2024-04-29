@@ -1,14 +1,16 @@
 FROM docker
 COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
 
-FROM eclipse-temurin:8-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 ENV ANDROID_COMPILE_SDK="34" \
     ANDROID_SDK_BUILD_TOOLS="34.0.0" \
     ANDROID_SDK_PLATFORM_TOOLS="35.0.1" \
     ANDROID_SDK_COMMANDLINE_TOOLS="11076708"
 
-RUN apk add --no-cache curl tar bash procps
+RUN apt-get update && \
+    apt-get install -y curl tar bash procps && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /android-sdk
 
@@ -30,4 +32,4 @@ COPY . .
 # RUN ./gradlew assembleDebug
 RUN chmod +x gradlew && \
     ./gradlew assembleRelease
-# app/build/outputs/apk/release/app-release.apk 에 위치
+# app/build/outputs/apk/release/app-release.apk 생성
