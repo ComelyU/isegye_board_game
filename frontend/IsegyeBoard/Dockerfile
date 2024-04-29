@@ -9,7 +9,7 @@ ENV ANDROID_COMPILE_SDK="34" \
     ANDROID_SDK_COMMANDLINE_TOOLS="11076708"
 
 RUN apt-get update && \
-    apt-get install -y curl tar bash procps && \
+    apt-get install -y curl tar bash procps unzip && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /android-sdk
