@@ -22,7 +22,8 @@ RUN curl -o cmdline-tools.zip "https://dl.google.com/android/repository/commandl
     mv cmdline-tools-temp/* cmdline-tools/latest/ && \
     rm -r cmdline-tools-temp
 
-ENV PATH $PATH:/android-sdk/cmdline-tools/latest/bin
+ENV ANDROID_HOME=/android-sdk
+ENV PATH $PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 
 RUN yes | sdkmanager --licenses
 
