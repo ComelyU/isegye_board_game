@@ -99,19 +99,18 @@ pipeline {
                 withAWS(credentials:'AWS-IAM') {
 		            s3Upload(file:'./app-debug.apk', bucket:"${s3BucketName}", path:"${apkS3Path}${BUILD_NUMBER}/app-debug.apk")
 				}
+                script {
+                    s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-debug.apk"
+                }
             }
         }
         
         stage('Docker stop & rm & rmi') {
             steps {
                 sshagent(credentials: ['SSH-ubuntu']) {
-                    sh '''
-                    if test "`ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker ps -aq --filter ancestor=$imageName:latest"`"; then
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker stop $(docker ps -aq --filter ancestor=$imageName:latest)"
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker rm -f $(docker ps -aq --filter ancestor=$imageName:latest)"
-                    ssh -o StrictHostKeyChecking=no $releaseServerAccount@$releaseServerIPAddr "docker rmi $imageName:latest"
-                    fi
-                    '''
+                    sh "docker stop ${containerName}"
+                    sh "docker rm ${containerName}"
+                    sh "docker rmi ${imageName}:latest"
                 }
             }
         }
