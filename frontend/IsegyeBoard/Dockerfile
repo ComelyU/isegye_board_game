@@ -26,7 +26,7 @@ ENV PATH $PATH:/android-sdk/cmdline-tools/latest/bin
 
 RUN yes | sdkmanager --licenses
 
-RUN sdkmanager "platform-tools;${ANDROID_SDK_PLATFORM_TOOLS}" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_SDK_BUILD_TOOLS}"
+RUN sdkmanager "platform-tools" "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_SDK_BUILD_TOOLS}"
 
 WORKDIR /app
 
