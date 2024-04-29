@@ -15,10 +15,12 @@ RUN apt-get update && \
 WORKDIR /android-sdk
 
 RUN curl -o cmdline-tools.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_COMMANDLINE_TOOLS}_latest.zip" && \
-    unzip cmdline-tools.zip && \
+    unzip cmdline-tools.zip -d . && \ 
     rm cmdline-tools.zip && \
+    mv cmdline-tools cmdline-tools-temp && \
     mkdir -p cmdline-tools/latest && \
-    mv cmdline-tools/* cmdline-tools/latest/ && \
+    mv cmdline-tools-temp/* cmdline-tools/latest/ && \
+    rm -r cmdline-tools-temp && \
     yes | sdkmanager --licenses
 
 ENV PATH $PATH:/android-sdk/cmdline-tools/latest/bin
