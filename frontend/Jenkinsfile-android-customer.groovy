@@ -13,7 +13,7 @@ pipeline {
         imageName = "demise1426/accio-isegye-android-customer" // docker hub의 이미지 이름
         registryCredential = 'demise1426-docker' // docker hub access token
         
-        apkFileContainerPath = '/app/build/outputs/apk/debug/app-debug.apk'
+        apkFileContainerPath = '/app/app/build/outputs/apk/debug/app-debug.apk'
         apkFileLocalPath = '/home/ubuntu/apk/customer/'
         apkS3Path = 'apk/customer/'
         s3BucketName = 'accio-isegye'
