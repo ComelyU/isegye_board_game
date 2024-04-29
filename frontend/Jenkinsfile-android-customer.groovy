@@ -98,8 +98,10 @@ pipeline {
         stage('S3 Upload') {
             steps {
                 withCredentials([aws(credentialsId: 'AWS-IAM', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable : 'AWS_SECRET_ACCESS_KEY ')]) {
-                sh "aws s3 cp ./app-release.apk s3://${s3BucketName}/${apkS3Path}${BUILD_NUMBER}/app-release.apk"
-                s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-release.apk"
+                    sh "aws s3 cp ./app-release.apk s3://${s3BucketName}/${apkS3Path}${BUILD_NUMBER}/app-release.apk"
+                    script {
+                        s3url = "https://${s3BucketName}.s3.${awsRegion}.amazonaws.com/${apkS3Path}${BUILD_NUMBER}/app-release.apk"
+                    }
                 }
             }
         }
