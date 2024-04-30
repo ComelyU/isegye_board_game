@@ -12,17 +12,18 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 public class MqttProperties {
     private final String brokerUrl;
     private final String brokerClientId;
+    private final String brokerServerId;
     private final String topicFilter;
     private final String username;
     private final String password;
     private final Integer keepAliveInterval;
 
     @ConstructorBinding
-    public MqttProperties(String brokerUrl, String brokerClientId, String topicFilter,
-        String username,
-        String password, Integer keepAliveInterval) {
+    public MqttProperties(String brokerUrl, String brokerClientId, String brokerServerId,
+        String topicFilter, String username, String password, Integer keepAliveInterval) {
         this.brokerUrl = brokerUrl;
         this.brokerClientId = brokerClientId;
+        this.brokerServerId = brokerServerId;
         this.topicFilter = topicFilter;
         this.username = username;
         this.password = password;
