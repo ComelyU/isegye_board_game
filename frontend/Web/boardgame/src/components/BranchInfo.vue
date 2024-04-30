@@ -22,7 +22,7 @@
 			</div>
 			
 			<div class="modal fade" id="storeModal" tabindex="-1" aria-labelledby="storeModalLabel" aria-hidden="true">
-			<!-- 모달 내용 -->
+		
 					<div class="modal-dialog modal-lg">
 							<div class="modal-content">
 									<div class="modal-header">
@@ -30,9 +30,8 @@
 											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
-											<!-- 테이블 목록 -->
-											<div v-for="table in tables" :key="table.id" :class="{ 'table-in-use': table.inUse }">
-											테이블 {{ table.id }}
+											<div v-for="table in tables" :key="table.id" :class="{ 'table-in-use': table.fcmToken }">
+												테이블 {{ table.id }}
 											</div>
 									</div>
 									<div class="modal-footer">
@@ -64,13 +63,15 @@ export default {
   },
     methods: {
         openModal() {
-            axios.get('/api/tables')
+					console.log("응애")
+            axios.get('https://k10a706.p.ssafy.io/api/stores/1/room-lists/available')
                 .then(response => {
-                // 받은 데이터를 테이블 목록으로 설정
-                this.tables = response.data.tables;
+									console.log(response)
+                	// 받은 데이터를 테이블 목록으로 설정
+                	this.tables = response.data.tables;
                 })
                 .catch(error => {
-                console.error('Error fetching tables:', error);
+                	console.error('Error fetching tables:', error);
                 });
         }
     }

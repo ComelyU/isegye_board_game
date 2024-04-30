@@ -21,4 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "BgManager"
 include(":app")
- 
+include(":domain")
+include(":presentation")
+include(":data")
+include(":remote")
+include(":local")
