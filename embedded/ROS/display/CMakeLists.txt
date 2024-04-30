@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(display LANGUAGES CXX)
 
-include_directories("/opt/ros/foxy/include")
+# ROS 헤더 파일이 있는 경로를 포함합니다.
+include_directories(
+    ${ament_cmake_INCLUDE_DIRS}
+    ${rclcpp_INCLUDE_DIRS}
+    ${std_msgs_INCLUDE_DIRS}
+)
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -31,4 +37,5 @@ target_link_libraries(display PRIVATE
     Qt5::Widgets
     ${rclcpp_LIBRARIES}
     ${std_msgs_LIBRARIES}
+    ${ament_cmake_LIBRARIES}
 )
