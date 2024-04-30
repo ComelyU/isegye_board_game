@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TurtleServiceImpl {
+public class TurtleServiceImpl implements TurtleService{
     private TurtleRepository turtleRepository;
     private TurtleLogRepository turtleLogRepository;
 }
