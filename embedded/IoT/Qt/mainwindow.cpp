@@ -39,6 +39,10 @@ void MainWindow::changeVideo(const QString& videoPath) {	//영상 바꾸기
 	player->setPlaylist(playlist);
 	player->play();
 }
+void MainWindow::changeVolume(int volume_level) {	//영상 바꾸기
+
+	player->setVolume(volume_level);
+}
 void MainWindow::socketThread() {
 	QTcpSocket socket;
 	while (true) {
@@ -70,6 +74,9 @@ void MainWindow::socketThread() {
 				emit requestVideoChange(appDir + "/../src/" + requestData + ".mp4");
 				std::cout << "Change Complete!" << std::endl;
 			}
+			else if(requestData.toInt()>=0 && requestData.toInt()<=100){
+			    changeVolume(requestData.toInt());
+			  }
 			else
 				std::cerr << "Invalid request: " << requestData.toStdString() << std::endl;
 		}
