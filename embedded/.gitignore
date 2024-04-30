@@ -33,7 +33,7 @@ Thumbs.db
 *.res
 *.rc
 build/
-
+*.user
 # qtcreator generated files
 *.pro.user*
 /.qmake.cache

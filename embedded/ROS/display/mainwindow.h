@@ -6,6 +6,10 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QThread>
+#include <QString>
+#include <QMovie>
+#include <QDebug>
+#include <QVector>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -23,15 +27,23 @@ public:
 
 private:
 	Ui::MainWindow* ui;
+
+	QVector<QString>emoji_list;
 	QLabel* label;
 	rclcpp::Node::SharedPtr node;
-	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr subscription;
+	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr emoji_subscription;
+	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr location_subscription;
 	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
 
-	int cnt;
+	void setEmoji(QString status);
+	void setButton();
 	void pub();
-	void messageReceived(const std_msgs::msg::String::SharedPtr msg);
-	void run_ros();
+	void emojiReceived(const std_msgs::msg::String::SharedPtr msg);
+	void locationReceived(const std_msgs::msg::String::SharedPtr msg);
+	void runRos();
+signals:
+	void emojiReceivedSignal(const QString &data);
+
 };
 
 #endif // MAINWINDOW_H
