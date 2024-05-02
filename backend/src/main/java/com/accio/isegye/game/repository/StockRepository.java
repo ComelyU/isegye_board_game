@@ -9,7 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
 
-    List<Stock> findAllByStoreIdAndIsAvailable(int storeId, int available);
-    List<Stock> findAllByIsAvailableAndStoreId(int available, int storeId);
-//    List<Stock> findAllByIsAvailableAndStoreIdUsingFetchJoin(int i, int storeId);
+    List<Stock> findAllByStoreId(int storeId);
 }
