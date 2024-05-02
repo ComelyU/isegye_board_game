@@ -3,9 +3,9 @@ package com.example.presentation
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.OrderUseCase
 import com.example.domain.usecase.TurtleBotUseCase
-import com.example.presentation.UiState.OrderUiState
-import com.example.presentation.UiState.UiState
 import com.example.presentation.base.BaseViewModel
+import com.example.presentation.ui.OrderUiState
+import com.example.presentation.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

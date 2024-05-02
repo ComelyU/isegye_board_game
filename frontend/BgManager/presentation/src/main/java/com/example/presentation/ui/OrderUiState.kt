@@ -1,4 +1,4 @@
-package com.example.presentation.UiState
+package com.example.presentation.ui
 
 data class OrderUiState(
     val orderId: Int,

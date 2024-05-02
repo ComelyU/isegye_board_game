@@ -3,7 +3,7 @@ package com.example.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.presentation.UiState.OrderUiState
+import com.example.presentation.ui.OrderUiState
 import com.example.presentation.databinding.ItemlayoutOrderBinding
 
 class OrderAdapter(private val itemList: List<OrderUiState>) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
