@@ -22,7 +22,6 @@ public class TurtleController {
     private final TurtleService turtleService;
 
     //터틀봇이 SEND할 수 있는 경로
-    //websocketconfig에서 설정한 setApplicationDestinationPrefixes와 @MessageMapping 경로가 병합됨
     // "/pub/
     @PostMapping("/pub")
     public ResponseEntity<String> publishMessage(){
