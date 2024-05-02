@@ -69,11 +69,8 @@ class MainPageFrg : Fragment() {
             startActivity(intent)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.videoSpace).setOnClickListener {
-            // 테스트용 임시 네비
-            it.findNavController().navigate(R.id.action_main_page_frg_to_gamedetail)
-            // 테스트후 삭제
-        }
+//        view.findViewById<ConstraintLayout>(R.id.videoSpace).setOnClickListener {
+//        }
 
         view.findViewById<ConstraintLayout>(R.id.button6).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_order_history)

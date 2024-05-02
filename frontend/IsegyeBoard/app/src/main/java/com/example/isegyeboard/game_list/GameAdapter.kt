@@ -36,20 +36,27 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
         }
 
         override fun onClick(v: View?) {
-            val game = dataList[adapterPosition]
-            if (game.stock > 0) {
+            val gameData = dataList[adapterPosition]
+            val gameDetail = gameData.game
+
+//            val tagCategories: List<GameTagCategory> = gameDetail.gameTagCategory
+//            val tagText = tagCategories.joinToString(", ") { category ->
+//                context.getString(category.codeItemName)
+//            }
+
+            if (gameData.isAvailable > 0) {
                 val bundle = Bundle().apply {
-                    putString("gameId", game.id.toString())
-                    putString("title", game.title)
-                    putString("description", game.description)
-                    putString("thumbnailUrl", game.thumbnailUrl)
-                    putString("stock", game.stock.toString())
-                    putString("minPlayer", game.minPlayer.toString())
-                    putString("maxPlayer", game.maxPlayer.toString())
-                    putString("minPlaytime", game.minPlaytime.toString())
-                    putString("maxPlaytime", game.maxPlaytime.toString())
-                    putString("difficulty", ceil(game.difficulty).toInt().toString())
-                    putString("theme", game.theme)
+                    putString("gameId", gameDetail.id.toString())
+                    putString("title", gameDetail.gameName)
+                    putString("description", gameDetail.gameDetail)
+                    putString("thumbnailUrl", gameDetail.gameImgUrl)
+                    putString("stock", gameData.isAvailable.toString())
+                    putString("minPlayer", gameDetail.minPlayer.toString())
+                    putString("maxPlayer", gameDetail.maxPlayer.toString())
+                    putString("minPlaytime", gameDetail.minPlaytime.toString())
+                    putString("maxPlaytime", gameDetail.maxPlaytime.toString())
+                    putString("difficulty", ceil(gameDetail.gameDifficulty).toInt().toString())
+//                    putString("theme", tagText)
                 }
                 v?.findNavController()?.navigate(R.id.action_gamelist_to_gamedetail, bundle)
             } else {
@@ -67,8 +74,9 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
     // onBindViewHolder: 데이터를 뷰에 연결
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         val gameItem = dataList[position]
+        val gameItemDetail = gameItem.game
 //            println(gameItem.thumbnailUrl)
-        if (gameItem.stock == 0) {
+        if (gameItem.isAvailable == 0) {
             holder.itemView.setBackgroundColor(Color.LTGRAY)
             holder.titleTextView.setTextColor(Color.GRAY)
             holder.descriptionTextView.setTextColor(Color.GRAY)
@@ -80,33 +88,40 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
         } else {
             holder.itemView.setBackgroundColor(Color.WHITE)
         }
-        holder.titleTextView.text = gameItem.title
-        holder.descriptionTextView.text = if (gameItem.description.length > 30) {
-            gameItem.description.substring(0, 30) + "..."
+        holder.titleTextView.text = gameItemDetail.gameName
+        holder.descriptionTextView.text = if (gameItemDetail.gameDetail.length > 30) {
+            gameItemDetail.gameDetail.substring(0, 30) + "..."
         } else {
-            gameItem.description
+            gameItemDetail.gameDetail
         }
-        holder.stockTextView.text = if (gameItem.stock > 0) {
-            "재고 : ${gameItem.stock}"
+        holder.stockTextView.text = if (gameItem.isAvailable > 0) {
+            "재고 : ${gameItem.isAvailable}"
         } else {
             "재고 : X"
         }
-        holder.playerTextView.text = if (gameItem.minPlayer == gameItem.maxPlayer) {
-            "인원 : ${gameItem.minPlayer}명, "
+        holder.playerTextView.text = if (gameItemDetail.minPlayer == gameItemDetail.maxPlayer) {
+            "인원 : ${gameItemDetail.minPlayer}명, "
         } else {
-            "인원 : ${gameItem.minPlayer} ~ ${gameItem.maxPlayer}명, "
+            "인원 : ${gameItemDetail.minPlayer} ~ ${gameItemDetail.maxPlayer}명, "
         }
 //            holder.maxPlayerTextView.text = gameItem.maxPlayer.toString()
-        holder.playTimeTextView.text = if (gameItem.minPlaytime == gameItem.maxPlaytime) {
-            "시간 : ${gameItem.minPlaytime}분, "
+        holder.playTimeTextView.text = if (gameItemDetail.minPlaytime == gameItemDetail.maxPlaytime) {
+            "시간 : ${gameItemDetail.minPlaytime}분, "
         } else {
-            "시간 : ${gameItem.minPlaytime} ~ ${gameItem.maxPlaytime}분, "
+            "시간 : ${gameItemDetail.minPlaytime} ~ ${gameItemDetail.maxPlaytime}분, "
         }
 //            holder.maxPlayTimeTextView.text = gameItem.maxPlaytime.toString()
-        holder.difficultyTextView.text = "난이도 : ${"★".repeat(ceil(gameItem.difficulty).toInt())}"
-        holder.themeTextView.text = "장르 : ${gameItem.theme}, "
+        holder.difficultyTextView.text = "난이도 : ${"★".repeat(ceil(gameItemDetail.gameDifficulty).toInt())}"
+
+        // 장르리스트
+//        val tagCategory: List<GameTagCategory> = gameItemDetail.gameTagCategory
+//        val tagText = tagCategory.joinToString(", ") { category ->
+//            context.getString(category.codeItemName)
+//        }
+//        holder.themeTextView.text = "장르 : $tagText, "
+
         Glide.with(context)
-            .load(gameItem.thumbnailUrl)
+            .load(gameItemDetail.gameImgUrl)
             .placeholder(R.drawable.ipad) // 로딩이미지
             .error(R.drawable.chess_black) //실패이미지
             .into(holder.imageView)

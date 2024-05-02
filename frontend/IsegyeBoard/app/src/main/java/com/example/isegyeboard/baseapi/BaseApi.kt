@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object BaseApi {
-    private val BASE_URL = "https://j10a706.p.ssafy.io/api/"
+    private val BASE_URL = "https://k10a706.p.ssafy.io/api/"
 
     private val client = Retrofit
         .Builder()

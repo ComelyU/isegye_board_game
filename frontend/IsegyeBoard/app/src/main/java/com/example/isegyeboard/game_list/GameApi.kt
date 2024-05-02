@@ -1,12 +1,12 @@
 package com.example.isegyeboard.game_list
 
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Path
 
 interface GameApi {
 
-    @GET("stock/games?")
+    @GET("game/{storeId}/stock-list")
     suspend fun getGameList(
-        @Query("storeId") storeId: String,
+        @Path("storeId") storeId: String,
     ) : List<GameClass>
 }

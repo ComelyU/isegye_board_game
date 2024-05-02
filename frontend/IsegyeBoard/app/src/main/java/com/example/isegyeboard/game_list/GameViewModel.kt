@@ -15,9 +15,11 @@ class GameViewModel() : ViewModel() {
     val gameList: LiveData<List<GameClass>> = _gameList
 
     fun getCurrentGameList(storeId: String) {
+        println("게임 뷰모델 들어옴")
         viewModelScope.launch {
             try {
                 val result = gameNetwork.getGameList(storeId)
+                println(result)
                 _gameList.value = result
             } catch (e: Exception) {
                 // 에러 처리
