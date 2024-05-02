@@ -47,7 +47,7 @@ public class Game extends BaseTimeEntity {
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private final List<Stock> stockList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
-    private final List<GameTagCategory> categoryList = new ArrayList<>();
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private final List<GameTagCategory> gameTagCategoryList = new ArrayList<>();
 
 }
