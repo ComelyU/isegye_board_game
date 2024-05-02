@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -20,8 +22,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@SuperBuilder
+@Builder
 public class CodeItem {
 
     @Id
@@ -34,11 +37,11 @@ public class CodeItem {
     private CodeGroup codeGroup;
 
     private String itemName;
+
     private String itemDescription;
 
-    @OneToOne(mappedBy = "codeItem")
-    private GameTagCategory gameTagCategory;
-
-
-
+    public void updateItemNameAndDescription(String itemName, String itemDescription) {
+        this.itemName = itemName;
+        this.itemDescription = itemDescription;
+    }
 }
