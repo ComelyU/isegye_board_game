@@ -81,6 +81,8 @@ public class MqttConfig {
                 String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
                 if (topic.equals(mqttProperties.getTopicFilter())) {
                     System.out.println("this is our topic");
+                }else{
+                    System.out.println("new topic: " + topic);
                 }
                 System.out.println(message.getPayload());
             }
