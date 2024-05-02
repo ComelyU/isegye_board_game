@@ -4,36 +4,34 @@
 
     <data>
         <variable
-            name="viewModel"
-            type="com.example.presentation.MainViewModel" />
-<!--        <variable-->
-<!--            name="adapter"-->
-<!--            type="com.example.presentation.Order.OrderAdapter" />-->
+            name="orderItem"
+            type="com.example.presentation.UiState.OrderUiState" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutOrderItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-<!--        <TextView-->
-<!--            android:id="@+id/orderName"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            android:text="@{viewModel.uiStateFlow.orderIdString}"-->
-<!--            />-->
+        <TextView
+            android:id="@+id/oderItemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@{orderItem.orderIdString}"
+            />
 
-<!--        <TextView-->
-<!--            android:id="@+id/orderQuantity"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintStart_toEndOf="@id/orderName"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            android:text="@{viewModel.uiStateFlow.orderQuantityString}"-->
-<!--            />-->
+        <TextView
+            android:id="@+id/orderItemQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/oderItemName"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@{orderItem.orderQuantityString}"
+            />
 
         <Button
             android:layout_width="100dp"

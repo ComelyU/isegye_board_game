@@ -46,9 +46,9 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
 
             // Order 데이터 로드
-            val orderResponse = orderUseCase.invoke()
-            if (orderResponse.isSuccess) {
-                val orderDataList = orderResponse.getOrThrow()
+            val response = orderUseCase.invoke()
+            if (response.isSuccess) {
+                val orderDataList = response.getOrThrow()
                 val currentState = _uiStateFlow.value
 
                 // Order 데이터 업데이트
