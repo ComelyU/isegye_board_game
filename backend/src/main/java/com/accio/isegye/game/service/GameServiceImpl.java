@@ -40,7 +40,6 @@ public class GameServiceImpl implements GameService{
 
     @Override
     public List<StockResponse> getStockList(int storeId) {
-//        modelMapper.typeMap(Stock.class, StockResponse.class).addMapping(stock -> )
 
         List<StockResponse> stockResponse = stockRepository.findAllByIsAvailableAndStoreId (1, storeId)
             .stream()
@@ -53,4 +52,5 @@ public class GameServiceImpl implements GameService{
     public List<GameResponse> getGameList(int gameId){
         return gameRepository.findById(gameId).stream().map(game -> modelMapper.map(game, GameResponse.class)).toList();
     }
+
 }
