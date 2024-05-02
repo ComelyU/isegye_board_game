@@ -1,0 +1,5 @@
+<resources>
+    <string name="button_name">터틀봇 호출</string>
+    <string name="app_name">presentation</string>
+    <string name="order_button">완료</string>
+</resources>
