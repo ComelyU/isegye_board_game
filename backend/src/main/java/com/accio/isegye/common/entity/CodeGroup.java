@@ -13,6 +13,8 @@ import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -21,19 +23,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@SuperBuilder
+@Builder
 public class CodeGroup {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_name", insertable = true, updatable = false)
+    @Column(name = "group_name", updatable = false)
     private String groupName;
 
     private String groupDescription;
 
-    @OneToOne(mappedBy = "codeGroup")
-    private GameTagCategory gameTagCategory;
-
     @OneToMany(mappedBy = "codeGroup", fetch = FetchType.LAZY)
     private final List<CodeItem> codeItemList = new ArrayList<>();
+
+    public void updateGroupDescription(String description) {
+        this.groupDescription = description;
+    }
 }
