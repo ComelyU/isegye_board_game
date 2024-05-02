@@ -41,7 +41,7 @@ public class GameServiceImpl implements GameService{
     @Override
     public List<StockResponse> getStockList(int storeId) {
 
-        List<StockResponse> stockResponse = stockRepository.findAllByIsAvailableAndStoreId (1, storeId)
+        List<StockResponse> stockResponse = stockRepository.findAllByStoreId (storeId)
             .stream()
             .map(this::getStockResponse)
             .toList();

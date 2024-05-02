@@ -21,30 +21,12 @@ public class StockResponse {
     private int id;
 
     @NotNull
+    private int isAvailable;
+
+    @NotNull
     private String stockLocation;
 
     @NotNull
     private GameResponse game;
-
-//    private String gameThemeType;
-//
-//    @NotNull
-//    private String gameName;
-//
-//    private String gameDetail;
-//
-//    private String gameMinPlayer;
-//
-//    private String gameMaxPlayer;
-//
-//    private String gameMinPlaytime;
-//
-//    private String gameMaxPlaytime;
-//
-//    private float gameDifficulty;
-//
-//    private String gameImgUrl;
-//
-//    private List<String> gameTagCategoryCodeItemName = new ArrayList<>();
 
 }
