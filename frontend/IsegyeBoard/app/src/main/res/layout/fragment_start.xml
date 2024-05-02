@@ -61,7 +61,7 @@
 
     <!--가이드-->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/guideButton"
+        android:id="@+id/startGuideButton"
         android:layout_width="440dp"
         android:layout_height="360dp"
         android:layout_margin="10dp"

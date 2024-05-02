@@ -276,7 +276,7 @@
             android:layout_width="230dp"
             android:layout_height="76dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="192dp"
+            android:layout_marginBottom="56dp"
             android:background="@color/white"
             android:fontFamily="@font/dnfbitbitv2"
             android:gravity="center"
@@ -285,6 +285,7 @@
             android:textSize="40sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.545"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -292,16 +293,19 @@
             android:layout_width="230dp"
             android:layout_height="76dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginBottom="56dp"
             android:background="@color/white"
             android:fontFamily="@font/dnfbitbitv2"
             android:gravity="center"
             android:text="다시 추천"
             android:textColor="@color/black"
             android:textSize="40sp"
-            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.545"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchButton"/>
+            android:visibility="gone"
+            />
 
         <ImageView
             android:id="@+id/recBack"
