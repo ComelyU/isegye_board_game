@@ -1,6 +1,7 @@
 package com.example.isegyeboard.room_history
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.login.StartApi
+import com.example.isegyeboard.main_page.Tutorial
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,10 +40,15 @@ class StartFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_start, container, false)
 
         view.findViewById<ConstraintLayout>(R.id.startButton).setOnClickListener{
-
             // api 설계되면 밑에 링크는 주석
             findNavController().navigate(R.id.action_startFragment_to_main_page_frg)
+            // 윗 줄 주석
             sendStartInfo()
+        }
+
+        view.findViewById<ConstraintLayout>(R.id.startGuideButton).setOnClickListener {
+            val intent = Intent(requireContext(), Tutorial::class.java)
+            startActivity(intent)
         }
 
         return view

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -25,9 +26,9 @@ class GameDetail : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_gamedetail, container, false)
 
-        view.findViewById<ConstraintLayout>(R.id.photoButton).setOnClickListener {
+        view.findViewById<TextView>(R.id.photoButton).setOnClickListener {
             // 테스트용 임시 네비
-            it.findNavController().navigate(R.id.action_main_page_frg_to_gamedetail)
+            it.findNavController().navigate(R.id.action_gamedetail_to_photo)
             // 테스트후 삭제
         }
 

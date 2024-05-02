@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
+
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -8,6 +11,10 @@ plugins {
 android {
     namespace = "com.example.isegyeboard"
     compileSdk = 34
+
+    buildFeatures {
+        dataBinding = true
+    }
 
     defaultConfig {
         applicationId = "com.example.isegyeboard"

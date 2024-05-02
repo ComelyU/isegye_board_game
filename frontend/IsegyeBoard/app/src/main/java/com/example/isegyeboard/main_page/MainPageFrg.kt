@@ -65,7 +65,8 @@ class MainPageFrg : Fragment() {
         }
 
         view.findViewById<ConstraintLayout>(R.id.homeTutorialButton).setOnClickListener {
-
+            val intent = Intent(requireContext(), Tutorial::class.java)
+            startActivity(intent)
         }
 
         view.findViewById<ConstraintLayout>(R.id.videoSpace).setOnClickListener {
