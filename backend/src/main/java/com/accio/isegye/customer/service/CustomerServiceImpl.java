@@ -63,4 +63,17 @@ public class CustomerServiceImpl implements CustomerService{
 
         return update.getRoomFee();
     }
+
+    @Override
+    @Transactional
+    public Integer toggleTheme(int customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "No Customer matching: " + customerId));
+        int isTheme = customer.getIsTheme();
+        customer.setIsTheme( (isTheme+1)%2 ); // 테마 사용 여부 전환
+
+        Customer update = customerRepository.save(customer);
+
+        return update.getIsTheme();
+    }
 }
