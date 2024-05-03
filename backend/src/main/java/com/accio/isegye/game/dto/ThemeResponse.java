@@ -1,22 +1,11 @@
 package com.accio.isegye.game.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.accio.isegye.game.entity.Theme;
+import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ThemeResponse {
+public record ThemeResponse(Integer id, String themeType, String themeVideoUrl, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
 
-    @NotNull
-    private int id;
-
-    @NotBlank
-    private String themeType;
-
-    private String themeVideoUrl;
-
+    public ThemeResponse(Theme theme) {
+        this(theme.getId(), theme.getThemeType(), theme.getThemeVideoUrl(), theme.getCreatedAt(), theme.getUpdatedAt(), theme.getDeletedAt());
+    }
 }
