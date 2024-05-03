@@ -28,4 +28,11 @@ public class BaseTimeEntity {
 
     @Nullable
     private LocalDateTime deletedAt;
+
+    /**
+     * deletedAt 필드 값을 현재 시간으로 설정하여 엔티티를 '삭제된 상태'로 표시.
+     */
+    protected void markAsDeleted() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
