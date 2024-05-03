@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
 
-    List<Menu> findByStoreId(int storeId);
+    List<Menu> findByStoreIdAndDeletedAtIsNull(int storeId);
 }
