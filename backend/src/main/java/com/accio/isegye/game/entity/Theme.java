@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -30,8 +31,17 @@ public class Theme extends BaseTimeEntity {
     private int id;
 
     private String themeType;
+
     private String themeVideoUrl;
 
     @OneToMany(mappedBy = "theme", fetch = FetchType.LAZY)
     private final List<Game> game = new ArrayList<>();
+
+    public void updateThemeVideoUrl(String videoUrl) {
+        this.themeVideoUrl = videoUrl;
+    }
+
+    public void softDelete() {
+        super.markAsDeleted();
+    }
 }
