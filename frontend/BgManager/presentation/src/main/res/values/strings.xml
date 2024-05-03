@@ -3,4 +3,6 @@
     <string name="app_name">presentation</string>
     <string name="order_button">완료</string>
     <string name="page_title">주문목록</string>
+    <string name="push_turtle">배송 시작</string>
+    <string name="put_in">담기</string>
 </resources>

@@ -23,14 +23,19 @@ internal class RemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getOrderList(): Result<List<OrderData>> = runCatching {
-        val response = apiService.getOrderList()
-        if (response.isSuccessful) throw Exception()
-        response.body()!!.map { it ->
-            OrderData(
-                id = it.id,
-                orderName = it.orderName,
-                quantity = it.quantity
-            )
-        }
+//        val response = apiService.getOrderList()
+//        if (response.isSuccessful) throw Exception()
+//        response.body()!!.map { it ->
+//            OrderData(
+//                id = it.id,
+//                orderName = it.orderName,
+//                quantity = it.quantity
+//            )
+//        }
+        listOf(
+            OrderData(id = 1, orderName = "orderName1", quantity = 1),
+            OrderData(id = 2, orderName = "orderName2", quantity = 1),
+            OrderData(id = 3, orderName = "orderName3", quantity = 1)
+        )
     }
 }
