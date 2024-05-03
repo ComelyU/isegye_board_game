@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +43,23 @@ public class CustomerController {
 
         //터틀봇에게 반환 요청을 보낸다!
 
-        return new ResponseEntity<>(customerService.endCustomer(customerId), HttpStatus.OK);
+        int roomFee = customerService.endCustomer(customerId);
+        int orderFee = 0;
+
+        return new ResponseEntity<>(roomFee + orderFee, HttpStatus.OK);
     }
+
+    @Operation(
+        summary = "테마 on/off 토글",
+        description = "고객의 방의 테마를 on/off를 변경한다"
+    )
+    @PatchMapping("/{customerId}/theme")
+    public ResponseEntity<Integer> toggleTheme(@PathVariable int customerId){
+        return new ResponseEntity<>(customerService.toggleTheme(customerId), HttpStatus.OK);
+    }
+
+    /*
+    * 테마 음량 조절 기능
+    * */
 
 }

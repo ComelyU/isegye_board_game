@@ -8,4 +8,6 @@ public interface CustomerService {
     CustomerResponse createCustomer(CreateCustomerRequest createCustomerRequest);
 
     int endCustomer(int customerId);
+
+    Integer toggleTheme(int customerId);
 }
