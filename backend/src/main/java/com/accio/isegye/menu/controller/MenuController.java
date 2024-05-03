@@ -4,6 +4,7 @@ import com.accio.isegye.menu.dto.CreateMenuRequest;
 import com.accio.isegye.menu.dto.CreateOrderMenuRequest;
 import com.accio.isegye.menu.dto.MenuResponse;
 import com.accio.isegye.menu.dto.OrderMenuResponse;
+import com.accio.isegye.menu.dto.UpdateMenuRequest;
 import com.accio.isegye.menu.service.MenuService;
 import com.accio.isegye.turtle.service.TurtleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,17 +37,36 @@ public class MenuController {
         description = "새로운 매뉴 생성"
     )
     @PostMapping("/{storeId}")
-    public ResponseEntity<MenuResponse> createMenu(@PathVariable int storeId, @RequestBody CreateMenuRequest request){
-        return new ResponseEntity<>(menuService.createMenu(storeId, request), HttpStatus.OK);
+    public ResponseEntity<MenuResponse> createMenu(@PathVariable int storeId, @RequestBody CreateMenuRequest createMenuRequest){
+        return new ResponseEntity<>(menuService.createMenu(storeId, createMenuRequest), HttpStatus.OK);
     }
 
     @Operation(
         summary = "해당 매장의 모든 메뉴 목록",
-        description = "storeId 값에 해당되는 메뉴 목록"
+        description = "storeId 값에 해당되는 메뉴 목록, 폐기된 메뉴는 보이지 않는다"
     )
     @GetMapping("/{storeId}")
     public ResponseEntity<List<MenuResponse>> getMenuList(@PathVariable int storeId){
         return new ResponseEntity<>(menuService.getMenuList(storeId), HttpStatus.OK);
+    }
+
+    @Operation(
+        summary = "해당 메뉴의 정보 변경",
+        description = "menuId 값에 해당되는 메뉴 정보를 수정한다"
+    )
+    @PatchMapping("/{menuId}")
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable int menuId, @RequestBody UpdateMenuRequest updateMenuRequest){
+        return new ResponseEntity<>(menuService.updateMenu(menuId, updateMenuRequest), HttpStatus.OK);
+    }
+
+    @Operation(
+        summary = "해당 메뉴 삭제",
+        description = "menuId 값에 해당되는 메뉴를 폐기한다"
+    )
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<Void> deleteMenu(@PathVariable int menuId){
+        menuService.deleteMenu(menuId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(
@@ -55,7 +76,15 @@ public class MenuController {
     @PostMapping("/order/{customerId}")
     public ResponseEntity<OrderMenuResponse> createOrderMenu(@PathVariable int customerId, @Valid @RequestBody List<CreateOrderMenuRequest> orderMenuRequest){
 
-        return new ResponseEntity<>(menuService.createOrderMenu(orderMenuRequest, customerId), HttpStatus.OK);
+        OrderMenuResponse orderMenuResponse = menuService.createOrderMenu(orderMenuRequest, customerId);
+
+        /*
+        *
+        * 카프카를 통해서 점주에게도 주문 내역을 보낸다.
+        *
+        * */
+
+        return new ResponseEntity<>(orderMenuResponse, HttpStatus.OK);
     }
 
     @Operation(
@@ -117,7 +146,7 @@ public class MenuController {
         int turtleLogId = turtleService.createMenuLog(turtleList.get(0), orderMenuId);
         menuService.turtleOrderMenu(orderMenuId);
         //1.3 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
-        /**
+        /*
          *
          * 로봇에게 메시지 보내는 것을 넣을 것
          * coordinateX, coordinateY, turtleLogId

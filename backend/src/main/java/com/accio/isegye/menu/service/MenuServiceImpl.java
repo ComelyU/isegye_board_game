@@ -8,6 +8,7 @@ import com.accio.isegye.menu.dto.CreateMenuRequest;
 import com.accio.isegye.menu.dto.CreateOrderMenuRequest;
 import com.accio.isegye.menu.dto.MenuResponse;
 import com.accio.isegye.menu.dto.OrderMenuResponse;
+import com.accio.isegye.menu.dto.UpdateMenuRequest;
 import com.accio.isegye.menu.entity.Menu;
 import com.accio.isegye.menu.entity.OrderMenu;
 import com.accio.isegye.menu.entity.OrderMenuDetail;
@@ -72,10 +73,37 @@ public class MenuServiceImpl implements MenuService{
     @Override
     @Transactional(readOnly = true)
     public List<MenuResponse> getMenuList(int storeId) {
-        return menuRepository.findByStoreId(storeId)
+        return menuRepository.findByStoreIdAndDeletedAtIsNull(storeId)
             .stream()
             .map(this::getMenuResponse)
             .toList();
+    }
+
+    @Override
+    @Transactional
+    public MenuResponse updateMenu(int menuId, UpdateMenuRequest request) {
+        Menu menu = menuRepository.findById(menuId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "Menu does not exist: " + menuId));
+
+        menu.setMenuName(request.getMenuName());
+        if(request.getMenuType() != null) menu.setMenuType(request.getMenuType());
+        if(request.getMenuPrice() != null) menu.setMenuPrice(request.getMenuPrice());
+        if(request.getIsAvailable() != null) menu.setIsAvailable(request.getIsAvailable());
+        if(request.getMenuImgUrl() != null) menu.setMenuImgUrl(request.getMenuImgUrl());
+
+        Menu update = menuRepository.save(menu);
+
+        return getMenuResponse(update);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMenu(int menuId) {
+        Menu menu = menuRepository.findById(menuId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "Menu does not exist: " + menuId));
+
+        menu.setDeletedAt(LocalDateTime.now());
+        menuRepository.save(menu);
     }
 
     @Override
