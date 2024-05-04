@@ -1,10 +1,13 @@
 package com.accio.isegye.game.controller;
 
+import com.accio.isegye.game.dto.CreateGameRequest;
 import com.accio.isegye.game.dto.CreateThemeRequest;
+import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
 import com.accio.isegye.game.dto.StockResponse;
 import com.accio.isegye.game.dto.ThemeListResponse;
 import com.accio.isegye.game.dto.ThemeResponse;
+import com.accio.isegye.game.dto.UpdateGameRequest;
 import com.accio.isegye.game.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -104,14 +108,79 @@ public class GameController {
         );
     }
 
+    /*
+    Game
+     */
+
+    @Operation(
+        summary = "게임 등록",
+        description = "게임을 등록한다."
+    )
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<GameResponse> createGame(
+        @RequestPart("gameImg") MultipartFile gameImg,
+        @Valid @RequestPart("dto") CreateGameRequest dto
+    ) {
+        return new ResponseEntity<>(
+            gameService.createGame(gameImg, dto),
+            CREATED
+        );
+    }
+
+    @Operation(
+        summary = "게임 목록 조회",
+        description = "게임 리스트를 조회한다."
+    )
+    @GetMapping
+    public ResponseEntity<GameListResponse> getGameList() {
+        return new ResponseEntity<>(
+            gameService.getGameList(),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "게임 조회",
+        description = "{gameId}에 값에 해당하는 게임을 조회한다."
+    )
+    @GetMapping("/{gameId}")
+    public ResponseEntity<GameResponse> getGame(@PathVariable Integer gameId) {
+        return new ResponseEntity<>(
+            gameService.getGame(gameId),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "게임 수정",
+        description = "{gameId}에 값에 해당하는 게임을 수정한다. 게임 설명과 테마만 수정 가능."
+    )
+    @PatchMapping("/{gameId}")
+    public ResponseEntity<Void> updateGame(
+        @PathVariable Integer gameId,
+        @Valid @RequestBody UpdateGameRequest dto
+    ) {
+        return new ResponseEntity<>(
+            gameService.updateGame(gameId, dto),
+            NO_CONTENT
+        );
+    }
+
+    @Operation(
+        summary = "게임 삭제",
+        description = "{gameId} 값에 해당하는 게임을 삭제한다. Soft Delete 처리."
+    )
+    @DeleteMapping("/{gameId}")
+    public ResponseEntity<Void> deleteGame(@PathVariable Integer gameId) {
+        return new ResponseEntity<>(
+            gameService.deleteGame(gameId),
+            NO_CONTENT
+        );
+    }
 
     @GetMapping("/{id}/stock-list")
     public ResponseEntity<List<StockResponse>> getStockList(@PathVariable int id){
         return new ResponseEntity<>(gameService.getStockList(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<GameResponse>> getGameList(@PathVariable int id){
-        return new ResponseEntity<>(gameService.getGameList(id), HttpStatus.OK);
-    }
 }
