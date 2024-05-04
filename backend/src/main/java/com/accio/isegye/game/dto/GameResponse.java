@@ -1,41 +1,44 @@
 package com.accio.isegye.game.dto;
 
-import com.accio.isegye.game.entity.GameTagCategory;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
+import com.accio.isegye.game.entity.Game;
+import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class GameResponse {
-    @NotNull
-    int id;
 
-    @NotNull
-    private String themeType;
+public record GameResponse(
+    Integer id,
+    String gameName,
+    String gameDetail,
+    Integer minPlayer,
+    Integer maxPlayer,
+    Integer minPlaytime,
+    Integer maxPlaytime,
+    Float gameDifficulty,
+    String gameImgUrl,
+    String themeType,
+    List<GameTagCategoryResponse> gameTagCategory,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt,
+    LocalDateTime deletedAt
+) {
 
-    @NotBlank
-    private String gameName;
-
-    private String gameDetail;
-    @NotNull
-    private int minPlayer;
-    @NotNull
-    private int maxPlayer;
-    @NotNull
-    private int minPlaytime;
-    @NotNull
-    private int maxPlaytime;
-
-    private float gameDifficulty;
-
-    private String gameImgUrl;
-
-    @NotNull
-    private List<GameTagCategoryResponse> gameTagCategory= new ArrayList<>();
+    public GameResponse(Game game) {
+        this(
+            game.getId(),
+            game.getGameName(),
+            game.getGameDetail(),
+            game.getMinPlayer(),
+            game.getMaxPlayer(),
+            game.getMinPlaytime(),
+            game.getMaxPlaytime(),
+            game.getGameDifficulty(),
+            game.getGameImgUrl(),
+            game.getTheme().getThemeType(),
+            game.getGameTagCategoryList() != null ? game.getGameTagCategoryList()
+                .stream().map(GameTagCategoryResponse::new).toList() : null,
+            game.getCreatedAt(),
+            game.getUpdatedAt(),
+            game.getDeletedAt()
+        );
+    }
 }
