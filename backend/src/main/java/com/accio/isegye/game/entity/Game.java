@@ -36,18 +36,33 @@ public class Game extends BaseTimeEntity {
     private Theme theme;
 
     private String gameName;
+
     private String gameDetail;
+
     private int minPlayer;
+
     private int maxPlayer;
+
     private int minPlaytime;
+
     private int maxPlaytime;
+
     private float gameDifficulty;
+
     private String gameImgUrl;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private final List<Stock> stockList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private final List<GameTagCategory> gameTagCategoryList = new ArrayList<>();
 
+    public void updateGameDetailAndTheme(String gameDetail, Theme theme) {
+        this.gameDetail = gameDetail;
+        this.theme = theme;
+    }
+
+    public void softDelete() {
+        super.markAsDeleted();
+    }
 }

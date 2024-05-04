@@ -1,14 +1,20 @@
 package com.accio.isegye.game.service;
 
+import com.accio.isegye.common.entity.CodeItem;
+import com.accio.isegye.common.repository.CodeItemRepository;
 import com.accio.isegye.common.service.S3Service;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
+import com.accio.isegye.game.dto.CreateGameRequest;
 import com.accio.isegye.game.dto.CreateThemeRequest;
+import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
 import com.accio.isegye.game.dto.StockResponse;
 import com.accio.isegye.game.dto.ThemeListResponse;
 import com.accio.isegye.game.dto.ThemeResponse;
+import com.accio.isegye.game.dto.UpdateGameRequest;
 import com.accio.isegye.game.entity.Game;
+import com.accio.isegye.game.entity.GameTagCategory;
 import com.accio.isegye.game.entity.Stock;
 import com.accio.isegye.game.entity.Theme;
 import com.accio.isegye.game.repository.GameRepository;
@@ -36,11 +42,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class GameServiceImpl implements GameService{
 
     private final GameRepository gameRepository;
-    private final GameTagCategoryRepository categoryRepository;
+    private final GameTagCategoryRepository tagCategoryRepository;
     private final OrderGameRepository orderRepository;
     private final OrderGameStatusLogRepository logRepository;
     private final StockRepository stockRepository;
     private final ThemeRepository themeRepository;
+    private final CodeItemRepository codeItemRepository;
     private final S3Service s3Service;
     private final ModelMapper modelMapper;
 
@@ -126,6 +133,97 @@ public class GameServiceImpl implements GameService{
         return null;
     }
 
+    // 게임 등록
+    @Override
+    @Transactional
+    public GameResponse createGame(MultipartFile gameImg, CreateGameRequest dto) {
+        String gameImgUrl = uploadFileToS3(gameImg, "image/", "gameImg/" + dto.getGameName());
+
+        Game game = gameRepository.save(
+            Game.builder()
+                .gameName(dto.getGameName())
+                .gameDetail(dto.getGameDetail())
+                .minPlayer(dto.getMinPlayer())
+                .maxPlayer(dto.getMaxPlayer())
+                .minPlaytime(dto.getMinPlayTime())
+                .maxPlaytime(dto.getMaxPlayTime())
+                .gameDifficulty(dto.getGameDifficulty())
+                .gameImgUrl(gameImgUrl)
+                .theme(dto.getThemeId() != null ?
+                    themeRepository.findById(dto.getThemeId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 테마를 찾을 수 없습니다"))
+                    : null)
+                .build()
+        );
+
+        if(dto.getTagCategoryIdList() != null && !dto.getTagCategoryIdList().isEmpty()) {
+            dto.getTagCategoryIdList().forEach(tagCategoryItemId -> {
+                CodeItem codeItem = codeItemRepository.findById(tagCategoryItemId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "공통 코드에서 해당하는 태그 또는 카테고리를 찾을 수 없습니다"));
+
+                tagCategoryRepository.save(
+                    GameTagCategory.builder()
+                        .game(game)
+                        .codeGroup(codeItem.getCodeGroup())
+                        .codeItem(codeItem)
+                        .build()
+                );
+            });
+        }
+
+//        return new GameResponse(
+//            gameRepository.findById(game.getId())
+//                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임을 찾을 수 없습니다"))
+//        );
+        return new GameResponse(game);
+    }
+
+    // 게임 목록 조회
+    @Override
+    public GameListResponse getGameList() {
+        return new GameListResponse(
+            gameRepository.findAll()
+                .stream()
+                .map(GameResponse::new)
+                .toList()
+        );
+    }
+
+    // 게임 조회
+    @Override
+    public GameResponse getGame(Integer gameId) {
+        return new GameResponse(
+            gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임을 찾을 수 없습니다"))
+        );
+    }
+
+    // 게임 수정
+    @Override
+    @Transactional
+    public Void updateGame(Integer gameId, UpdateGameRequest dto) {
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임을 찾을 수 없습니다"));
+
+        Theme theme = themeRepository.findById(dto.getThemeId())
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 테마를 찾을 수 없습니다"));
+
+        game.updateGameDetailAndTheme(dto.getGameDetail(), theme);
+
+        return null;
+    }
+
+    // 게임 삭제
+    @Override
+    @Transactional
+    public Void deleteGame(Integer gameId) {
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임을 찾을 수 없습니다"));
+
+        game.softDelete();
+
+        return null;
+    }
+
     @Override
     public List<StockResponse> getStockList(int storeId) {
 
@@ -137,8 +235,5 @@ public class GameServiceImpl implements GameService{
         return stockResponse;
     }
 
-    public List<GameResponse> getGameList(int gameId){
-        return gameRepository.findById(gameId).stream().map(game -> modelMapper.map(game, GameResponse.class)).toList();
-    }
 
 }
