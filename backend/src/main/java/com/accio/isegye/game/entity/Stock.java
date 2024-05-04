@@ -40,9 +40,19 @@ public class Stock extends BaseTimeEntity {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    private int isAvailable;
+    private Integer isAvailable;
+
     private String stockLocation;
 
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     private final List<OrderGame> orderGameList = new ArrayList<>();
+
+    public void updateIsAvailableAndStockLocation(Integer isAvailable, String stockLocation) {
+        this.isAvailable = isAvailable;
+        this.stockLocation = stockLocation;
+    }
+
+    public void softDelete() {
+        super.markAsDeleted();
+    }
 }
