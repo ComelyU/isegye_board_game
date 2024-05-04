@@ -1,13 +1,16 @@
 package com.accio.isegye.game.controller;
 
 import com.accio.isegye.game.dto.CreateGameRequest;
+import com.accio.isegye.game.dto.CreateStockRequest;
 import com.accio.isegye.game.dto.CreateThemeRequest;
 import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
+import com.accio.isegye.game.dto.StockListResponse;
 import com.accio.isegye.game.dto.StockResponse;
 import com.accio.isegye.game.dto.ThemeListResponse;
 import com.accio.isegye.game.dto.ThemeResponse;
 import com.accio.isegye.game.dto.UpdateGameRequest;
+import com.accio.isegye.game.dto.UpdateStockRequest;
 import com.accio.isegye.game.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -178,9 +181,81 @@ public class GameController {
         );
     }
 
-    @GetMapping("/{id}/stock-list")
-    public ResponseEntity<List<StockResponse>> getStockList(@PathVariable int id){
-        return new ResponseEntity<>(gameService.getStockList(id), HttpStatus.OK);
+    /*
+    Game Stock By Store
+     */
+
+    @Operation(
+        summary = "매장 게임 재고 등록",
+        description = "{storeId}에 해당하는 매장에 {gameId}에 해당하는 게임을 재고로 등록한다."
+    )
+    @PostMapping("/{gameId}/stores/{storeId}")
+    public ResponseEntity<StockResponse> createStockToStore(
+        @PathVariable Integer gameId,
+        @PathVariable Integer storeId,
+        @Valid @RequestBody CreateStockRequest dto
+    ) {
+        return new ResponseEntity<>(
+            gameService.createStockToStore(gameId, storeId, dto),
+            CREATED
+        );
+    }
+
+    @Operation(
+        summary = "매장에 따른 게임 재고 목록 조회",
+        description = "{storeId}에 해당하는 매장에 등록된 게임 재고 목록을 조회한다."
+    )
+    @GetMapping("/stocks/stores/{storeId}")
+    public ResponseEntity<StockListResponse> getStockListByStore(
+        @PathVariable Integer storeId
+    ) {
+        return new ResponseEntity<>(
+            gameService.getStockListByStore(storeId),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "게임 재고 조회",
+        description = "{stockId}에 해당하는 재고를 조회한다."
+    )
+    @GetMapping("/stocks/{stockId}")
+    public ResponseEntity<StockResponse> getStock(
+        @PathVariable Integer stockId
+    ) {
+        return new ResponseEntity<>(
+            gameService.getStock(stockId),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "게임 재고 수정",
+        description = "{stockId}에 해당하는 재고를 수정한다. 재고 보유 여부와 위치만 수정 가능."
+    )
+    @PatchMapping("/stocks/{stockId}")
+    public ResponseEntity<Void> updateStock(
+        @PathVariable Integer stockId,
+        @Valid @RequestBody UpdateStockRequest dto
+    ) {
+        return new ResponseEntity<>(
+            gameService.updateStock(stockId, dto),
+            NO_CONTENT
+        );
+    }
+
+    @Operation(
+        summary = "게임 재고 삭제",
+        description = "{stodckId}에 해당하는 재고를 삭제한다. soft delete."
+    )
+    @DeleteMapping("/stocks/{stockId}")
+    public ResponseEntity<Void> deleteStock(
+        @PathVariable Integer stockId
+    ) {
+        return new ResponseEntity<>(
+            gameService.deleteStock(stockId),
+            NO_CONTENT
+        );
     }
 
 }

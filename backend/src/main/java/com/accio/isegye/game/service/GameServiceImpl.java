@@ -6,13 +6,16 @@ import com.accio.isegye.common.service.S3Service;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
 import com.accio.isegye.game.dto.CreateGameRequest;
+import com.accio.isegye.game.dto.CreateStockRequest;
 import com.accio.isegye.game.dto.CreateThemeRequest;
 import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
+import com.accio.isegye.game.dto.StockListResponse;
 import com.accio.isegye.game.dto.StockResponse;
 import com.accio.isegye.game.dto.ThemeListResponse;
 import com.accio.isegye.game.dto.ThemeResponse;
 import com.accio.isegye.game.dto.UpdateGameRequest;
+import com.accio.isegye.game.dto.UpdateStockRequest;
 import com.accio.isegye.game.entity.Game;
 import com.accio.isegye.game.entity.GameTagCategory;
 import com.accio.isegye.game.entity.Stock;
@@ -25,6 +28,7 @@ import com.accio.isegye.game.repository.StockRepository;
 import com.accio.isegye.game.repository.ThemeRepository;
 import com.accio.isegye.store.dto.StoreResponse;
 import com.accio.isegye.store.entity.Store;
+import com.accio.isegye.store.repository.StoreRepository;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +52,7 @@ public class GameServiceImpl implements GameService{
     private final StockRepository stockRepository;
     private final ThemeRepository themeRepository;
     private final CodeItemRepository codeItemRepository;
+    private final StoreRepository storeRepository;
     private final S3Service s3Service;
     private final ModelMapper modelMapper;
 
@@ -224,16 +229,69 @@ public class GameServiceImpl implements GameService{
         return null;
     }
 
+    // 게임 재고 등록
     @Override
-    public List<StockResponse> getStockList(int storeId) {
+    public StockResponse createStockToStore(Integer gameId, Integer storeId,
+        CreateStockRequest dto) {
+        Store store = storeRepository.findById(storeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 매장을 찾을 수 없습니다"));
 
-        List<StockResponse> stockResponse = stockRepository.findAllByStoreId (storeId)
-            .stream()
-            .map(this::getStockResponse)
-            .toList();
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임을 찾을 수 없습니다"));
 
-        return stockResponse;
+        return new StockResponse(
+            stockRepository.save(
+                Stock.builder()
+                    .store(store)
+                    .game(game)
+                    .isAvailable(1) // 재고 보유 여부는 true 상태로
+                    .stockLocation(dto.getStockLocation())
+                    .build()
+            )
+        );
     }
 
+    // 매장에 따른 게임 재고 목록 확인
+    @Override
+    public StockListResponse getStockListByStore(Integer storeId) {
+        return new StockListResponse(
+            stockRepository.findAllByStoreId(storeId)
+                .stream()
+                .map(StockResponse::new)
+                .toList()
+        );
+    }
 
+    // 게임 재고 확인
+    @Override
+    public StockResponse getStock(Integer stockId) {
+        return new StockResponse(
+            stockRepository.findById(stockId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 재고를 찾을 수 없습니다"))
+        );
+    }
+
+    // 게임 재고 수정
+    @Override
+    @Transactional
+    public Void updateStock(Integer stockId, UpdateStockRequest dto) {
+        Stock stock = stockRepository.findById(stockId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 재고를 찾을 수 없습니다"));
+
+        stock.updateIsAvailableAndStockLocation(dto.getIsAvailable(), dto.getStockLocation());
+
+        return null;
+    }
+
+    // 게임 재고 삭제
+    @Override
+    @Transactional
+    public Void deleteStock(Integer stockId) {
+        Stock stock = stockRepository.findById(stockId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 재고를 찾을 수 없습니다"));
+
+        stock.softDelete();
+
+        return null;
+    }
 }
