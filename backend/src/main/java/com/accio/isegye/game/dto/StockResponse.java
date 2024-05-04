@@ -1,32 +1,30 @@
 package com.accio.isegye.game.dto;
 
-import com.accio.isegye.game.entity.Game;
-import com.accio.isegye.game.entity.GameTagCategory;
-import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import com.accio.isegye.game.entity.Stock;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class StockResponse {
-
-    @NotNull
-    private int id;
-
-    @NotNull
-    private int isAvailable;
-
-    @NotNull
-    private String stockLocation;
-
-    @NotNull
-    private GameResponse game;
-
+public record StockResponse(
+    Integer id,
+    Integer storeId,
+    String storeName,
+    GameResponse game,
+    Integer isAvailable,
+    String stockLocation,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt,
+    LocalDateTime deletedAt
+) {
+    public StockResponse(Stock stock) {
+        this(
+            stock.getId(),
+            stock.getStore().getId(),
+            stock.getStore().getStoreName(),
+            new GameResponse(stock.getGame()),
+            stock.getIsAvailable(),
+            stock.getStockLocation(),
+            stock.getCreatedAt(),
+            stock.getUpdatedAt(),
+            stock.getDeletedAt()
+        );
+    }
 }
