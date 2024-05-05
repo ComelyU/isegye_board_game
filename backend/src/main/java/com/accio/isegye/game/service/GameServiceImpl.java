@@ -3,21 +3,29 @@ package com.accio.isegye.game.service;
 import com.accio.isegye.common.entity.CodeItem;
 import com.accio.isegye.common.repository.CodeItemRepository;
 import com.accio.isegye.common.service.S3Service;
+import com.accio.isegye.customer.entity.Customer;
+import com.accio.isegye.customer.repository.CustomerRepository;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
 import com.accio.isegye.game.dto.CreateGameRequest;
+import com.accio.isegye.game.dto.CreateOrderGameRequest;
 import com.accio.isegye.game.dto.CreateStockRequest;
 import com.accio.isegye.game.dto.CreateThemeRequest;
 import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
+import com.accio.isegye.game.dto.OrderGameListResponse;
+import com.accio.isegye.game.dto.OrderGameResponse;
 import com.accio.isegye.game.dto.StockListResponse;
 import com.accio.isegye.game.dto.StockResponse;
 import com.accio.isegye.game.dto.ThemeListResponse;
 import com.accio.isegye.game.dto.ThemeResponse;
 import com.accio.isegye.game.dto.UpdateGameRequest;
+import com.accio.isegye.game.dto.UpdateOrderGameRequest;
 import com.accio.isegye.game.dto.UpdateStockRequest;
 import com.accio.isegye.game.entity.Game;
 import com.accio.isegye.game.entity.GameTagCategory;
+import com.accio.isegye.game.entity.OrderGame;
+import com.accio.isegye.game.entity.OrderGameStatusLog;
 import com.accio.isegye.game.entity.Stock;
 import com.accio.isegye.game.entity.Theme;
 import com.accio.isegye.game.repository.GameRepository;
@@ -26,16 +34,12 @@ import com.accio.isegye.game.repository.OrderGameRepository;
 import com.accio.isegye.game.repository.OrderGameStatusLogRepository;
 import com.accio.isegye.game.repository.StockRepository;
 import com.accio.isegye.game.repository.ThemeRepository;
-import com.accio.isegye.store.dto.StoreResponse;
 import com.accio.isegye.store.entity.Store;
 import com.accio.isegye.store.repository.StoreRepository;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,19 +51,14 @@ public class GameServiceImpl implements GameService{
 
     private final GameRepository gameRepository;
     private final GameTagCategoryRepository tagCategoryRepository;
-    private final OrderGameRepository orderRepository;
-    private final OrderGameStatusLogRepository logRepository;
+    private final OrderGameRepository orderGameRepository;
+    private final OrderGameStatusLogRepository orderGameStatusLogRepository;
     private final StockRepository stockRepository;
     private final ThemeRepository themeRepository;
     private final CodeItemRepository codeItemRepository;
     private final StoreRepository storeRepository;
+    private final CustomerRepository customerRepository;
     private final S3Service s3Service;
-    private final ModelMapper modelMapper;
-
-    // Stock과 StockResponse 매핑
-    private StockResponse getStockResponse(Stock stock){
-        return modelMapper.map(stock, StockResponse.class);
-    }
 
     // 파일 S3 업로드
     private String uploadFileToS3(MultipartFile file, String mimeTye, String dirName) {
@@ -175,10 +174,6 @@ public class GameServiceImpl implements GameService{
             });
         }
 
-//        return new GameResponse(
-//            gameRepository.findById(game.getId())
-//                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임을 찾을 수 없습니다"))
-//        );
         return new GameResponse(game);
     }
 
@@ -291,6 +286,158 @@ public class GameServiceImpl implements GameService{
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 재고를 찾을 수 없습니다"));
 
         stock.softDelete();
+
+        return null;
+    }
+
+    // 게임 주문 등록
+    @Override
+    @Transactional
+    public OrderGameResponse createOrderGame(Integer customerId, Integer stockId,
+        CreateOrderGameRequest dto) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 고객을 찾을 수 없습니다"));
+        Stock stock = stockRepository.findById(stockId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 재고를 찾을 수 없습니다"));
+        if(customer.getEndTime() != null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "이미 사용 종료된 고객입니다");
+        }
+        if(customer.getRoom().getStore().getId() != stock.getStore().getId()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "매장의 고객이 아닙니다");
+        }
+        if(dto.getOrderType() == 0 && stock.getIsAvailable() == 0) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "주문 요청이 불가능한 게임입니다");
+        }
+        if(dto.getOrderType() == 1 && stock.getIsAvailable() == 1) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "회수 요청이 불가능한 게임입니다");
+        }
+
+        OrderGame orderGame = orderGameRepository.save(
+            OrderGame.builder()
+                .customer(customer)
+                .stock(stock)
+                .orderType(dto.getOrderType())
+                .orderStatus(0)
+                .build()
+        );
+
+        orderGameStatusLogRepository.save(
+            OrderGameStatusLog.builder()
+                .orderGame(orderGame)
+                .beforeStatus(0)
+                .afterStatus(0)
+                .build()
+        );
+
+        // 주문이면 주문 접수 즉시 재고 보유 떨어야 함. 회수인 경우에는 배달 완료가 되었을 때 재고 보유 처리해야 함.
+        if(dto.getOrderType() == 0) {
+            stock.updateIsAvailableAndStockLocation(0, stock.getStockLocation());
+        }
+
+        // TODO: Kafka 관련 추가
+
+        return new OrderGameResponse(orderGame);
+    }
+
+    // 고객에 따른 게임 주문 목록 조회
+    @Override
+    public OrderGameListResponse getOrderGameListByCustomer(Integer customerId) {
+        return new OrderGameListResponse(
+            orderGameRepository.findAllByCustomerId(customerId)
+                .stream()
+                .map(OrderGameResponse::new)
+                .toList()
+        );
+    }
+
+    // 매장에 따른 게임 주문 목록 조회
+    @Override
+    public OrderGameListResponse getOrderGameListByStore(Integer storeId) {
+        return new OrderGameListResponse(
+            orderGameRepository.findAllByStock_StoreId(storeId)
+                .stream()
+                .map(OrderGameResponse::new)
+                .toList()
+        );
+    }
+
+    // 게임 주문 조회
+    @Override
+    public OrderGameResponse getOrderGame(Long orderGameId) {
+        return new OrderGameResponse(
+            orderGameRepository.findById(orderGameId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 주문을 찾을 수 없습니다"))
+        );
+    }
+
+    // 게임 주문의 상태 변경
+    @Override
+    @Transactional
+    public Void updateOrderGameStatus(Long orderGameId, UpdateOrderGameRequest dto) {
+        OrderGame orderGame = orderGameRepository.findById(orderGameId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 주문을 찾을 수 없습니다"));
+
+        // 현재 주문 상태와 변경하려는 주문 상태가 같은 경우
+        if(orderGame.getOrderStatus() == dto.getOrderStatus()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "현재 주문 상태와 변경 주문 상태가 같습니다");
+        }
+
+        // 배달 완료 처리된 주문에 대해서 상태를 변경하려는 경우
+        if(orderGame.getOrderStatus() == 2) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "배달 완료된 주문입니다");
+        }
+
+        // 취소 처리된 주문에 대해서 상태를 변경하려는 경우
+        if(orderGame.getOrderStatus() == 3) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "이미 취소된 주문입니다");
+        }
+
+        orderGameStatusLogRepository.save(
+            OrderGameStatusLog.builder()
+                .orderGame(orderGame)
+                .beforeStatus(orderGame.getOrderStatus())
+                .afterStatus(dto.getOrderStatus())
+                .build()
+        );
+
+        if(dto.getOrderStatus() == 2) { // 배달 완료로 상태를 변경하려는 경우
+            orderGame.updateOrderStatusAndDelieveredAt(dto.getOrderStatus(), LocalDateTime.now());
+
+            if(orderGame.getOrderType() == 1) { // 회수 요청인 경우 재고 보유 여부 true
+                orderGame.getStock().updateIsAvailableAndStockLocation(1, orderGame.getStock().getStockLocation());
+            }
+        } else { // 다른 상태로 변경하는 경우
+            orderGame.updateOrderStatusAndDelieveredAt(dto.getOrderStatus(), null);
+
+            if(orderGame.getOrderType() == 0 && dto.getOrderStatus() == 3) { // 주문 요청이면서 변경하려는 상태가 주문 취소 상태인 경우 재고 보유 여부 true
+                orderGame.getStock().updateIsAvailableAndStockLocation(1, orderGame.getStock().getStockLocation());
+            }
+        }
+
+        return null;
+    }
+
+
+    // 게임 주문 삭제
+    @Override
+    @Transactional
+    public Void deleteOrderGame(Long orderGameId) {
+        OrderGame orderGame = orderGameRepository.findById(orderGameId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 주문을 찾을 수 없습니다"));
+
+        orderGameStatusLogRepository.save(
+            OrderGameStatusLog.builder()
+                .orderGame(orderGame)
+                .beforeStatus(orderGame.getOrderStatus())
+                .afterStatus(3)
+                .build()
+        );
+
+        orderGame.softDelete();
+
+        if(orderGame.getOrderType() == 0) { // 주문 요청에 대해서 처리하는 경우 재고 보유 여부 true
+            orderGame.getStock().updateIsAvailableAndStockLocation(1, orderGame.getStock().getStockLocation());
+        }
 
         return null;
     }
