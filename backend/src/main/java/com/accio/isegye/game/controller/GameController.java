@@ -1,23 +1,25 @@
 package com.accio.isegye.game.controller;
 
 import com.accio.isegye.game.dto.CreateGameRequest;
+import com.accio.isegye.game.dto.CreateOrderGameRequest;
 import com.accio.isegye.game.dto.CreateStockRequest;
 import com.accio.isegye.game.dto.CreateThemeRequest;
 import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
+import com.accio.isegye.game.dto.OrderGameListResponse;
+import com.accio.isegye.game.dto.OrderGameResponse;
 import com.accio.isegye.game.dto.StockListResponse;
 import com.accio.isegye.game.dto.StockResponse;
 import com.accio.isegye.game.dto.ThemeListResponse;
 import com.accio.isegye.game.dto.ThemeResponse;
 import com.accio.isegye.game.dto.UpdateGameRequest;
+import com.accio.isegye.game.dto.UpdateOrderGameRequest;
 import com.accio.isegye.game.dto.UpdateStockRequest;
 import com.accio.isegye.game.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -246,7 +248,7 @@ public class GameController {
 
     @Operation(
         summary = "게임 재고 삭제",
-        description = "{stodckId}에 해당하는 재고를 삭제한다. soft delete."
+        description = "{stockId}에 해당하는 재고를 삭제한다. soft delete."
     )
     @DeleteMapping("/stocks/{stockId}")
     public ResponseEntity<Void> deleteStock(
@@ -258,4 +260,94 @@ public class GameController {
         );
     }
 
+    /*
+    Order Game
+     */
+
+    @Operation(
+        summary = "게임 주문을 등록",
+        description = "게임 주문을 등록한다."
+    )
+    @PostMapping("/order/{customerId}/stocks/{stockId}")
+    public ResponseEntity<OrderGameResponse> createOrderGame(
+        @PathVariable Integer customerId,
+        @PathVariable Integer stockId,
+        @Valid @RequestBody CreateOrderGameRequest dto
+    ) {
+        return new ResponseEntity<>(
+            gameService.createOrderGame(customerId, stockId, dto),
+            CREATED
+        );
+    }
+
+    @Operation(
+        summary = "고객에 따른 게임 주문 목록을 조회",
+        description = "{customerId}에 해당하는 고객의 게임 주문 목록을 조회한다."
+    )
+    @GetMapping("/order/customers/{customerId}")
+    public ResponseEntity<OrderGameListResponse> getOrderGameListByCustomer(
+        @PathVariable Integer customerId
+    ) {
+        return new ResponseEntity<>(
+            gameService.getOrderGameListByCustomer(customerId),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "매장에 따른 게임 주문 목록을 조회",
+        description = "{storeId}에 해당하는 매장의 게임 주문 목록을 조회한다."
+    )
+    @GetMapping("/order/stores/{storeId}")
+    public ResponseEntity<OrderGameListResponse> getOrderGameListByStore(
+        @PathVariable Integer storeId
+    ) {
+        return new ResponseEntity<>(
+            gameService.getOrderGameListByStore(storeId),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "게임 주문 조회",
+        description = "{orderGameId}에 해당하는 게임 주문을 조회한다."
+    )
+    @GetMapping("/order/{orderGameId}")
+    public ResponseEntity<OrderGameResponse> getOrderGame(
+        @PathVariable Long orderGameId
+    ) {
+        return new ResponseEntity<>(
+            gameService.getOrderGame(orderGameId),
+            OK
+        );
+    }
+
+    @Operation(
+        summary = "게임 주문 상태 변경",
+        description = "{orderGameId}에 해당하는 게임 주문의 주문 상태를 변경한다."
+    )
+    @PatchMapping("/order/{orderGameId}")
+    public ResponseEntity<Void> updateOrderGameStatus(
+        @PathVariable Long orderGameId,
+        @Valid @RequestBody UpdateOrderGameRequest dto
+    ) {
+        return new ResponseEntity<>(
+            gameService.updateOrderGameStatus(orderGameId, dto),
+            NO_CONTENT
+        );
+    }
+
+    @Operation(
+        summary = "게임 주문 삭제",
+        description = "게임 주문을 삭제한다. 진행 상태를 주문 취소를 바꾸는 것으로 Soft Delete 처리한다."
+    )
+    @DeleteMapping("/order/{orderGameId}")
+    public ResponseEntity<Void> deleteOrderGame(
+        @PathVariable Long orderGameId
+    ) {
+        return new ResponseEntity<>(
+            gameService.deleteOrderGame(orderGameId),
+            NO_CONTENT
+        );
+    }
 }
