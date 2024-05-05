@@ -43,6 +43,7 @@ public class OrderGame {
     private Stock stock;
 
     private int orderType;
+
     private int orderStatus;
 
     @CreatedDate
@@ -56,4 +57,13 @@ public class OrderGame {
 
     @OneToMany(mappedBy = "orderGame", fetch = FetchType.LAZY)
     private final List<TurtleLog> turtleLogList = new ArrayList<>();
+
+    public void updateOrderStatusAndDelieveredAt(Integer orderStatus, LocalDateTime deliveredAt) {
+        this.orderStatus = orderStatus;
+        this.deliveredAt = deliveredAt;
+    }
+
+    public void softDelete() {
+        this.orderStatus = 3; // 주문 취소 상태로 변경하는 것으로 Soft Delete 처리
+    }
 }
