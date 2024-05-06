@@ -33,9 +33,9 @@ class OrderHistory : Fragment() {
         val sharedPreferences =
             requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
 
-        val roomLogId = sharedPreferences.getString("roomLogId", "")
+        val customerId = sharedPreferences.getString("customerId", "1")
 
-        viewModel = HistoryViewModel(roomLogId!!)
+        viewModel = HistoryViewModel(customerId!!)
         viewModel.getHistoryList()
 
         historyAdapter = HistoryAdapter(requireContext(), emptyList()) // 초기에 빈 리스트로 어댑터 생성

@@ -29,9 +29,15 @@ class HistoryAdapter(private val context: Context, private var dataList: List<Or
 
     // onBindViewHolder: 데이터를 뷰에 연결
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        val historyItem = dataList[position]
-        holder.nameTextView.text = historyItem.name
-        holder.quanTextView.text = "${historyItem.quantity} 개"
+        val orderMenuResponse = dataList[position]
+        val orderMenuDetailList = orderMenuResponse.orderMenuDetail
+        // 주문 메뉴의 상세 정보를 가져와서 표시
+        for (orderMenuDetail in orderMenuDetailList) {
+            val menuName = orderMenuDetail.menuName
+            val quantity = orderMenuDetail.quantity
+            holder.nameTextView.append("$menuName\n")
+            holder.quanTextView.append("$quantity 개\n")
+        }
     }
 
     // getItemCount: 데이터 목록의 크기 반환
