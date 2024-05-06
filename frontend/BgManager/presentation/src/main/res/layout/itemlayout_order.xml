@@ -14,36 +14,36 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/oderItemName"
+            android:id="@+id/oderId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@{orderItem.orderName}"
+            android:text="@{orderItem.customerIdString}"
             />
 
         <TextView
-            android:id="@+id/orderItemQuantity"
+            android:id="@+id/orderStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/oderItemName"
+            app:layout_constraintStart_toEndOf="@id/oderId"
             android:layout_marginStart="10dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@{orderItem.orderQuantityString}"
+            android:text="@{orderItem.orderStatusString}"
             />
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orderDetailsRV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            app:layout_constraintStart_toEndOf="@id/orderItemQuantity"
             app:layout_constraintTop_toTopOf="parent"
-            android:textSize="30sp"
-            android:text="ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/orderStatus"
+            android:layout_marginStart="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
-
 
         <Button
             android:layout_width="100dp"
@@ -67,4 +67,3 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
-

@@ -6,15 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.presentation.adapter.OrderAdapter
 import com.example.presentation.databinding.ActivityMainBinding
+import com.example.presentation.ui.UiState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
-    private lateinit var adapter: OrderAdapter
 
     private var _binding: ActivityMainBinding? = null
+    private lateinit var orderAdapter: OrderAdapter
 
     private val binding
         get() = _binding!!
@@ -27,25 +28,22 @@ class MainActivity : AppCompatActivity() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        val adapter = OrderAdapter(
-//            listOf(
-//                OrderUiState(orderId = 5, orderQuantity = 5, orderName = "메뉴1"),
-//                OrderUiState(orderId = 6, orderQuantity = 6, orderName = "메뉴2"),
-//                OrderUiState(orderId = 7, orderQuantity = 7, orderName = "메뉴3"),
-//            )
-        )
-        binding.mainRV.adapter = adapter
+        orderAdapter = OrderAdapter()
+        binding.mainRV.adapter = orderAdapter
 
         viewModel.loadData()
 
+//        viewModel.uiStateFlow.observe(this, Observer { uiState ->
+//            adapter.submitList(uiState.orders)
+//        })
+
         viewModel.uiStateFlow.observe(this, Observer { uiState ->
-            adapter.submitList(uiState.orders)
+            when (uiState) {
+                is UiState -> {
+                    orderAdapter.submitList(uiState.orders)
+                }
+                // 다른 상태 처리
+            }
         })
     }
 }
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
-//    }

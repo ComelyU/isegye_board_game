@@ -2,9 +2,9 @@ package com.example.remote
 
 import com.example.data.RemoteDataSource
 import com.example.data.model.OrderData
+import com.example.data.model.OrderDetailData
 import com.example.data.model.TurtleData
 import com.example.remote.retrofit.ApiService
-import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,7 +15,7 @@ internal class RemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getTurtleBot(): Result<TurtleData> = runCatching {
         val response = apiService.getTurtleBot()
-        if (response.isSuccessful) throw Exception()
+        if (!response.isSuccessful) throw Exception()
         TurtleData(
             id = response.body()!!.id,
             storeId = response.body()!!.storeId
@@ -23,19 +23,26 @@ internal class RemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getOrderList(): Result<List<OrderData>> = runCatching {
-//        val response = apiService.getOrderList()
-//        if (response.isSuccessful) throw Exception()
-//        response.body()!!.map { it ->
-//            OrderData(
-//                id = it.id,
-//                orderName = it.orderName,
-//                quantity = it.quantity
-//            )
-//        }
-        listOf(
-            OrderData(id = 1, orderName = "orderName1", quantity = 1),
-            OrderData(id = 2, orderName = "orderName2", quantity = 1),
-            OrderData(id = 3, orderName = "orderName3", quantity = 1)
-        )
+        val response = apiService.getOrderList("1")
+        if (!response.isSuccessful) throw Exception()
+
+        val ordersFromServer = response.body() ?: emptyList()
+        val orders = ordersFromServer.map { serverOrder ->
+            val orderDetailData = serverOrder.orderDetailData.map { serverDetail ->
+                OrderDetailData(
+                    orderDetailId = serverDetail.orderDetailId,
+                    menuName = serverDetail.menuName,
+                    quantity = serverDetail.quantity,
+                    totalPrice = serverDetail.totalPrice
+                )
+            }
+            OrderData(
+                orderId = serverOrder.orderId,
+                customerId = serverOrder.customerId,
+                orderStatus = serverOrder.orderStatus,
+                orderDetailData = orderDetailData
+            )
+        }
+        orders
     }
 }

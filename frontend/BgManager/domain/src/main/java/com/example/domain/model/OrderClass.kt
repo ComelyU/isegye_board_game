@@ -1,7 +1,8 @@
 package com.example.domain.model
 
 data class OrderClass(
-    val id: Int,
-    val orderName: String,
-    val quantity: Int
+    val orderId: Int,
+    val customerId: Int,
+    val orderStatus: Int,
+    val orderDetail: List<OrderDetailClass>
 )

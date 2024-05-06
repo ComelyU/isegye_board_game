@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.presentation.databinding.ItemlayoutOrderBinding
 import com.example.presentation.ui.OrderUiState
 
-//class OrderAdapter(private val itemList: List<OrderUiState>) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 class OrderAdapter : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(OrderDiffCallback()) {
 
     class OrderViewHolder(private val binding: ItemlayoutOrderBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -17,6 +16,9 @@ class OrderAdapter : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(Ord
             binding.orderItem = item
             binding.executePendingBindings()
             println("어댑터 뷰홀더 들어옴 ${binding.orderItem}")
+
+            val adapter = OrderDetailAdapter(item.orderDetail)
+            binding.orderDetailsRV.adapter = adapter
         }
     }
 
@@ -32,10 +34,6 @@ class OrderAdapter : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(Ord
         println("바인드 뷰홀더 들어옴 $item")
         holder.bind(item)
     }
-
-//    override fun getItemCount(): Int {
-//        return itemList.size
-//    }
 
     private class OrderDiffCallback : DiffUtil.ItemCallback<OrderUiState>() {
         override fun areItemsTheSame(oldItem: OrderUiState, newItem: OrderUiState): Boolean {

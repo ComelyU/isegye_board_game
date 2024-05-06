@@ -2,12 +2,13 @@ package com.example.presentation.ui
 
 data class OrderUiState(
     val orderId: Int,
-    val orderQuantity: Int,
-    val orderName: String
+    val customerId: Int,
+    val orderStatus: Int,
+    val orderDetail: List<OrderDetailState>
 ) {
-    val orderIdString: String
-        get() = orderId.toString()
+    val customerIdString: String
+        get() = customerId.toString()
 
-    val orderQuantityString: String
-        get() = orderQuantity.toString()
+    val orderStatusString: String
+        get() = orderStatus.toString()
 }
