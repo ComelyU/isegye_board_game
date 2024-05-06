@@ -36,13 +36,12 @@ class Gamelist : Fragment() {
         gameAdapter = GameAdapter(requireContext(), emptyList())
 
         val sharedPreferences = requireActivity().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
-//        val StoreId = sharedPreferences.getString("StoreId", "")
-        val StoreId = "1"
+        val storeId = sharedPreferences.getString("StoreId", "1")
 
         gameListRV.layoutManager = GridLayoutManager(requireContext(), 2)
         gameListRV.adapter = gameAdapter
 
-        viewModel.getCurrentGameList(StoreId!!)
+        viewModel.getCurrentGameList(storeId!!)
 
         lifecycleScope.launch {
             viewModel.gameList.observe(viewLifecycleOwner) { gamelist ->

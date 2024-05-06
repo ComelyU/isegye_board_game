@@ -1,11 +1,11 @@
 package com.example.isegyeboard.beverage
 
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Path
 
 interface BeverageApi {
-    @GET("menu/list?")
+    @GET("menu/{storeId}")
     suspend fun getMenuList(
-        @Query("storeId") storeId: String,
+        @Path("storeId") storeId: String,
     ) : List<BeverageClass>
 }

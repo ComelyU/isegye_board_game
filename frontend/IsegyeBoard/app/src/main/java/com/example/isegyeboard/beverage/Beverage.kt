@@ -12,14 +12,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
-import com.example.isegyeboard.game_list.GameAdapter
-import com.example.isegyeboard.game_list.GameClass
-import com.example.isegyeboard.game_list.GameViewModel
+import com.example.isegyeboard.beverage.cart.CartAdapter
+import com.example.isegyeboard.beverage.cart.CartClass
+import com.example.isegyeboard.beverage.cart.CartViewModel
+import com.example.isegyeboard.databinding.FragmentBeverageBinding
 import kotlinx.coroutines.launch
 
-class Beverage : Fragment() {
+class Beverage : Fragment(), CartAdapter.OnItemClickListener {
     private lateinit var buttonCoffee: ConstraintLayout
     private lateinit var buttonDrink: ConstraintLayout
     private lateinit var buttonSnack: ConstraintLayout
@@ -28,10 +30,15 @@ class Beverage : Fragment() {
     private lateinit var textDrink: TextView
     private lateinit var textSnack: TextView
 
-    private val viewModel: BeverageViewModel by viewModels()
-    private lateinit var menuListRV: RecyclerView
+    private val beverageViewModel: BeverageViewModel by viewModels()
+    private lateinit var beverageListRV: RecyclerView
     private lateinit var beverageAdapter: BeverageAdapter
-    private lateinit var menuList: List<BeverageClass>
+    private lateinit var beverageList: List<BeverageClass>
+
+    private val cartViewModel: CartViewModel by viewModels()
+    private lateinit var cartListRV: RecyclerView
+    private lateinit var cartAdapter: CartAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,32 +57,46 @@ class Beverage : Fragment() {
         buttonDrink.setOnClickListener{ handleButtonClick(buttonDrink, textDrink)}
         buttonSnack.setOnClickListener{ handleButtonClick(buttonSnack, textSnack)}
 
-        menuListRV = view.findViewById(R.id.menuListRV)
+        beverageListRV = view.findViewById(R.id.menuListRV)
+        cartListRV = view.findViewById(R.id.cartRV)
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        beverageAdapter = BeverageAdapter(requireContext(), emptyList())
 
         val sharedPreferences = requireActivity().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
-        val StoreId = sharedPreferences.getString("StoreId", "")
+        val storeId = sharedPreferences.getString("StoreId", "1")
 
-        menuListRV.layoutManager = GridLayoutManager(requireContext(), 4)
-        menuListRV.adapter = beverageAdapter
+        beverageAdapter = BeverageAdapter(requireContext(), emptyList())
 
-        viewModel.getMenuList(StoreId!!)
+        beverageListRV.layoutManager = GridLayoutManager(requireContext(), 4)
+        beverageListRV.adapter = beverageAdapter
+
+        beverageViewModel.getMenuList(storeId!!)
+
+        cartAdapter = CartAdapter(requireContext(), emptyList(), this)
+        cartListRV.layoutManager = LinearLayoutManager(requireContext())
+        cartListRV.adapter = cartAdapter
 
         lifecycleScope.launch {
-            viewModel.menuList.observe(viewLifecycleOwner) { menulist ->
-                beverageAdapter.updateData(menulist) // 데이터 업데이트
-                menuList = menulist
+            beverageViewModel.menuList.observe(viewLifecycleOwner) { menulist ->
+                beverageList = menulist
+                beverageAdapter.updateData(beverageList)
+                handleButtonClick(buttonCoffee, textCoffee)
+                beverageAdapter.notifyDataSetChanged()
+            }
+
+            cartViewModel.cartItems.observe(viewLifecycleOwner) { cartItems ->
+                cartAdapter.updateData(cartItems)
             }
         }
-
     }
 
+    override fun onItemRemoved(cartItem: CartClass) {
+        cartViewModel.removeCartItem(cartItem)
+    }
     private fun handleButtonClick(clickedButton: ConstraintLayout, clickedTextView: TextView) {
         // 모든 버튼의 배경색을 원래대로 되돌림
         resetButtonBackgrounds()
@@ -83,6 +104,17 @@ class Beverage : Fragment() {
         // 선택된 버튼의 배경색을 변경
         clickedButton.setBackgroundColor(Color.WHITE)
         clickedTextView.setTextColor(Color.BLACK)
+
+        val filteredList = when (clickedButton.id) {
+            R.id.buttonCoffee -> beverageList.filter { it.menuType == "C" } // 카테고리에 따라 필터링
+            R.id.buttonDrink -> beverageList.filter { it.menuType == "D" }
+            R.id.buttonSnack -> beverageList.filter { it.menuType == "F" }
+            else -> beverageList
+        }
+//        println(filteredList)
+
+        beverageAdapter.updateData(filteredList)
+        beverageAdapter.notifyDataSetChanged()
     }
 
     private fun resetButtonBackgrounds() {
