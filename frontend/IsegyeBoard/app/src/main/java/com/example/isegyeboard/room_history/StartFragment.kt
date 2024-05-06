@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.FailureDialog
-import com.example.isegyeboard.login.StartApi
+import com.example.isegyeboard.login.RoomApi
 import com.example.isegyeboard.main_page.Tutorial
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,7 +55,7 @@ class StartFragment : Fragment() {
     }
 
     private fun sendStartInfo() {
-        val client = BaseApi.getInstance().create(StartApi::class.java)
+        val client = BaseApi.getInstance().create(RoomApi::class.java)
 
         val sharedPreferences = requireContext().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
         val storeId = sharedPreferences.getString("storeId", null)
