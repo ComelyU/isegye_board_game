@@ -1,5 +1,6 @@
 package com.accio.isegye.menu.service;
 
+import com.accio.isegye.common.service.KafkaProducerService;
 import com.accio.isegye.customer.entity.Customer;
 import com.accio.isegye.customer.repository.CustomerRepository;
 import com.accio.isegye.exception.CustomException;
@@ -38,6 +39,7 @@ public class MenuServiceImpl implements MenuService{
     private final OrderMenuStatusLogRepository logRepository;
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     //Menu와 MenuResponse 매핑
     private MenuResponse getMenuResponse(Menu menu){
@@ -148,6 +150,15 @@ public class MenuServiceImpl implements MenuService{
         OrderMenu save = orderMenuRepository.save(orderMenu);
         detailRepository.saveAll(orderMenuDetailList);
         logRepository.save(statusLog);
+
+        // + Kafka
+        kafkaProducerService.send(
+            "OrderMenu",
+            String.format(
+                "[메뉴 주문] 고객 ID: %d, 방 번호: %d",
+                save.getCustomer().getId(), save.getCustomer().getRoom().getRoomNumber()
+            )
+        );
 
         //4. return OrderMenuResponse // 주문 ID를 반환한다
         return getOrderMenuResponse(save);
