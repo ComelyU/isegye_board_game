@@ -2,6 +2,7 @@ package com.accio.isegye.game.service;
 
 import com.accio.isegye.common.entity.CodeItem;
 import com.accio.isegye.common.repository.CodeItemRepository;
+import com.accio.isegye.common.service.KafkaProducerService;
 import com.accio.isegye.common.service.S3Service;
 import com.accio.isegye.customer.entity.Customer;
 import com.accio.isegye.customer.repository.CustomerRepository;
@@ -59,6 +60,7 @@ public class GameServiceImpl implements GameService{
     private final StoreRepository storeRepository;
     private final CustomerRepository customerRepository;
     private final S3Service s3Service;
+    private final KafkaProducerService kafkaProducerService;
 
     // 파일 S3 업로드
     private String uploadFileToS3(MultipartFile file, String mimeTye, String dirName) {
@@ -334,7 +336,15 @@ public class GameServiceImpl implements GameService{
             stock.updateIsAvailableAndStockLocation(0, stock.getStockLocation());
         }
 
-        // TODO: Kafka 관련 추가
+        kafkaProducerService.send(
+            "OrderGame",
+            String.format(
+                "[게임 %s 요청] 고객 ID: %d, 방 번호: %d, 게임명: %s, 재고 위치: %s",
+                orderGame.getOrderType() == 0 ? "주문" : "회수",
+                orderGame.getCustomer().getId(), orderGame.getCustomer().getRoom().getRoomNumber(),
+                orderGame.getStock().getGame().getGameName(), orderGame.getStock().getStockLocation()
+            )
+        );
 
         return new OrderGameResponse(orderGame);
     }
