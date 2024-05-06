@@ -55,7 +55,11 @@
         android:id="@+id/beverage"
         android:name="com.example.isegyeboard.beverage.Beverage"
         android:label="fragment_beverage"
-        tools:layout="@layout/fragment_beverage" />
+        tools:layout="@layout/fragment_beverage" >
+        <action
+            android:id="@+id/action_beverage_to_main_page_frg"
+            app:destination="@id/main_page_frg" />
+    </fragment>
     <fragment
         android:id="@+id/order_history"
         android:name="com.example.isegyeboard.room_history.OrderHistory"

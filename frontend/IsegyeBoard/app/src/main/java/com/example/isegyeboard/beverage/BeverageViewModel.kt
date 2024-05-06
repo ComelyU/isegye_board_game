@@ -4,34 +4,64 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.beverage.cart.CartClass
-import com.example.isegyeboard.game_list.GameClass
 import kotlinx.coroutines.launch
-class BeverageViewModel : ViewModel() {
-    private val beverageNetwork = BaseApi.getInstance().create(BeverageApi::class.java)
+
+class CoffeeViewModel : ViewModel()  {
+    private val beverageNetwork = BeverageNetWork()
 
     private val _menuList = MutableLiveData<List<BeverageClass>>()
-    val menuList: LiveData<List<BeverageClass>> = _menuList
+    val coffeeMenuList: LiveData<List<BeverageClass>> = _menuList
 
-    fun getMenuList(storeId: String) {
+    fun getCurrentMenuList() {
         viewModelScope.launch {
             try {
-                val result = beverageNetwork.getMenuList(storeId)
-                val allMenu = result
-                println(result)
-                _menuList.value = allMenu
+                val result = beverageNetwork.getMenuList()
+                val coffeeMenu = result.filter { it.menuType == "C" }
+                _menuList.value = coffeeMenu
             } catch (e: Exception) {
                 // 에러 처리
                 println(e)
             }
         }
     }
+}
 
+class DrinkViewModel : ViewModel()  {
+    private val beverageNetwork = BeverageNetWork()
 
-    private val _cartItems = MutableLiveData<List<CartClass>>()
-    val cartItems: LiveData<List<CartClass>> = _cartItems
-    fun updateCartItems(newItems: List<CartClass>) {
-        _cartItems.value = newItems
+    private val _menuList = MutableLiveData<List<BeverageClass>>()
+    val drinkMenuList: LiveData<List<BeverageClass>> = _menuList
+
+    fun getCurrentMenuList() {
+        viewModelScope.launch {
+            try {
+                val result = beverageNetwork.getMenuList()
+                val DrinkMenu = result.filter { it.menuType == "D" }
+                _menuList.value = DrinkMenu
+            } catch (e: Exception) {
+                // 에러 처리
+                println(e)
+            }
+        }
+    }
+}
+
+class SnackViewModel : ViewModel() {
+    private val beverageNetwork = BeverageNetWork()
+
+    private val _menuList = MutableLiveData<List<BeverageClass>>()
+    val snackMenuList: LiveData<List<BeverageClass>> = _menuList
+
+    fun getCurrentMenuList() {
+        viewModelScope.launch {
+            try {
+                val result = beverageNetwork.getMenuList()
+                val snackMenu = result.filter { it.menuType == "F" }
+                _menuList.value = snackMenu
+            } catch (e: Exception) {
+                // 에러 처리
+                println(e)
+            }
+        }
     }
 }

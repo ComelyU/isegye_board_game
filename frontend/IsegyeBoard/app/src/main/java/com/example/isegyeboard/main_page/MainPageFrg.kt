@@ -19,7 +19,7 @@ import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.BasicResponse
 import com.example.isegyeboard.baseapi.FailureDialog
-import com.example.isegyeboard.login.StartApi
+import com.example.isegyeboard.login.RoomApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -98,7 +98,7 @@ class MainPageFrg : Fragment() {
     }
 
     private fun overConfirm() {
-        val client = BaseApi.getInstance().create(StartApi::class.java)
+        val client = BaseApi.getInstance().create(RoomApi::class.java)
 
         val sharedPreferences = requireContext().getSharedPreferences(
             "RoomInfo",

@@ -1,44 +1,38 @@
 package com.example.isegyeboard.beverage
 
 import android.content.Context
-import android.graphics.Color
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
+import com.example.isegyeboard.baseapi.BaseApi
+import com.example.isegyeboard.baseapi.BasicResponse
 import com.example.isegyeboard.beverage.cart.CartAdapter
 import com.example.isegyeboard.beverage.cart.CartClass
+import com.example.isegyeboard.beverage.cart.CartManage
+import com.example.isegyeboard.beverage.cart.CartUpdateListener
 import com.example.isegyeboard.beverage.cart.CartViewModel
-import com.example.isegyeboard.databinding.FragmentBeverageBinding
-import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class Beverage : Fragment(), CartAdapter.OnItemClickListener {
-    private lateinit var buttonCoffee: ConstraintLayout
-    private lateinit var buttonDrink: ConstraintLayout
-    private lateinit var buttonSnack: ConstraintLayout
+class Beverage : Fragment(), CartUpdateListener {
 
-    private lateinit var textCoffee: TextView
-    private lateinit var textDrink: TextView
-    private lateinit var textSnack: TextView
-
-    private val beverageViewModel: BeverageViewModel by viewModels()
-    private lateinit var beverageListRV: RecyclerView
-    private lateinit var beverageAdapter: BeverageAdapter
-    private lateinit var beverageList: List<BeverageClass>
-
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartListRV: RecyclerView
+    private lateinit var cartRecyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter
-
+    private lateinit var cartViewModel: CartViewModel
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,87 +40,103 @@ class Beverage : Fragment(), CartAdapter.OnItemClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_beverage, container, false)
 
-        buttonCoffee = view.findViewById(R.id.buttonCoffee)
-        buttonDrink = view.findViewById(R.id.buttonDrink)
-        buttonSnack = view.findViewById(R.id.buttonSnack)
-        textCoffee = view.findViewById(R.id.textCoffee)
-        textDrink = view.findViewById(R.id.textDrink)
-        textSnack = view.findViewById(R.id.textSnack)
+        cartRecyclerView = view.findViewById(R.id.cartRV)
+        cartAdapter = CartAdapter()
+        cartRecyclerView.layoutManager = LinearLayoutManager(context)
+        cartRecyclerView.adapter = cartAdapter
 
-        buttonCoffee.setOnClickListener{ handleButtonClick(buttonCoffee, textCoffee)}
-        buttonDrink.setOnClickListener{ handleButtonClick(buttonDrink, textDrink)}
-        buttonSnack.setOnClickListener{ handleButtonClick(buttonSnack, textSnack)}
+        cartViewModel = ViewModelProvider(this)[CartViewModel::class.java]
+        cartViewModel.cartItems.observe(viewLifecycleOwner, Observer { cartItems ->
+            cartAdapter.submitList(cartItems)
+            updateTotalPrice(cartItems)
+        })
 
-        beverageListRV = view.findViewById(R.id.menuListRV)
-        cartListRV = view.findViewById(R.id.cartRV)
+        updateCartItems()
+
+        sharedPreferences = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
+        val customerId = sharedPreferences.getString("customerId", "1")
+        val menuOrder = view.findViewById<TextView>(R.id.orderButton)
+        menuOrder.setOnClickListener{
+            val cartItems = CartManage.getInstance().getItems()
+            sendOrder(customerId!!, cartItems)
+        }
+
+        val delCart = view.findViewById<TextView>(R.id.cartDeleteButton)
+        delCart.setOnClickListener{
+            ClearCartButton()
+        }
 
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun updateTotalPrice(cartItems: List<CartClass>) {
+        val totalPriceTextView = view?.findViewById<TextView>(R.id.cartPrice)
+        val totalPrice = cartItems.sumOf { it.price * it.quantity }
+        totalPriceTextView?.text = "$totalPrice 원"
+    }
 
-        val sharedPreferences = requireActivity().getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
-        val storeId = sharedPreferences.getString("StoreId", "1")
+    private fun updateCartItems() {
+        // 장바구니에 담긴 아이템 리스트를 가져옵니다.
+        val cartItems = CartManage.getInstance().getItems()
 
-        beverageAdapter = BeverageAdapter(requireContext(), emptyList())
+        // Adapter에 아이템 리스트 업데이트
+//        cartAdapter.submitList(cartItems)
+        cartViewModel.updateCartItems(cartItems)
 
-        beverageListRV.layoutManager = GridLayoutManager(requireContext(), 4)
-        beverageListRV.adapter = beverageAdapter
+        val totalPriceTextView = view?.findViewById<TextView>(R.id.cartPrice)
+        val totalPrice = cartAdapter.calculateTotalPrice()
+        totalPriceTextView?.text = "$totalPrice 원"
+    }
 
-        beverageViewModel.getMenuList(storeId!!)
+    private fun sendOrder(customerId: String, cartItems: List<CartClass>) {
+        val client = BaseApi.getInstance().create(BeverageApi::class.java)
 
-        cartAdapter = CartAdapter(requireContext(), emptyList(), this)
-        cartListRV.layoutManager = LinearLayoutManager(requireContext())
-        cartListRV.adapter = cartAdapter
+        val CreateOrderMenuRequest = cartItems.map { CreateOrderMenuRequest(it.id, it.quantity) }
+        val requestBody = MenuOrderRequest(CreateOrderMenuRequest)
 
-        lifecycleScope.launch {
-            beverageViewModel.menuList.observe(viewLifecycleOwner) { menulist ->
-                beverageList = menulist
-                beverageAdapter.updateData(beverageList)
-                handleButtonClick(buttonCoffee, textCoffee)
-                beverageAdapter.notifyDataSetChanged()
+        client.menuOrder(customerId, requestBody).enqueue(object : Callback<BasicResponse> {
+            override fun onResponse(call : Call<BasicResponse>, response: Response<BasicResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null && responseBody.success) {
+                        showOrderedDialog()
+//                        Log.d("menuOrder", "Menu order success")
+                    } else {
+                        Log.d("menuOrder", "Menu order failed")
+                    }
+                } else {
+                    Log.d("menuOrder", "request failed")
+                }
             }
 
-            cartViewModel.cartItems.observe(viewLifecycleOwner) { cartItems ->
-                cartAdapter.updateData(cartItems)
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+                Log.e("Theme", "$t")
+            }
+        })
+    }
+
+    private fun showOrderedDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("주문완료")
+            setMessage("주문이 완료되었습니다.\n잠시만 기다려주세요")
+            setPositiveButton("확인") {dialog, _ ->
+                dialog.dismiss()
+                ClearCartButton()
+                requireView().findNavController().navigate(R.id.action_beverage_to_main_page_frg)
             }
         }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
-    override fun onItemRemoved(cartItem: CartClass) {
-        cartViewModel.removeCartItem(cartItem)
-    }
-    private fun handleButtonClick(clickedButton: ConstraintLayout, clickedTextView: TextView) {
-        // 모든 버튼의 배경색을 원래대로 되돌림
-        resetButtonBackgrounds()
-
-        // 선택된 버튼의 배경색을 변경
-        clickedButton.setBackgroundColor(Color.WHITE)
-        clickedTextView.setTextColor(Color.BLACK)
-
-        val filteredList = when (clickedButton.id) {
-            R.id.buttonCoffee -> beverageList.filter { it.menuType == "C" } // 카테고리에 따라 필터링
-            R.id.buttonDrink -> beverageList.filter { it.menuType == "D" }
-            R.id.buttonSnack -> beverageList.filter { it.menuType == "F" }
-            else -> beverageList
-        }
-//        println(filteredList)
-
-        beverageAdapter.updateData(filteredList)
-        beverageAdapter.notifyDataSetChanged()
+    override fun onCartUpdated() {
+        cartViewModel.updateCartItems(CartManage.getInstance().getItems())
     }
 
-    private fun resetButtonBackgrounds() {
-        val defCol = Color.parseColor("#5E412F")
-        val defFont = Color.WHITE
-
-        buttonCoffee.setBackgroundColor(defCol)
-        buttonDrink.setBackgroundColor(defCol)
-        buttonSnack.setBackgroundColor(defCol)
-
-        textCoffee.setTextColor(defFont)
-        textDrink.setTextColor(defFont)
-        textSnack.setTextColor(defFont)
+    private fun ClearCartButton() {
+        CartManage.getInstance().clearCart()
+        (requireActivity() as? CartUpdateListener)?.onCartUpdated()
     }
 }
+
