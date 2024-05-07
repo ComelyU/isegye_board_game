@@ -5,7 +5,7 @@ import com.accio.isegye.customer.dto.CustomerResponse;
 
 public interface CustomerService {
 
-    CustomerResponse createCustomer(CreateCustomerRequest createCustomerRequest);
+    CustomerResponse createCustomer(int roomId, CreateCustomerRequest createCustomerRequest);
 
     int endCustomer(int customerId);
 
