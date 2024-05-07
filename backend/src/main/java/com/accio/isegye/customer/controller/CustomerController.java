@@ -29,9 +29,9 @@ public class CustomerController {
         summary = "고객 시작",
         description = "고객 테이블 생성"
     )
-    @PostMapping
-    public ResponseEntity<CustomerResponse> createCustomer(@Valid @RequestBody CreateCustomerRequest request){
-        return new ResponseEntity<>(customerService.createCustomer(request), HttpStatus.OK);
+    @PostMapping("/{roomId}")
+    public ResponseEntity<CustomerResponse> createCustomer(@PathVariable int roomId, @Valid @RequestBody CreateCustomerRequest request){
+        return new ResponseEntity<>(customerService.createCustomer(roomId, request), HttpStatus.OK);
     }
 
     @Operation(

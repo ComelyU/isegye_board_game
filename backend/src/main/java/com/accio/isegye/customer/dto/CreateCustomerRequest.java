@@ -9,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 public class CreateCustomerRequest {
 
     @NotNull
-    private Integer roomId;
-
-    @NotNull
     private int isTheme;
 
     private int peopleNum;

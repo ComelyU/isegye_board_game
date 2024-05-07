@@ -31,10 +31,10 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     @Transactional
-    public CustomerResponse createCustomer(CreateCustomerRequest request) {
+    public CustomerResponse createCustomer(int roomId, CreateCustomerRequest request) {
         Customer customer = Customer.builder()
-            .room(roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "No Room matching: " + request.getRoomId())))
+            .room(roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "No Room matching: " + roomId)))
             .isTheme(request.getIsTheme())
             .peopleNum(request.getPeopleNum())
             .build();
