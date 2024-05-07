@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @ToString
 @Data
 public class MessageDto {
-    private String title;
+    private String topic;
     private String content;
 
 }
