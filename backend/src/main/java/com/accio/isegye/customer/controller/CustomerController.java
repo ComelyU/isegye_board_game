@@ -42,11 +42,8 @@ public class CustomerController {
     public ResponseEntity<Integer> endCustomer(@PathVariable int customerId){
 
         //터틀봇에게 반환 요청을 보낸다!
-
         int roomFee = customerService.endCustomer(customerId);
-        int orderFee = 0;
-
-        return new ResponseEntity<>(roomFee + orderFee, HttpStatus.OK);
+        return new ResponseEntity<>(roomFee, HttpStatus.OK);
     }
 
     @Operation(
@@ -55,7 +52,8 @@ public class CustomerController {
     )
     @PatchMapping("/{customerId}/theme")
     public ResponseEntity<Integer> toggleTheme(@PathVariable int customerId){
-        return new ResponseEntity<>(customerService.toggleTheme(customerId), HttpStatus.OK);
+        int theme = customerService.toggleTheme(customerId);
+        return new ResponseEntity<>(theme, HttpStatus.OK);
     }
 
     /*
