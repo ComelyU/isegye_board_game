@@ -138,6 +138,11 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
+    public Integer getRoomId(int storeId, int roomNumber) {
+        return roomRepository.findIdByStoreIdAndRoomNumber(storeId, roomNumber);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<RoomResponse> getRoomList(int storeId) {
         return roomRepository.findAllByDeletedAtIsNullAndStoreId(storeId)

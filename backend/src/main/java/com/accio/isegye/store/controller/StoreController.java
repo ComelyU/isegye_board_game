@@ -98,6 +98,15 @@ public class StoreController {
     }
 
     @Operation(
+        summary = "StoreId와 RoomNumber를 기준으로 방 찾기",
+        description = "방 id 가져오기"
+    )
+    @GetMapping("/rooms/valid/{storeId}")
+    public ResponseEntity<Integer> getRoomId(@PathVariable int storeId, @RequestParam int roomNumber){
+        return new ResponseEntity<>(service.getRoomId(storeId, roomNumber), HttpStatus.OK);
+    }
+
+    @Operation(
         summary = "특정 매장의 모든 방 정보 확인",
         description = "매장 id 필수"
     )

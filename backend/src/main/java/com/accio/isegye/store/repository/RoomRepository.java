@@ -17,4 +17,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     String findIotIdById(int id);
 
     List<Room> findAllByDeletedAtIsNullAndStoreId(int storeId);
+
+    @Query("select r.id from Room r where r.store.id = ?1 and r.roomNumber = ?2")
+    Integer findIdByStoreIdAndRoomNumber(int storeId, int roomNumber);
 }
