@@ -20,23 +20,23 @@ public class MessageService {
 
     private final RabbitTemplate rabbitTemplate;
 
-    /**
-     * Queue로 메시지를 발행
-     *
-     * @param messageDto 발행할 메시지의 DTO 객체
-     */
-    public void sendMessage(MessageDto messageDto) {
-        log.info("message sent: {}", messageDto.toString());
-        rabbitTemplate.convertAndSend(exchangeName, routingKey, messageDto);
-    }
+//    /**
+//     * Queue로 메시지를 발행
+//     *
+//     * @param messageDto 발행할 메시지의 DTO 객체
+//     */
+//    public void sendMessage(MessageDto messageDto) {
+//        log.info("message sent: {}", messageDto.toString());
+//        rabbitTemplate.convertAndSend(exchangeName, routingKey, messageDto);
+//    }
 
     /**
      * Queue에서 메시지를 구독
      *
-     * @param messageDto 구독한 메시지를 담고 있는 MessageDto 객체
+     * @param message 구독한 메시지를 담고 있는 MessageDto 객체
      */
     @RabbitListener(queues = "${rabbitmq.queue.name}")
-    public void receiveMessage(MessageDto messageDto) {
-        log.info("Received message: {}", messageDto.toString());
+    public void receiveMessage(String message) {
+        log.info("Received message: {}", message);
     }
 }

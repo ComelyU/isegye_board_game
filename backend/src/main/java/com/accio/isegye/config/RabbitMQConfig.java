@@ -3,9 +3,11 @@ package com.accio.isegye.config;
 import jakarta.validation.Valid;
 
 import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -54,9 +56,14 @@ public class RabbitMQConfig {
      *
      * @return TopicExchange 빈 객체
      */
+//    @Bean
+//    public DirectExchange exchange() {
+//        return new DirectExchange(exchangeName);
+//    }
+
     @Bean
-    public DirectExchange exchange() {
-        return new DirectExchange(exchangeName);
+    public TopicExchange exchangeTopic(){
+        return new TopicExchange(exchangeName);
     }
 
     /**
@@ -67,8 +74,9 @@ public class RabbitMQConfig {
      * @return Binding 빈 객체
      */
     @Bean
-    public Binding binding(Queue queue, DirectExchange exchange) {
+    public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(routingKey);
+//        return new Binding(queueName, DestinationType.QUEUE, exchangeName, routingKey, null);
     }
 
     /**
