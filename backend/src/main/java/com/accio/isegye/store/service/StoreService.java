@@ -33,6 +33,9 @@ public interface StoreService {
     //방 정보 확인
     RoomResponse getRoom(int id);
 
+    //방 ID 확인
+    Integer getRoomId(int storeId, int roomNumber);
+
     //전체 방 정보 확인
     List<RoomResponse> getRoomList(int storeId);
 
