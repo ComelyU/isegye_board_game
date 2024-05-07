@@ -9,6 +9,7 @@ import com.accio.isegye.exception.ErrorCode;
 import com.accio.isegye.store.dto.RoomResponse;
 import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,12 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setRoomFee((int)hourDifference * hourFee * customer.getPeopleNum());
         Customer update = customerRepository.save(customer);
 
-        return update.getRoomFee();
+        Integer menuFee = customerRepository.getMenuFeeByCustomerId(customerId);
+        if(menuFee == null){
+            menuFee = 0;
+        }
+
+        return update.getRoomFee() + menuFee;
     }
 
     @Override
