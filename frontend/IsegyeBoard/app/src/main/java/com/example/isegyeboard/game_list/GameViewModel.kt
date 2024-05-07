@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.isegyeboard.baseapi.BaseApi
+import com.example.isegyeboard.game_list.model.GameClass
+import com.example.isegyeboard.game_list.model.StockList
 import kotlinx.coroutines.launch
 
 class GameViewModel() : ViewModel() {
@@ -19,7 +21,7 @@ class GameViewModel() : ViewModel() {
             try {
                 val result = gameNetwork.getGameList(storeId)
                 println(result)
-                _gameList.value = result
+                _gameList.value = result.stockList
             } catch (e: Exception) {
                 // 에러 처리
                 println(e)

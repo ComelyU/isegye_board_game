@@ -1,4 +1,4 @@
-package com.example.isegyeboard.game_list
+package com.example.isegyeboard.game_list.model
 
 data class GameResponse(
     val id: Int,
@@ -11,5 +11,5 @@ data class GameResponse(
     val maxPlaytime:Int,
     val gameDifficulty:Float,
     val gameImgUrl:String,
-//    val gameTagCategory: List<GameTagCategory>
+    val gameTagCategory: List<GameTagCategory>
 )

@@ -13,6 +13,9 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.isegyeboard.R
+import com.example.isegyeboard.game_list.model.GameClass
+import com.example.isegyeboard.game_list.model.GameTagCategory
+import com.example.isegyeboard.game_list.model.StockList
 import kotlin.math.ceil
 
 class GameAdapter(private val context: Context, private var dataList: List<GameClass>) :
@@ -24,9 +27,7 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
         val descriptionTextView: TextView = itemView.findViewById(R.id.listDescription)
         val stockTextView: TextView = itemView.findViewById(R.id.listStock)
         val playerTextView: TextView = itemView.findViewById(R.id.listPlayer)
-        //            val maxPlayerTextView: TextView = itemView.findViewById(R.id.maxPlayer)
         val playTimeTextView: TextView = itemView.findViewById(R.id.listPlaytime)
-        //            val maxPlayTimeTextView: TextView = itemView.findViewById(R.id.maxPlaytime)
         val difficultyTextView: TextView = itemView.findViewById(R.id.listDifficulty)
         val themeTextView: TextView = itemView.findViewById(R.id.listTheme)
         val imageView: ImageView = itemView.findViewById(R.id.thumbnailImage)
@@ -56,7 +57,9 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
                     putString("minPlaytime", gameDetail.minPlaytime.toString())
                     putString("maxPlaytime", gameDetail.maxPlaytime.toString())
                     putString("difficulty", ceil(gameDetail.gameDifficulty).toInt().toString())
-//                    putString("theme", tagText)
+                    putString("theme", gameDetail.gameTagCategory.joinToString(", ") { category ->
+                        category.codeItemName
+                    })
                 }
                 v?.findNavController()?.navigate(R.id.action_gamelist_to_gamedetail, bundle)
             } else {
@@ -114,11 +117,11 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
         holder.difficultyTextView.text = "난이도 : ${"★".repeat(ceil(gameItemDetail.gameDifficulty).toInt())}"
 
         // 장르리스트
-//        val tagCategory: List<GameTagCategory> = gameItemDetail.gameTagCategory
-//        val tagText = tagCategory.joinToString(", ") { category ->
-//            context.getString(category.codeItemName)
-//        }
-//        holder.themeTextView.text = "장르 : $tagText, "
+        val tagCategory: List<GameTagCategory> = gameItemDetail.gameTagCategory
+        val tagText = tagCategory.joinToString(", ") { category ->
+            category.codeItemName
+        }
+        holder.themeTextView.text = "장르 : $tagText, "
 
         Glide.with(context)
             .load(gameItemDetail.gameImgUrl)

@@ -1,4 +1,4 @@
-package com.example.isegyeboard.game_list
+package com.example.isegyeboard.game_list.model
 
 data class GameClass(
     val id: Int,

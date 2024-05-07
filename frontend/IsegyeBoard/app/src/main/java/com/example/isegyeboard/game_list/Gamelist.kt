@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
+import com.example.isegyeboard.game_list.model.GameClass
 import kotlinx.coroutines.launch
 
 class Gamelist : Fragment() {
