@@ -9,30 +9,33 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/peopleCount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
+        app:layout_constraintEnd_toStartOf="@id/peopleMinusButton"
         android:fontFamily="@font/dnfbitbitv2"
-        android:textSize="50sp"
+        android:layout_margin="20dp"
+        android:textSize="60sp"
         android:text="인원"
-        android:textColor="@color/white"
+        android:textColor="#523829"
         />
 
     <TextView
         android:id="@+id/peopleMinusButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/startButton"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
         app:layout_constraintEnd_toStartOf="@id/peopleCount"
         android:text="-"
         android:fontFamily="@font/dnfbitbitv2"
+        android:elevation="8dp"
         android:textSize="75sp"
         android:layout_margin="20dp"
         android:textColor="@color/white"/>
 
     <TextView
         android:id="@+id/peopleCount"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/startButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,21 +43,37 @@
         android:layout_margin="20dp"
         android:fontFamily="@font/dnfbitbitv2"
         android:textSize="75sp"
+        android:gravity="center"
         android:text="2"
-        android:textColor="@color/white"
+        android:textColor="#523829"
         />
 
     <TextView
         android:id="@+id/peoplePlusButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/startButton"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
         app:layout_constraintStart_toEndOf="@id/peopleCount"
         android:text="+"
+        android:elevation="8dp"
         android:fontFamily="@font/dnfbitbitv2"
         android:textSize="75sp"
         android:layout_margin="20dp"
         android:textColor="@color/white"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
+        app:layout_constraintStart_toEndOf="@id/peoplePlusButton"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:textSize="60sp"
+        android:layout_margin="20dp"
+        android:text="명"
+        android:textColor="#523829"
+        />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -62,7 +81,7 @@
         android:layout_width="3dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.35"
+        app:layout_constraintGuide_percent="0.25"
         />
     <!--    시작버튼-->
     <androidx.constraintlayout.widget.ConstraintLayout

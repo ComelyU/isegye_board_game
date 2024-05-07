@@ -15,12 +15,11 @@ import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.BasicResponse
 import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.room.RoomApi
-import com.example.isegyeboard.room.RoomOverResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -109,10 +108,10 @@ class MainPageFrg : Fragment() {
         sharedPreferences.edit().remove("isOccupied").apply()
 
         val customerId = pref.getString("customerId", null)
+        Log.d("Logout", "try logout : ${customerId}")
 
-
-        client.deleteCustomerInfo(customerId!!).enqueue(object : Callback<RoomOverResponse> {
-            override fun onResponse(call: Call<RoomOverResponse>, response: Response<RoomOverResponse>) {
+        client.deleteCustomerInfo(customerId!!).enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null) {
@@ -121,6 +120,7 @@ class MainPageFrg : Fragment() {
                         sharedPreferences.edit().remove("customerId").apply()
                         //페이지 이동
                         Log.d("logout", "logout success")
+                        showFeeDialog(responseBody)
                     } else {
                         Log.d("logout", "logout failed $responseBody")
                         FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
@@ -131,10 +131,23 @@ class MainPageFrg : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<RoomOverResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Int>, t: Throwable) {
                 Log.e("logout", "$t")
                 FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
+    }
+
+    private fun showFeeDialog(fee: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireActivity())
+        alertDialogBuilder.apply {
+            setTitle("요금 안내")
+            setMessage("이용 요금은 ${fee}원 입니다.\n 이용해주셔서 감사합니다.")
+            setPositiveButton("종료") { _, _ ->
+                findNavController().navigate(R.id.action_main_page_frg_to_startFragment)
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

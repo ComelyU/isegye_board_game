@@ -20,7 +20,7 @@ interface RoomApi {
     @PATCH("customer/{customerId}")
     fun deleteCustomerInfo(
         @Path("customerId") customerId: String
-    ): Call<RoomOverResponse>
+    ): Call<Int>
 
     @GET("menu/order/{customerId}")
     suspend fun getHistoryList(
