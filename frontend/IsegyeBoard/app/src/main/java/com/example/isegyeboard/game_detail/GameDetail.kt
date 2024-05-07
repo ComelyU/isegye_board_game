@@ -2,18 +2,14 @@ package com.example.isegyeboard.game_detail
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.media.AudioManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SwitchCompat
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -38,7 +34,7 @@ class GameDetail : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentGamedetailBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -48,10 +44,8 @@ class GameDetail : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sharedPreferences = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-        val backButton = view.findViewById<ImageView>(R.id.detailBack)
-        val photoButton = view.findViewById<TextView>(R.id.photoButton)
 
-        photoButton.setOnClickListener {
+            binding.photoButton.setOnClickListener {
             // 테스트용 임시 네비
             it.findNavController().navigate(R.id.action_gamedetail_to_photo)
             // 테스트후 삭제
@@ -65,7 +59,7 @@ class GameDetail : Fragment() {
             .into(DrawableImageViewTarget(loadingImage))
 
         // 목록으로 돌아가기
-        backButton.setOnClickListener{
+        binding.detailBack.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
 
@@ -79,23 +73,23 @@ class GameDetail : Fragment() {
         val minPlaytime = arguments?.getString("minPlaytime")
         val maxPlaytime = arguments?.getString("maxPlaytime")
         val difficulty = arguments?.getString("difficulty")!!.toInt()
-//        val theme = arguments?.getString("theme")
+        val theme = arguments?.getString("theme")
 
         // UI 요소에 정보 표시
-        view.findViewById<TextView>(R.id.detailTitle).text = title
-        view.findViewById<TextView>(R.id.detailDescription).text = description
-        view.findViewById<TextView>(R.id.detailPlayer).text = if (minPlayer == maxPlayer) {
+        binding.detailTitle.text = title
+        binding.detailDescription.text = description
+        binding.detailPlayer.text = if (minPlayer == maxPlayer) {
             "인원 : ${maxPlayer}명"
         } else {
             "인원 : $minPlayer ~ ${maxPlayer}명"
         }
-        view.findViewById<TextView>(R.id.detailPlaytime).text = if (minPlaytime == maxPlaytime) {
+        binding.detailPlaytime.text = if (minPlaytime == maxPlaytime) {
             "플레이타임 : ${maxPlaytime}분"
         } else {
             "플레이타임 : $minPlaytime ~ ${maxPlaytime}분"
         }
-        view.findViewById<TextView>(R.id.detailDifficulty).text = "난이도 : ${"★".repeat(difficulty)}"
-//        view.findViewById<TextView>(R.id.detailTheme).text = "장르 : $theme"
+        binding.detailDifficulty.text = "난이도 : ${"★".repeat(difficulty)}"
+        binding.detailTheme.text = "장르 : $theme"
 
         thumbnailUrl?.let {
             Glide.with(requireContext())
@@ -104,78 +98,75 @@ class GameDetail : Fragment() {
                 .error(R.drawable.chess_black) // 로딩 실패 시 표시할 이미지
                 .into(binding.detailImage)
         }
-        val roomLogId = sharedPreferences.getString("roomLogId", "")
+        val customerId = sharedPreferences.getString("customerId", "1")
         val themeOn = sharedPreferences.getBoolean("themeOn", true)
 
-        val returnButton = view.findViewById<TextView>(R.id.returnButton)
-        val startButton = view.findViewById<TextView>(R.id.startButton)
-        val themeSwitch = view.findViewById<SwitchCompat>(R.id.theme_switch)
 
         // DB상의 테마 온오프여부
 //        println(themeOn)
-        themeSwitch.isChecked = themeOn
+        binding.themeSwitch.isChecked = themeOn
 
         // 테마 온오프 스위치
-        themeSwitch.setOnCheckedChangeListener { _, _ ->
-            sendThemeToggle(roomLogId!!)
+        binding.themeSwitch.setOnCheckedChangeListener { _, _ ->
+            themeToggle(customerId!!)
         }
-
 
         // 시작/반납 버튼 토글
         toggleButtons(gameId.toString(), view)
 
         // 시작버튼
-        startButton.setOnClickListener{
+        binding.startButton.setOnClickListener{
             lifecycleScope.launch {
                 loadingImage.visibility = View.VISIBLE
-                gameId?.let{startGame(it, roomLogId!!, view)}
+                gameId?.let{startGame(it, customerId!!, view, 0)}
             }
         }
 
         //종료버튼
-        returnButton.setOnClickListener{
+        binding.returnButton.setOnClickListener{
             lifecycleScope.launch {
                 loadingImage.visibility = View.VISIBLE
-                gameId?.let{returnGame(it, roomLogId!!, view)}
+                gameId?.let{startGame(it, customerId!!, view, 1)}
             }
         }
     }
 
 
 
-    private fun startGame(gameId: String, roomLogId: String, view: View) {
+    private fun startGame(gameId: String, customerId: String, view: View, type: Int) {
         val service = BaseApi.getInstance().create((GameOrderApi::class.java))
 
-        val call: Call<BasicResponse> = service.orderGame(gameId, roomLogId)
-//        println("$gameId, $roomId, $storeId")
+        val requestBody = mapOf(
+            "orderType" to type,
+        )
 
-        call.enqueue(object : Callback<BasicResponse> {
-            override  fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
-//                println(response)
+        val call: Call<GameOrderResponse> = service.orderGame(gameId, customerId, requestBody)
+
+        call.enqueue(object : Callback<GameOrderResponse> {
+            override  fun onResponse(call: Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
                 loadingImage.visibility = View.GONE
                 if (response.isSuccessful) {
-//                    Log.d("Order", "${response.body()}")
-                    val responseResult: BasicResponse? = response.body()
-                    val success: Boolean? = responseResult?.success
-                    val message: String? = responseResult?.message
-
-//                    Log.d("Order", "message: $message")
+                    val responseBody = response.body()
 
                     // 성공 여부에 따른 로직 처리
-                    if (success == true) {
-                        Log.d("Order", "Success: $message")
+                    if (responseBody != null && type == 0) {
+                        Log.d("Order", "Success")
                         saveGameId(gameId, view)
+                    } else if (responseBody != null && type == 1) {
+                        showReturnedDialog()
+                        sharedPreferences.edit().remove("gameId").apply()
+                        toggleButtons(gameId, view)
                     } else {
                         // 실패 처리
                         showFailedDialog()
-                        Log.d("Order", "Failed: $message")
+                        Log.d("Order", "Failed")
                     }
                 } else {
                     showFailedDialog()
                     Log.d("Order", "Fail to send: ${response.errorBody()}")
                 }
             }
-            override fun onFailure(call: Call<BasicResponse>, t:Throwable) {
+            override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
                 showFailedDialog()
                 Log.d("Order", "$t")
             }
@@ -203,47 +194,6 @@ class GameDetail : Fragment() {
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
-    }
-
-    private fun returnGame(gameId: String, roomLogId: String, view: View) {
-        val sharedPreferences = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
-
-        val call: Call<BasicResponse> = service.returnGame(roomLogId)
-
-        call.enqueue(object : Callback<BasicResponse> {
-            override  fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
-//                println(response)
-                loadingImage.visibility = View.GONE
-                if (response.isSuccessful) {
-//                    Log.d("Order", "${response.body()}")
-                    val responseResult: BasicResponse? = response.body()
-                    val success: Boolean? = responseResult?.success
-                    val message: String? = responseResult?.message
-
-//                    Log.d("Order", "message: $message")
-
-                    // 성공 여부에 따른 로직 처리
-                    if (success == true) {
-//                        Log.d("Order", "Success: $message")
-                        showReturnedDialog()
-                        sharedPreferences.edit().remove("gameId").apply()
-                        toggleButtons(gameId, view)
-                    } else {
-                        // 실패 처리
-                        showFailedDialog()
-                        Log.d("Order", "Failed: $responseResult")
-                    }
-                } else {
-                    showFailedDialog()
-                    Log.d("Order", "Fail to send: $response")
-                }
-            }
-            override fun onFailure(call: Call<BasicResponse>, t:Throwable) {
-                showFailedDialog()
-                Log.d("Order", "$t")
-            }
-        })
     }
 
     private fun showReturnedDialog() {
@@ -290,11 +240,11 @@ class GameDetail : Fragment() {
         }
     }
 
-    private fun sendThemeToggle(roomLogId: String){
+    private fun themeToggle(customerId: String){
         val service = BaseApi.getInstance().create((GameOrderApi::class.java))
 
         val requestBody = mapOf(
-            "roomLogId" to roomLogId
+            "customerId" to customerId
         )
 
         service.sendThemeToggle(requestBody).enqueue(object : Callback<BasicResponse> {

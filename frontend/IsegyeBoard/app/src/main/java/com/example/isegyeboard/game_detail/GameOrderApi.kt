@@ -6,16 +6,18 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GameOrderApi {
 
     // 게임 배달 요청
-    @GET("game-order?")
+    @POST("game/order/{customerId}/stocks/{stockId}")
     fun orderGame(
-        @Query("gameId") gameId: String,
-        @Query("roomLogId") roomLogId: String
-    ): Call<BasicResponse>
+        @Path("stockId") gameId: String,
+        @Path("customerId") roomLogId: String,
+        @Body requestBody: Map<String, Int>
+    ): Call<GameOrderResponse>
 
     // 게임 반납 요청
     @GET("game-order/return?")

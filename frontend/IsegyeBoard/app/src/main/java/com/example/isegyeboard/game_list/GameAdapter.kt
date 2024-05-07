@@ -40,11 +40,6 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
             val gameData = dataList[adapterPosition]
             val gameDetail = gameData.game
 
-//            val tagCategories: List<GameTagCategory> = gameDetail.gameTagCategory
-//            val tagText = tagCategories.joinToString(", ") { category ->
-//                context.getString(category.codeItemName)
-//            }
-
             if (gameData.isAvailable > 0) {
                 val bundle = Bundle().apply {
                     putString("gameId", gameDetail.id.toString())

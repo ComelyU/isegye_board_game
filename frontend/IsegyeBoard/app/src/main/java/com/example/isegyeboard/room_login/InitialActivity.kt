@@ -71,7 +71,7 @@ class InitialActivity : AppCompatActivity() {
 //                        Log.d("Login", "login success${response}")
                         Log.d("Login", "login success body ${responseBody}")
                         val roomId = responseBody
-                        saveStoreInfo(roomId)
+                        saveStoreInfo(storeId, roomId)
                     } else {
                         Log.d("Login", "login failed $responseBody")
                         FailureDialog.showFailure(this@InitialActivity, "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
@@ -89,9 +89,10 @@ class InitialActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveStoreInfo(roomId: Int) {
+    private fun saveStoreInfo(storeId: String, roomId: Int) {
         val sharedPreferences = getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
+        editor.putString("storeId", storeId)
         editor.putString("roomId", roomId.toString())
         editor.apply()
 
