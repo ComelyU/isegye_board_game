@@ -11,7 +11,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.isegyeboard.R
 import com.example.isegyeboard.beverage.BeverageAdapter
-import com.example.isegyeboard.beverage.BeverageClass
+import com.example.isegyeboard.beverage.model.BeverageClass
 import com.example.isegyeboard.beverage.CoffeeViewModel
 import com.example.isegyeboard.beverage.cart.CartAdapter
 import com.example.isegyeboard.databinding.FragmentCoffeeBinding

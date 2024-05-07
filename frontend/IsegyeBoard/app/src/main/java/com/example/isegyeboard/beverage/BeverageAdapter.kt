@@ -16,6 +16,7 @@ import com.example.isegyeboard.beverage.cart.CartAdapter
 import com.example.isegyeboard.beverage.cart.CartClass
 import com.example.isegyeboard.beverage.cart.CartManage
 import com.example.isegyeboard.beverage.cart.CartUpdateListener
+import com.example.isegyeboard.beverage.model.BeverageClass
 
 class BeverageAdapter(private val context: Context, private var dataList: List<BeverageClass>, private val cartAdapter: CartAdapter) :
     RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>() {
@@ -35,7 +36,6 @@ class BeverageAdapter(private val context: Context, private var dataList: List<B
             if (menu.isAvailable != 0) {
                 val cartItem = CartClass(menu.id, menu.menuName, menu.menuPrice)
                 addToCart(cartItem)
-//                v?.findNavController()?.navigate(R.id.action_beverage_self)
                 val activity = v?.context as? AppCompatActivity
                 activity?.recreate()
 

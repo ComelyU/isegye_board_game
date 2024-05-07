@@ -45,7 +45,7 @@ class GameDetail : Fragment() {
 
         sharedPreferences = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
 
-            binding.photoButton.setOnClickListener {
+        binding.photoButton.setOnClickListener {
             // 테스트용 임시 네비
             it.findNavController().navigate(R.id.action_gamedetail_to_photo)
             // 테스트후 삭제

@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Coffee"
+            android:text="@string/coffee"
+            android:fontFamily="@font/jua"
             android:textSize="45sp"
             android:textAlignment="center"
             android:textColor="@color/white"
@@ -43,7 +44,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Drink"
+            android:text="@string/drink"
+            android:fontFamily="@font/jua"
             android:textSize="45sp"
             android:textAlignment="center"
             android:textColor="@color/white"
@@ -66,7 +68,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Snack"
+            android:text="@string/snack"
+            android:fontFamily="@font/jua"
             android:textSize="45sp"
             android:textAlignment="center"
             >
@@ -81,6 +84,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/white"
         android:layout_margin="0dp"
-        tools:listitem="@layout/layout_menu_item" />
+        tools:listitem="@layout/layout_menu_item"
+        android:padding="12dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

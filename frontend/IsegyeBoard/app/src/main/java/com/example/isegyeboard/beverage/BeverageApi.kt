@@ -1,6 +1,8 @@
 package com.example.isegyeboard.beverage
 
-import com.example.isegyeboard.baseapi.BasicResponse
+import com.example.isegyeboard.beverage.model.BeverageClass
+import com.example.isegyeboard.beverage.model.CreateOrderMenuRequest
+import com.example.isegyeboard.room_history.OrderMenuResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,9 +15,9 @@ interface BeverageApi {
         @Path("storeId") storeId: String,
     ) : List<BeverageClass>
 
-    @POST("menu/order{customerId}")
+    @POST("menu/order/{customerId}")
     fun menuOrder(
         @Path("customerId") customerId: String,
-        @Body requestBody: MenuOrderRequest
-    ): Call<BasicResponse>
+        @Body requestBody: List<CreateOrderMenuRequest>
+    ): Call<OrderMenuResponse>
 }

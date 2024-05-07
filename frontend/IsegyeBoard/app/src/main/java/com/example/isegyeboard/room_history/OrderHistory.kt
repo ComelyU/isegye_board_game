@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.isegyeboard.databinding.FragmentOrderHistoryBinding
 import kotlinx.coroutines.launch
@@ -40,7 +41,7 @@ class OrderHistory : Fragment() {
 
         historyAdapter = HistoryAdapter(requireContext(), emptyList()) // 초기에 빈 리스트로 어댑터 생성
         binding.orderHistoryRV.adapter = historyAdapter
-        binding.orderHistoryRV.layoutManager = LinearLayoutManager(requireContext())
+        binding.orderHistoryRV.layoutManager = GridLayoutManager(requireContext(), 2)
 
         val emptyTextView = binding.emptyTextView
 

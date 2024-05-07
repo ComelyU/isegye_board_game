@@ -1,4 +1,4 @@
-package com.example.isegyeboard.beverage
+package com.example.isegyeboard.beverage.model
 
 data class BeverageClass(
     val id: Int,

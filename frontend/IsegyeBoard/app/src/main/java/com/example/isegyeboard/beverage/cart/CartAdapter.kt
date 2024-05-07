@@ -11,6 +11,11 @@ import com.example.isegyeboard.R
 
 class CartAdapter : ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallback()) {
 
+    private lateinit var cartUpdateListener: CartUpdateListener
+    fun setCartListener(listener: CartUpdateListener) {
+        this.cartUpdateListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_cart_item, parent, false)
         return CartViewHolder(view)
@@ -70,6 +75,7 @@ class CartAdapter : ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallb
         cartItem.quantity++
         updateTotalPrice()
         notifyDataSetChanged()
+        cartUpdateListener.onCartUpdated()
     }
 
     fun decreaseQuantity(cartItem: CartClass) {
@@ -77,9 +83,12 @@ class CartAdapter : ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallb
             cartItem.quantity--
             if (cartItem.quantity == 0) {
                 removeItem(cartItem)
+                notifyDataSetChanged()
+                cartUpdateListener.onCartUpdated()
             } else {
                 updateTotalPrice()
                 notifyDataSetChanged()
+                cartUpdateListener.onCartUpdated()
             }
         }
     }

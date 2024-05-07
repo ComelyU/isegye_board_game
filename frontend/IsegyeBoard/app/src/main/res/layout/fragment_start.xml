@@ -27,11 +27,11 @@
         app:layout_constraintBottom_toBottomOf="@id/peopleCount"
         app:layout_constraintEnd_toStartOf="@id/peopleCount"
         android:text="-"
+        android:gravity="center"
         android:fontFamily="@font/dnfbitbitv2"
-        android:elevation="8dp"
         android:textSize="75sp"
         android:layout_margin="20dp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/peopleCount"
@@ -56,11 +56,12 @@
         app:layout_constraintBottom_toBottomOf="@id/peopleCount"
         app:layout_constraintStart_toEndOf="@id/peopleCount"
         android:text="+"
-        android:elevation="8dp"
+        android:gravity="center"
         android:fontFamily="@font/dnfbitbitv2"
         android:textSize="75sp"
         android:layout_margin="20dp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        />
 
     <TextView
         android:layout_width="wrap_content"
