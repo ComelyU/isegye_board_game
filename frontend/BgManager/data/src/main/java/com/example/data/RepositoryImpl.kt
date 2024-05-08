@@ -1,6 +1,7 @@
 package com.example.data
 
 import com.example.data.mapper.turtle.toDomain
+import com.example.domain.model.GameClass
 import com.example.domain.model.OrderClass
 import com.example.domain.model.TurtleBotClass
 import com.example.domain.repository.Repository
@@ -19,6 +20,12 @@ internal class RepositoryImpl @Inject constructor(
 
     override suspend fun orderRepo(): Result<List<OrderClass>> {
         return remote.getOrderList().map { datalist ->
+            datalist.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun gameRepo(): Result<List<GameClass>> {
+        return remote.getGameList().map { datalist ->
             datalist.map { it.toDomain() }
         }
     }

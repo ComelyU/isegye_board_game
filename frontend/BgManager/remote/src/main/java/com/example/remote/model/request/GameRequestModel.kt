@@ -2,6 +2,6 @@ package com.example.remote.model.request
 
 import com.google.gson.annotations.SerializedName
 
-data class OrderRequestModel(
+data class GameRequestModel(
     @SerializedName("storeId") val id: Int = 1,
 )
