@@ -31,7 +31,7 @@ public class CustomerController {
     )
     @PostMapping("/{roomId}")
     public ResponseEntity<CustomerResponse> createCustomer(@PathVariable int roomId, @Valid @RequestBody CreateCustomerRequest request){
-        return new ResponseEntity<>(customerService.createCustomer(roomId, request), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.createCustomer(roomId, request), HttpStatus.CREATED);
     }
 
     @Operation(
