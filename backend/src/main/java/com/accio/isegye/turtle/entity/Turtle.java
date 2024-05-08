@@ -42,4 +42,15 @@ public class Turtle extends BaseTimeEntity {
     @OneToMany(mappedBy = "turtle", fetch = FetchType.LAZY)
     private final List<TurtleLog> roomList = new ArrayList<>();
 
+    public void updateStore(Store store) {
+        this.store = store;
+    }
+    public void updateIsWorking(int isWorking) {
+        this.isWorking = isWorking;
+    }
+
+    public void softDelete() {
+        super.markAsDeleted();
+    }
+
 }

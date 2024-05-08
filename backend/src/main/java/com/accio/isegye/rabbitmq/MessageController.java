@@ -39,7 +39,7 @@ public class MessageController {
     @RequestMapping(value = "/send/mqtt", method = RequestMethod.POST)
     public ResponseEntity<?> sendMqtt(@RequestBody String mqttMessage) {
         JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
-        mqttGateway.sendToMqtt(convertObject.get("content").toString(), "isegye.key");
+        mqttGateway.sendToMqtt(convertObject.get("content").toString(), "ros_test");
         return ResponseEntity.ok("Message sent to MQTT!");
     }
 

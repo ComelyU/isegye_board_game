@@ -1,10 +1,19 @@
 package com.accio.isegye.turtle.service;
 
+import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import java.util.List;
 
 public interface TurtleService {
 
-    List<Integer>  getAvailableTurtleList();
+    Integer createTurtle(int storeId);
 
-    Integer createMenuLog(int turtleId, long orderMenuId);
+    void updateTurtle(int turtleId, UpdateTurtleRequest request);
+
+    void deleteTurtle(int turtleId);
+
+    List<Integer> getAvailableTurtleList(int storeId);
+
+    Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, int commandType);
+
+    void sendOrderToTurtle(int turtleId, Long orderMenuId, Long orderGameId, Long turtleLogId);
 }

@@ -35,7 +35,7 @@ public class MessageService {
      *
      * @param message 구독한 메시지를 담고 있는 MessageDto 객체
      */
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    @RabbitListener(queues = "isegye.queue")
     public void receiveMessage(String message) {
         log.info("Received message: {}", message);
     }
