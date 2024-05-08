@@ -10,6 +10,8 @@
 #include <QMovie>
 #include <QDebug>
 #include <QVector>
+#include <QFont>
+#include <QFontDatabase>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -37,12 +39,13 @@ private:
 
 	void setEmoji(QString status);
 	void setButton();
-	void pub();
-	void emojiReceived(const std_msgs::msg::String::SharedPtr msg);
-	void locationReceived(const std_msgs::msg::String::SharedPtr msg);
+	void msgPub();
+	void msgReceived(const std_msgs::msg::String::SharedPtr msg);
+
 	void runRos();
 signals:
 	void emojiReceivedSignal(const QString &data);
+	void buttonReceivedSignal();
 
 };
 
