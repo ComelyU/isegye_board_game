@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget* parent)
 
 	connect(this, &MainWindow::emojiReceivedSignal, this, &MainWindow::setEmoji);
 	connect(this, &MainWindow::buttonReceivedSignal, this, &MainWindow::setButton);
-	//setButton();
-	setEmoji("sleep");
+	setButton();
+	//setEmoji("sleep");
 	runRos();
 
 	resize(1024,600);
@@ -60,7 +60,7 @@ void MainWindow::msgPub() {
 	publisher->publish(*msg);
 
 	std::cout<<"pub complete\n";
-	//setEmoji("heart2");
+	setEmoji("smile");
 
 }
 void MainWindow::setEmoji(QString status) {
@@ -83,24 +83,25 @@ void MainWindow::setEmoji(QString status) {
 }
 
 void MainWindow::setButton() {
-	QPushButton* pubBtn = new QPushButton("준비가 다되면\n 화면을 눌러주세요", this);
-	pubBtn->setStyleSheet("color: #5E412F; background-color:  #FFCC99; border: 13px solid #FF8220; border-radius: 100px;");
-	//pubBtn->setStyleSheet("color: #5E412F; background-color:  #FFCC99; border: 10px solid #FF8220; border-radius: 100px; font-size: 90px; font-weight:bold;");
-
+	QPushButton* pubBtn = new QPushButton("준비를 마치고\n 화면을 눌러주세요", this);
+	//pubBtn->setStyleSheet("color: #5E412F; background-color: rgba(255,224,140,240); border: 11px solid #FF8220; border-radius: 100px;");
+	pubBtn->setStyleSheet("color: #5E412F; background-color: rgba(255,224,140,240); border: 11px solid #5E412F; border-radius: 100px;");
 	pubBtn->setFixedSize(800,500);
+
 	QString fontName = "Jua";
 	  // 폰트 데이터베이스에서 폰트 경로 확인
 	  QString fontPath = QFontDatabase::applicationFontFamilies(QFontDatabase::addApplicationFont("../src/Jua.ttf")).at(0);
 	  // 폰트 로드
 	  QFont font(fontName);
 	  // 폰트 크기 설정
-	  font.setPointSize(80);
+	  font.setPointSize(70);
 	 pubBtn->setFont(font);
+
 	QVBoxLayout* lay = new QVBoxLayout();
-	lay->addStretch(); // 윈도우의 크기에 따라 레이아웃의 크기를 동적으로 조절하기 위한 스트레치 추가
-	lay->addWidget(pubBtn);
-	lay->addStretch(); // 버튼 위아래로 여백 추가
-	lay->setContentsMargins(100, 0, 100, 0); // 여백 제거
+	lay->addStretch();
+	lay->addWidget(pubBtn,0,Qt::AlignCenter);
+	lay->addStretch();
+	//lay->setContentsMargins(0, 0, 0, 0);
 
 	QWidget* widget = new QWidget(this);
 	widget->setLayout(lay);
