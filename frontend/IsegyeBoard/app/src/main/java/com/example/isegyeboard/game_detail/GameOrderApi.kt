@@ -19,11 +19,6 @@ interface GameOrderApi {
         @Body requestBody: Map<String, Int>
     ): Call<GameOrderResponse>
 
-    // 게임 반납 요청
-    @GET("game-order/return?")
-    fun returnGame(
-        @Query("roomLogId") roomLogId: String
-    ): Call<BasicResponse>
 
     //테마 요청(게임도착시)
     @POST("room/theme")

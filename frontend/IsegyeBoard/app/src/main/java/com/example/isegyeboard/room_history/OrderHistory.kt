@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.isegyeboard.databinding.FragmentOrderHistoryBinding
+import com.example.isegyeboard.room_history.model.OrderGameResponse
+import com.example.isegyeboard.room_history.model.OrderMenuResponse
 import kotlinx.coroutines.launch
 
 class OrderHistory : Fragment() {
@@ -17,8 +19,11 @@ class OrderHistory : Fragment() {
 
     private lateinit var viewModel: HistoryViewModel
 
-    private lateinit var historyAdapter: HistoryAdapter
-    private lateinit var historyList: List<OrderMenuResponse>
+    private lateinit var menuHistoryAdapter: MenuHistoryAdapter
+    private lateinit var menuHistoryList: List<OrderMenuResponse>
+
+    private lateinit var gameHistoryAdapter: GameHistoryAdapter
+    private lateinit var gameHistoryList: List<OrderGameResponse>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,24 +42,37 @@ class OrderHistory : Fragment() {
         val customerId = sharedPreferences.getString("customerId", "1")
 
         viewModel = HistoryViewModel(customerId!!)
-        viewModel.getHistoryList()
+        viewModel.getMenuHistoryList()
+        viewModel.getGameHistoryList()
 
-        historyAdapter = HistoryAdapter(requireContext(), emptyList()) // 초기에 빈 리스트로 어댑터 생성
-        binding.orderHistoryRV.adapter = historyAdapter
-        binding.orderHistoryRV.layoutManager = GridLayoutManager(requireContext(), 2)
+        menuHistoryAdapter = MenuHistoryAdapter(requireContext(), emptyList()) // 초기에 빈 리스트로 어댑터 생성
+        binding.menuHistoryRV.adapter = menuHistoryAdapter
+        binding.menuHistoryRV.layoutManager = LinearLayoutManager(requireContext())
+
+        gameHistoryAdapter = GameHistoryAdapter(requireContext(), emptyList()) // 초기에 빈 리스트로 어댑터 생성
+        binding.gameHistoryRV.adapter = gameHistoryAdapter
+        binding.gameHistoryRV.layoutManager = LinearLayoutManager(requireContext())
 
         val emptyTextView = binding.emptyTextView
 
         lifecycleScope.launch {
-            viewModel.historyList.observe(viewLifecycleOwner) { historylist ->
-                println(historylist)
+            viewModel.menuHistoryList.observe(viewLifecycleOwner) { historylist ->
+//                println(historylist)
 
-                if (historylist.isEmpty()) {
-                    emptyTextView.visibility = View.VISIBLE // 비어 있는 경우 TextView 표시
-                } else {
+                if (historylist.isNotEmpty()) {
                     emptyTextView.visibility = View.GONE // 비어 있지 않은 경우 TextView 숨김
-                    historyAdapter.updateData(historylist) // 데이터 업데이트
-                    historyList = historylist
+                    menuHistoryAdapter.updateData(historylist) // 데이터 업데이트
+                    menuHistoryList = historylist
+                }
+            }
+
+            viewModel.gameHistoryList.observe(viewLifecycleOwner) { historylist ->
+//                println(historylist)
+
+                if (historylist.isNotEmpty()) {
+                    emptyTextView.visibility = View.GONE // 비어 있지 않은 경우 TextView 숨김
+                    gameHistoryAdapter.updateData(historylist) // 데이터 업데이트
+                    gameHistoryList = historylist
                 }
             }
         }

@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
+import com.example.isegyeboard.room_history.model.OrderGameResponse
 
-class HistoryAdapter(private val context: Context, private var dataList: List<OrderMenuResponse>) :
-    RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+class GameHistoryAdapter(private val context: Context, private var dataList: List<OrderGameResponse>) :
+    RecyclerView.Adapter<GameHistoryAdapter.HistoryViewHolder>() {
 
     // ViewHolder 클래스 정의
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
@@ -31,11 +32,12 @@ class HistoryAdapter(private val context: Context, private var dataList: List<Or
 
     // onBindViewHolder: 데이터를 뷰에 연결
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        val orderMenuResponse = dataList[position]
-        val orderMenuDetailList = orderMenuResponse.orderMenuDetail
+        val orderGameResponse = dataList[position]
 
-        val historyId = orderMenuResponse.id
-        val orderStatus = orderMenuResponse.orderStatus
+        val historyId = orderGameResponse.id
+        val orderStatus = orderGameResponse.orderStatus
+        val gameName = orderGameResponse.gameName
+
         val orderStatusString = if (orderStatus == 0) {
             "주문 접수"
         } else if (orderStatus == 1) {
@@ -44,26 +46,22 @@ class HistoryAdapter(private val context: Context, private var dataList: List<Or
             "배송 완료"
         }
 
-        holder.historyIdTextView.append(historyId.toString())
-        holder.orderStatusTextView.append(orderStatusString)
-        // 주문 메뉴의 상세 정보를 가져와서 표시
-
-        val menuNames = StringBuilder()
-        val quantities = StringBuilder()
-
-        for (orderMenuDetail in orderMenuDetailList) {
-            menuNames.append("${orderMenuDetail.menuName}\n")
-            quantities.append("${orderMenuDetail.quantity} 개\n")
+        val orderTypeString = if (orderGameResponse.orderType == 0) {
+            "배송 요청"
+        } else {
+            "반납 요청"
         }
 
-        holder.nameTextView.text = menuNames.toString()
-        holder.quanTextView.text = quantities.toString()
+        holder.historyIdTextView.append(historyId.toString())
+        holder.orderStatusTextView.append(orderStatusString)
+        holder.nameTextView.text = gameName
+        holder.quanTextView.text = orderTypeString
     }
 
     // getItemCount: 데이터 목록의 크기 반환
     override fun getItemCount() = dataList.size
 
-    fun updateData(newHistoryList: List<OrderMenuResponse>) {
+    fun updateData(newHistoryList: List<OrderGameResponse>) {
         dataList = newHistoryList
         notifyDataSetChanged() // 변경 사항을 RecyclerView에 알림
     }

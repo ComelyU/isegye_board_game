@@ -100,7 +100,7 @@ class GameDetail : Fragment() {
         }
         val customerId = sharedPreferences.getString("customerId", "1")
         val themeOn = sharedPreferences.getBoolean("themeOn", true)
-
+        val savedGameId = sharedPreferences.getString("gameId", "")
 
         // DB상의 테마 온오프여부
 //        println(themeOn)
@@ -112,13 +112,20 @@ class GameDetail : Fragment() {
         }
 
         // 시작/반납 버튼 토글
-        toggleButtons(gameId.toString(), view)
+        toggleButtons(gameId.toString(), savedGameId, view)
 
         // 시작버튼
         binding.startButton.setOnClickListener{
             lifecycleScope.launch {
-                loadingImage.visibility = View.VISIBLE
-                gameId?.let{startGame(it, customerId!!, view, 0)}
+                if (savedGameId != null) {
+                    //모달
+                    loadingImage.visibility = View.VISIBLE
+                    orderGame(savedGameId, customerId!!, view, 1)
+                    gameId?.let{orderGame(it, customerId, view, 0)}
+                } else {
+                    loadingImage.visibility = View.VISIBLE
+                    gameId?.let { orderGame(it, customerId!!, view, 0) }
+                }
             }
         }
 
@@ -126,21 +133,22 @@ class GameDetail : Fragment() {
         binding.returnButton.setOnClickListener{
             lifecycleScope.launch {
                 loadingImage.visibility = View.VISIBLE
-                gameId?.let{startGame(it, customerId!!, view, 1)}
+                gameId?.let{orderGame(it, customerId!!, view, 1)}
             }
         }
     }
 
 
 
-    private fun startGame(gameId: String, customerId: String, view: View, type: Int) {
+    private fun orderGame(gameId: String, customerId: String, view: View, orderType: Int) {
         val service = BaseApi.getInstance().create((GameOrderApi::class.java))
 
         val requestBody = mapOf(
-            "orderType" to type,
+            "orderType" to orderType,
         )
 
         val call: Call<GameOrderResponse> = service.orderGame(gameId, customerId, requestBody)
+        Log.d("GameOrder", "$gameId, $customerId, $requestBody")
 
         call.enqueue(object : Callback<GameOrderResponse> {
             override  fun onResponse(call: Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
@@ -149,26 +157,26 @@ class GameDetail : Fragment() {
                     val responseBody = response.body()
 
                     // 성공 여부에 따른 로직 처리
-                    if (responseBody != null && type == 0) {
+                    if (responseBody != null && orderType == 0) {
                         Log.d("Order", "Success")
                         saveGameId(gameId, view)
-                    } else if (responseBody != null && type == 1) {
-                        showReturnedDialog()
+                    } else if (responseBody != null && orderType == 1) {
                         sharedPreferences.edit().remove("gameId").apply()
-                        toggleButtons(gameId, view)
+                        showOrderDialog("반납")
+                        toggleButtons(gameId, null, view)
                     } else {
                         // 실패 처리
                         showFailedDialog()
-                        Log.d("Order", "Failed")
+                        Log.d("Order", "Failed but response success")
                     }
                 } else {
                     showFailedDialog()
-                    Log.d("Order", "Fail to send: ${response.errorBody()}")
+                    Log.d("Order", "Response fail: ${response.errorBody()}")
                 }
             }
             override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
                 showFailedDialog()
-                Log.d("Order", "$t")
+                Log.d("Order", "Fail to send : $t")
             }
         })
     }
@@ -179,30 +187,16 @@ class GameDetail : Fragment() {
         editor.putString("gameId", gameId)
 //        editor.putString("isDeli", "true")
         editor.apply()
-        showOrderedDialog()
-        toggleButtons(gameId, view)
+        showOrderDialog("주문")
+        toggleButtons(gameId, gameId, view)
     }
 
-    private fun showOrderedDialog() {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.apply {
-            setTitle("주문완료")
-            setMessage("주문이 완료되었습니다.\n잠시만 기다려주세요")
-            setPositiveButton("확인") {dialog, _ ->
-                dialog.dismiss()
-            }
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    private fun showReturnedDialog() {
+    private fun showOrderDialog(message: String) {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.apply {
             setTitle("요청완료")
-            setMessage("반납요청되었습니다.\n잠시만 기다려주세요")
+            setMessage("${message}요청되었습니다.\n잠시만 기다려주세요")
             setPositiveButton("확인") {dialog, _ ->
-                loadingImage.visibility = View.GONE
                 dialog.dismiss()
             }
         }
@@ -224,10 +218,7 @@ class GameDetail : Fragment() {
         alertDialog.show()
     }
 
-    private fun toggleButtons(gameId: String, view: View) {
-        val savedGameId = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-            .getString("gameId", "")
-
+    private fun toggleButtons(gameId: String, savedGameId: String?, view: View) {
         val returnButton = view.findViewById<TextView>(R.id.returnButton)
         val startButton = view.findViewById<TextView>(R.id.startButton)
 

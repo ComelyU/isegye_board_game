@@ -25,7 +25,7 @@ import com.example.isegyeboard.beverage.cart.CartManage
 import com.example.isegyeboard.beverage.cart.CartUpdateListener
 import com.example.isegyeboard.beverage.cart.CartViewModel
 import com.example.isegyeboard.beverage.model.CreateOrderMenuRequest
-import com.example.isegyeboard.room_history.OrderMenuResponse
+import com.example.isegyeboard.room_history.model.OrderMenuResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
