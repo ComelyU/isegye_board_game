@@ -9,7 +9,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
 
-class CartAdapter: ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallback()) {
+class CartAdapter : ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallback()) {
+
+    private lateinit var cartUpdateListener: CartUpdateListener
+    fun setCartListener(listener: CartUpdateListener) {
+        this.cartUpdateListener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_cart_item, parent, false)
@@ -43,6 +48,19 @@ class CartAdapter: ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallba
         }
     }
 
+    fun updateCartItems(newItems: List<CartClass>) {
+        submitList(newItems)
+        notifyDataSetChanged()
+    }
+
+    fun calculateTotalPrice(): Int {
+        var totalPrice = 0
+        for (cartItem in currentList) {
+            totalPrice += cartItem.price * cartItem.quantity
+        }
+        return totalPrice
+    }
+
     private class DiffCallback : DiffUtil.ItemCallback<CartClass>() {
         override fun areItemsTheSame(oldItem: CartClass, newItem: CartClass): Boolean {
             return oldItem.id == newItem.id
@@ -52,10 +70,12 @@ class CartAdapter: ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallba
             return oldItem == newItem
         }
     }
+
     fun increaseQuantity(cartItem: CartClass) {
         cartItem.quantity++
         updateTotalPrice()
         notifyDataSetChanged()
+        cartUpdateListener.onCartUpdated()
     }
 
     fun decreaseQuantity(cartItem: CartClass) {
@@ -63,9 +83,12 @@ class CartAdapter: ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallba
             cartItem.quantity--
             if (cartItem.quantity == 0) {
                 removeItem(cartItem)
+                notifyDataSetChanged()
+                cartUpdateListener.onCartUpdated()
             } else {
                 updateTotalPrice()
                 notifyDataSetChanged()
+                cartUpdateListener.onCartUpdated()
             }
         }
     }
@@ -80,17 +103,10 @@ class CartAdapter: ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallba
             notifyDataSetChanged()
         }
     }
+
     private fun updateTotalPrice() {
         // 총합 가격 계산
         val totalPrice = calculateTotalPrice()
         // 여기에서 총합 가격을 업데이트할 수 있는 뷰에 적용하세요.
-    }
-
-    fun calculateTotalPrice(): Int {
-        var totalPrice = 0
-        for (cartItem in currentList) {
-            totalPrice += cartItem.price * cartItem.quantity
-        }
-        return totalPrice
     }
 }

@@ -4,20 +4,97 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".room_history.StartFragment">
+    tools:context=".room.StartFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
+        app:layout_constraintEnd_toStartOf="@id/peopleMinusButton"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:layout_margin="20dp"
+        android:textSize="60sp"
+        android:text="인원"
+        android:textColor="#523829"
+        />
+
+    <TextView
+        android:id="@+id/peopleMinusButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
+        app:layout_constraintEnd_toStartOf="@id/peopleCount"
+        android:text="-"
+        android:gravity="center"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:textSize="75sp"
+        android:layout_margin="20dp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/peopleCount"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/startButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="20dp"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:textSize="75sp"
+        android:gravity="center"
+        android:text="2"
+        android:textColor="#523829"
+        />
+
+    <TextView
+        android:id="@+id/peoplePlusButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
+        app:layout_constraintStart_toEndOf="@id/peopleCount"
+        android:text="+"
+        android:gravity="center"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:textSize="75sp"
+        android:layout_margin="20dp"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/peopleCount"
+        app:layout_constraintBottom_toBottomOf="@id/peopleCount"
+        app:layout_constraintStart_toEndOf="@id/peoplePlusButton"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:textSize="60sp"
+        android:layout_margin="20dp"
+        android:text="명"
+        android:textColor="#523829"
+        />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideLineHorizontal"
+        android:layout_width="3dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25"
+        />
     <!--    시작버튼-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/startButton"
         android:layout_width="440dp"
         android:layout_height="360dp"
         android:layout_margin="10dp"
+        android:layout_marginEnd="20dp"
         android:background="#FFFFFF"
         android:elevation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/startGuideLine"
-        >
+        app:layout_constraintTop_toTopOf="@id/startGuideLineHorizontal">
 
         <Space
             android:id="@+id/startSpace"
@@ -67,8 +144,7 @@
         android:layout_margin="10dp"
         android:background="#FCEBB6"
         android:elevation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/startGuideLineHorizontal"
         app:layout_constraintStart_toEndOf="@id/startGuideLine"
         >
 

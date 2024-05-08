@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.BasicResponse
 import com.example.isegyeboard.baseapi.FailureDialog
 import com.example.isegyeboard.firebase.PushMessage
 import com.example.isegyeboard.main_page.MainActivity
@@ -28,9 +27,9 @@ class InitialActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         } else {
-//            setContentView(R.layout.activity_initial)
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            setContentView(R.layout.activity_initial)
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
         }
 
         PushMessage().getFirebaseToken()
@@ -43,34 +42,36 @@ class InitialActivity : AppCompatActivity() {
             val storeId = storeNumInput.text.toString()
             val roomNum = roomNumInput.text.toString()
 
-            StoreNumCheck(storeId, roomNum)
+            storeNumCheck(storeId, roomNum)
         }
     }
 
     private fun isLogined() : Boolean {
-        val sharedPreferences = getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
-        return sharedPreferences.contains("storeId") && sharedPreferences.contains("roomNum")
+        val sharedPreferences = getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
+        return sharedPreferences.contains("roomId")
     }
 
-    private fun StoreNumCheck(storeId: String, roomNum: String) {
+    private fun storeNumCheck(storeId: String, roomNum: String) {
         val client = BaseApi.getInstance().create(LoginApi::class.java)
 
-        val pref = applicationContext.getSharedPreferences("token", Context.MODE_PRIVATE)
-        val token = pref.getString("token", null)
+//        val pref = applicationContext.getSharedPreferences("token", Context.MODE_PRIVATE)
+//        val token = pref.getString("token", null)
 
-        val requestBody = mapOf(
-            "storeId" to storeId,
-            "roomNumber" to roomNum,
-            "fcmToken" to token
-        )
+//        val requestBody = mapOf(
+//            "storeId" to storeId,
+//            "roomNumber" to roomNum,
+//            "fcmToken" to token
+//        )
 
-        client.sendStoreInfo(requestBody).enqueue(object : Callback<BasicResponse> {
-            override fun onResponse(call : Call<BasicResponse>, response: Response<BasicResponse>) {
+        client.sendStoreInfo(storeId, roomNum).enqueue(object : Callback<Int> {
+            override fun onResponse(call : Call<Int>, response: Response<Int>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    if (responseBody != null && responseBody.success) {
-                        Log.d("Login", "login success")
-                        saveStoreInfo(storeId, roomNum)
+                    if (responseBody != null) {
+//                        Log.d("Login", "login success${response}")
+                        Log.d("Login", "login success body ${responseBody}")
+                        val roomId = responseBody
+                        saveStoreInfo(storeId, roomId)
                     } else {
                         Log.d("Login", "login failed $responseBody")
                         FailureDialog.showFailure(this@InitialActivity, "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
@@ -81,20 +82,21 @@ class InitialActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Int>, t: Throwable) {
                 Log.e("Login", "$t")
                 FailureDialog.showFailure(this@InitialActivity, "요청에 실패했습니다.")
             }
         })
     }
 
-    private fun saveStoreInfo(storeId: String, roomNum: String) {
-        val sharedPreferences = getSharedPreferences("StoreInfo", Context.MODE_PRIVATE)
+    private fun saveStoreInfo(storeId: String, roomId: Int) {
+        val sharedPreferences = getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("storeId", storeId)
-        editor.putString("roomNum", roomNum)
+        editor.putString("roomId", roomId.toString())
         editor.apply()
 
+        Log.d("Login", "저장 성공 룸 아이디: ${roomId}")
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()

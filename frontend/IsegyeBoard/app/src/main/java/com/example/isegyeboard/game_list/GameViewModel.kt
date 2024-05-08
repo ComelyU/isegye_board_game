@@ -1,11 +1,11 @@
 package com.example.isegyeboard.game_list
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.isegyeboard.baseapi.BaseApi
+import com.example.isegyeboard.game_list.model.GameClass
 import kotlinx.coroutines.launch
 
 class GameViewModel() : ViewModel() {
@@ -15,10 +15,12 @@ class GameViewModel() : ViewModel() {
     val gameList: LiveData<List<GameClass>> = _gameList
 
     fun getCurrentGameList(storeId: String) {
+        println("게임 뷰모델 들어옴")
         viewModelScope.launch {
             try {
                 val result = gameNetwork.getGameList(storeId)
-                _gameList.value = result
+                println(result)
+                _gameList.value = result.stockList
             } catch (e: Exception) {
                 // 에러 처리
                 println(e)
