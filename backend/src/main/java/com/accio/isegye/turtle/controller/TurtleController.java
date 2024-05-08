@@ -1,18 +1,28 @@
 package com.accio.isegye.turtle.controller;
 
+import com.accio.isegye.game.service.GameService;
 import com.accio.isegye.menu.service.MenuService;
+import com.accio.isegye.turtle.dto.CreateOrderTurtleRequest;
+import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.service.TurtleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -24,41 +34,72 @@ public class TurtleController {
 
     private final TurtleService turtleService;
     private final MenuService menuService;
+    private final GameService gameService;
 
-    //터틀봇이 SEND할 수 있는 경로
-    // "/pub/
-    @PostMapping("/pub")
-    public ResponseEntity<String> publishMessage(){
-
-        return new ResponseEntity<>("Message", HttpStatus.OK);
-    }
-
-    //현재 대기 상태 중인 터틀 봇 리스트를 반환
-    @GetMapping("/list")
-    public ResponseEntity<List<Integer>> getTurtleList(){
-        return new ResponseEntity<>(turtleService.getAvailableTurtleList(), HttpStatus.OK);
-    }
-
-    /*
-     * 메뉴 주문 갱신
-     * */
     @Operation(
-        summary = "로봇 호출",
-        description = "storeId에 현재 사용 가능한 로봇을 호출"
+        summary = "로봇 등록",
+        description = "storeId 매장에 새로운 로봇을 등록한다"
     )
-    @GetMapping("order/{storeId}")
-    public ResponseEntity<Integer> findAvailableTurtle(@PathVariable long orderMenuId){
+    @PostMapping("/{storeId}")
+    public ResponseEntity<Integer> createTurtle(@PathVariable int storeId){
+        int turtleId = turtleService.createTurtle(storeId);
+        return new ResponseEntity<>(turtleId, HttpStatus.CREATED);
+    }
 
-        //1. 사용 가능한 로봇 호출
-        List<Integer> turtleList = turtleService.getAvailableTurtleList();
-        //1.1 사용 가능한 로봇이 없는 경우 별도의 메시지를 돌려보낸다.
-        if(turtleList.isEmpty()){
-            return new ResponseEntity<>(0, HttpStatus.OK);
+    @Operation(
+        summary = "로봇 상태 변경",
+        description = "turtleId 로봇의 상태를 변경한다"
+    )
+    @PatchMapping("/{turtleId}")
+    public ResponseEntity<Integer> updateTurtle(@PathVariable int turtleId,
+        @Valid @RequestBody UpdateTurtleRequest request){
+
+        turtleService.updateTurtle(turtleId, request);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(
+        summary = "로봇 폐기 처분",
+        description = "turtleId 로봇을 폐기 처분한다"
+    )
+    @DeleteMapping("/{turtleId}")
+    public ResponseEntity<Integer> deleteTurtle(@PathVariable int turtleId){
+        turtleService.deleteTurtle(turtleId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(
+        summary = "로봇 검색",
+        description = "storeId에 대기중인 로봇을 찾아낸다"
+    )
+    @GetMapping("/{storeId}/list")
+    public ResponseEntity<List<Integer>> getTurtleList(@PathVariable int storeId){
+        return new ResponseEntity<>(turtleService.getAvailableTurtleList(storeId), HttpStatus.OK);
+    }
+
+    @Operation(
+        summary = "배송을 위한 로봇 호출",
+        description = "turtleId에 해당되는 로봇을 호출한다"
+    )
+    @PostMapping("/order/{turtleId}")
+    public ResponseEntity<Integer> orderTurtle(
+        @PathVariable int turtleId, @Valid @RequestBody CreateOrderTurtleRequest request){
+
+        //주문 정보가 들어있지 않은 경우
+        if(request.getOrderMenuId() == null && request.getOrderGameId() == null){
+            return new ResponseEntity<>(-1, HttpStatus.BAD_REQUEST);
         }
-        //1.2 있는 경우 터틀봇 로그, 메뉴 로그를 작성하고 주문 테이블 갱신한다
-        int turtleLogId = turtleService.createMenuLog(turtleList.get(0), orderMenuId);
-        menuService.turtleOrderMenu(orderMenuId);
-        //1.3 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
+
+        //1. 터틀봇 로그, 메뉴 로그를 작성하고 주문 테이블 갱신한다
+        long turtleLogId = turtleService.createTurtleLog(turtleId, request.getOrderMenuId(), request.getOrderGameId(), 0);
+        if(request.getOrderMenuId() != null) {
+            menuService.updateOrderMenu(request.getOrderMenuId(), 2);
+        }
+        if(request.getOrderGameId() != null){
+            //********************************게임 주문 테이블 갱신 추가 ***********************************
+        }
+
+        //2. 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
         /*
          *
          * 로봇에게 메시지 보내는 것을 넣을 것
@@ -67,11 +108,10 @@ public class TurtleController {
          * 로봇에게서 반환 메시지를 받으면 로그 업데이트 고려
          *
          * */
+        turtleService.sendOrderToTurtle(turtleId, request.getOrderMenuId(), request.getOrderGameId(), turtleLogId);
 
         //2. 끝나면 터틀봇 id를 반환한다
-        return new ResponseEntity<>(turtleList.get(0), HttpStatus.OK);
+        return new ResponseEntity<>(turtleId, HttpStatus.OK);
     }
-
-
 
 }

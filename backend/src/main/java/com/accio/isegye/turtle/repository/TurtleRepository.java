@@ -12,4 +12,7 @@ public interface TurtleRepository extends JpaRepository<Turtle, Integer> {
 
     @Query("select t.id from Turtle t where t.isWorking=?1")
     List<Integer> findIdByIsWorking(int i);
+
+    @Query("select t.id from Turtle t where t.store.id = ?1 and t.isWorking = ?2")
+    List<Integer> findIdByStoreIdAndIsWorking(int storeId, int isWorking);
 }
