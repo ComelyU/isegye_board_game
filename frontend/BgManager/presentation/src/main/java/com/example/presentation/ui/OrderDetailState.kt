@@ -7,8 +7,8 @@ data class OrderDetailState(
     val totalPrice: Int
 ) {
     val quantityString: String
-        get() = quantity.toString()
+        get() = "$quantity 개"
 
     val totalPriceString: String
-        get() = totalPrice.toString()
+        get() = "$totalPrice 원"
 }

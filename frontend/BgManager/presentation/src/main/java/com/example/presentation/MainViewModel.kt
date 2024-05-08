@@ -3,9 +3,11 @@ package com.example.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.domain.usecase.GameUseCase
 import com.example.domain.usecase.OrderUseCase
 import com.example.domain.usecase.TurtleBotUseCase
 import com.example.presentation.base.BaseViewModel
+import com.example.presentation.ui.GameUiState
 import com.example.presentation.ui.OrderDetailState
 import com.example.presentation.ui.OrderUiState
 import com.example.presentation.ui.UiState
@@ -17,13 +19,14 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val turtleBotUseCase: TurtleBotUseCase,
     private val orderUseCase: OrderUseCase,
+    private val gameUseCase: GameUseCase,
 ) :BaseViewModel<Unit>() {
     private val _uiStateLiveData = MutableLiveData<UiState>()
     val uiStateFlow: LiveData<UiState>
         get() = _uiStateLiveData
 
     init {
-        _uiStateLiveData.value = UiState(0, 0, emptyList())
+        _uiStateLiveData.value = UiState(0, 0, emptyList(), emptyList())
     }
 
     fun pushTurtle() {
@@ -63,6 +66,24 @@ class MainViewModel @Inject constructor(
                                     totalPrice = it.totalPrice
                                 )
                             }
+                        )
+                    }
+                )
+            }
+
+            val gameResponse = gameUseCase.invoke()
+//            println("게임뷰모델 들어옴 ${gameResponse}")
+            if (gameResponse.isSuccess) {
+                val gameDataList = gameResponse.getOrThrow()
+                _uiStateLiveData.value = _uiStateLiveData.value?.copy(
+                    games = gameDataList.map { gameOrderData ->
+                        GameUiState(
+                            gameOrderId = gameOrderData.gameOrderId,
+                            customerId = gameOrderData.customerId,
+                            gameName = gameOrderData.gameName,
+                            stockLocation = gameOrderData.stockLocation,
+                            orderStatus = gameOrderData.orderStatus,
+                            orderType = gameOrderData.orderType
                         )
                     }
                 )

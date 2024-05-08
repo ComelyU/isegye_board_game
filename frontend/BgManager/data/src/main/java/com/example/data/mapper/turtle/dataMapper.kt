@@ -1,8 +1,10 @@
 package com.example.data.mapper.turtle
 
+import com.example.data.model.GameData
 import com.example.data.model.OrderData
 import com.example.data.model.OrderDetailData
 import com.example.data.model.TurtleData
+import com.example.domain.model.GameClass
 import com.example.domain.model.OrderClass
 import com.example.domain.model.OrderDetailClass
 import com.example.domain.model.TurtleBotClass
@@ -41,4 +43,22 @@ internal fun OrderDetailClass.toData() = OrderDetailData(
     menuName = menuName,
     quantity = quantity,
     totalPrice = totalPrice
+)
+
+
+internal fun GameData.toDomain() = GameClass(
+    gameOrderId = gameOrderId,
+    customerId = customerId,
+    gameName = gameName,
+    stockLocation = stockLocation,
+    orderType = orderType,
+    orderStatus = orderStatus,
+)
+internal fun GameClass.toData() = GameData(
+    gameOrderId = gameOrderId,
+    customerId = customerId,
+    gameName = gameName,
+    stockLocation = stockLocation,
+    orderType = orderType,
+    orderStatus = orderStatus,
 )

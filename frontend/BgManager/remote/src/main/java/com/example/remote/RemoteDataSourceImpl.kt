@@ -1,6 +1,7 @@
 package com.example.remote
 
 import com.example.data.RemoteDataSource
+import com.example.data.model.GameData
 import com.example.data.model.OrderData
 import com.example.data.model.OrderDetailData
 import com.example.data.model.TurtleData
@@ -44,5 +45,22 @@ internal class RemoteDataSourceImpl @Inject constructor(
             )
         }
         orders
+    }
+
+    override suspend fun getGameList(): Result<List<GameData>> = runCatching {
+        val response = apiService.getGameList("1")
+        if (!response.isSuccessful) throw Exception()
+
+        val games = response.body()!!.orderGameList.map { serverGame ->
+            GameData(
+                gameOrderId = serverGame.gameOrderId,
+                customerId = serverGame.customerId,
+                gameName = serverGame.gameName,
+                stockLocation = serverGame.stockLocation,
+                orderType = serverGame.orderType,
+                orderStatus =serverGame.orderStatus
+            )
+        }
+        games
     }
 }

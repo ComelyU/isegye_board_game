@@ -10,5 +10,10 @@ data class OrderUiState(
         get() = customerId.toString()
 
     val orderStatusString: String
-        get() = orderStatus.toString()
+        get() = when (orderStatus) {
+            0 -> "준비 중"
+            1 -> "배송 중"
+            2 -> "배송 완료"
+            else -> "배송 오류"
+        }
 }

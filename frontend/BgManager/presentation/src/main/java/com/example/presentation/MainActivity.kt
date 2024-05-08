@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.example.presentation.adapter.GameAdapter
 import com.example.presentation.adapter.OrderAdapter
 import com.example.presentation.databinding.ActivityMainBinding
 import com.example.presentation.ui.UiState
@@ -16,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private lateinit var orderAdapter: OrderAdapter
+    private lateinit var gameAdapter: GameAdapter
 
     private val binding
         get() = _binding!!
@@ -29,7 +31,9 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         orderAdapter = OrderAdapter()
+        gameAdapter = GameAdapter()
         binding.mainRV.adapter = orderAdapter
+        binding.gameRV.adapter = gameAdapter
 
         viewModel.loadData()
 
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             when (uiState) {
                 is UiState -> {
                     orderAdapter.submitList(uiState.orders)
+                    gameAdapter.submitList(uiState.games)
                 }
                 // 다른 상태 처리
             }

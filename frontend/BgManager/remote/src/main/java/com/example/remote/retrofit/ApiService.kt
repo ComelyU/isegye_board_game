@@ -1,5 +1,6 @@
 package com.example.remote.retrofit
 
+import com.example.remote.model.response.OrderGameList
 import com.example.remote.model.response.OrderResponseModel
 import com.example.remote.model.response.TurtleBotResponseModel
 import retrofit2.Response
@@ -17,4 +18,10 @@ interface ApiService {
         @Path("storeId") storeId: String
     )
     : Response<List<OrderResponseModel>>
+
+    @GET("game/order/stores/{storeId}")
+    suspend fun getGameList(
+        @Path("storeId") storeId: String
+    )
+    : Response<OrderGameList>
 }
