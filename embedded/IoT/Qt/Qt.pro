@@ -1,4 +1,4 @@
-QT       += core gui multimedia multimediawidgets
+QT       += core gui multimedia multimediawidgets webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -6,6 +6,10 @@ CONFIG += c++11
 DESTDIR = build
 OBJECTS_DIR = build
 MOC_DIR = build
+
+INCLUDEPATH += /usr/local/include
+LIBS += -L/usr/local/lib -lpaho-mqttpp3 -lpaho-mqtt3a
+
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
