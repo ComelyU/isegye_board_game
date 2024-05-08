@@ -19,6 +19,8 @@ public class OrderMenuResponse {
     @NotNull
     private int customerId;
 
+    private int customerRoomNumber;
+
     private int orderStatus;
 
     private List<OrderMenuDetailResponse> orderMenuDetail = new ArrayList<>();

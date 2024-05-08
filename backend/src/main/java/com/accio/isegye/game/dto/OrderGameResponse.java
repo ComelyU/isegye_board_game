@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public record OrderGameResponse(
     Long id,
     Integer customerId,
+    Integer customerRoomNumber,
     Integer stockId,
     String gameName,
     String stockLocation,
@@ -18,6 +19,7 @@ public record OrderGameResponse(
         this(
             orderGame.getId(),
             orderGame.getCustomer().getId(),
+            orderGame.getCustomer().getRoom().getRoomNumber(),
             orderGame.getStock().getId(),
             orderGame.getStock().getGame().getGameName(),
             orderGame.getStock().getStockLocation(),
