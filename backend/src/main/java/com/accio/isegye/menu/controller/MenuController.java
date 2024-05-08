@@ -77,12 +77,6 @@ public class MenuController {
 
         OrderMenuResponse orderMenuResponse = menuService.createOrderMenu(orderMenuRequest, customerId);
 
-        /*
-        *
-        * 카프카를 통해서 점주에게도 주문 내역을 보낸다.
-        *
-        * */
-
         return new ResponseEntity<>(orderMenuResponse, HttpStatus.OK);
     }
 
