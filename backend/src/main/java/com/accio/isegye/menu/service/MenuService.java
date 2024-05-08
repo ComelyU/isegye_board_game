@@ -24,9 +24,5 @@ public interface MenuService {
 
     List<OrderMenuResponse> getStoreOrderMenu(int storeId);
 
-    void readyOrderMenu(long orderMenuId);
-
-    void turtleOrderMenu(long orderMenuId);
-
-    void completeOrderMenu(long orderMenuId);
+    void updateOrderMenu(long orderMenuId, int orderStatus);
 }

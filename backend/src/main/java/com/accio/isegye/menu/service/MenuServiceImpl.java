@@ -186,56 +186,22 @@ public class MenuServiceImpl implements MenuService{
 
     @Override
     @Transactional
-    public void readyOrderMenu(long orderMenuId) {
-        //1. order menu 테이블 정보 가져오기
-        OrderMenu orderMenu = findOrderMenuById(orderMenuId);
-
-        //2. 새로운 메뉴 주문 상태 변경 로그 생성
-        OrderMenuStatusLog statusLog = updateStatusLog(orderMenu, 1);
-
-        //3. order menu 테이블의 order status 컬럼을 갱신
-        orderMenu.setOrderStatus(1); // 메뉴 준비중
-
-        //4. 갱신 적용
-        orderMenuRepository.save(orderMenu);
-        logRepository.save(statusLog);
-    }
-
-    @Override
-    @Transactional
-    public void turtleOrderMenu(long orderMenuId) {
-        //1. order menu 테이블의 정보를 가져온다
-        OrderMenu orderMenu = findOrderMenuById(orderMenuId);
-
-        //2. 새로운 메뉴 주문 상태 변경 로그 생성
-        OrderMenuStatusLog statusLog = updateStatusLog(orderMenu, 2);
-
-        //3. order menu 테이블의 order status 컬럼을 갱신
-        orderMenu.setOrderStatus(2);
-
-        //4. 갱신 적용
-        orderMenuRepository.save(orderMenu);
-        logRepository.save(statusLog);
-
-    }
-
-    @Override
-    @Transactional
-    public void completeOrderMenu(long orderMenuId) {
+    public void updateOrderMenu(long orderMenuId, int orderStatus) {
         //1. order menu 테이블의 delivered at 컬럼을 갱신
         OrderMenu orderMenu = findOrderMenuById(orderMenuId);
-        orderMenu.setDeliveredAt(LocalDateTime.now());
+        if(orderStatus == 3){
+            orderMenu.setDeliveredAt(LocalDateTime.now());
+        }
 
         //2. 새로운 메뉴 주문 상태 변경 로그 생성
-        OrderMenuStatusLog statusLog = updateStatusLog(orderMenu, 3);
+        OrderMenuStatusLog statusLog = updateStatusLog(orderMenu, orderStatus);
 
         //3. order menu 테이블의 order status 컬럼을 갱신
-        orderMenu.setOrderStatus(3);
+        orderMenu.setOrderStatus(orderStatus);
 
         //4. 갱신 적용
         orderMenuRepository.save(orderMenu);
         logRepository.save(statusLog);
-
     }
 
     private OrderMenuStatusLog updateStatusLog(OrderMenu orderMenu, int orderStatus){

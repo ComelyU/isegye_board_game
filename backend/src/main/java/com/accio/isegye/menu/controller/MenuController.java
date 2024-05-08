@@ -108,9 +108,9 @@ public class MenuController {
         summary = "메뉴 준비 시작",
         description = "menuId에 해당하는 주문을 메뉴 준비 시작 상태로 변경한다"
     )
-    @PatchMapping("order/{orderMenuId}")
+    @PatchMapping("order/{orderMenuId}/ready")
     public ResponseEntity<Void> readyOrderMenu(@PathVariable long orderMenuId){
-        menuService.readyOrderMenu(orderMenuId);
+        menuService.updateOrderMenu(orderMenuId, 1);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -120,7 +120,7 @@ public class MenuController {
     )
     @PatchMapping("order/{orderMenuId}/complete")
     public ResponseEntity<Void> completeOrderMenu(@PathVariable long orderMenuId){
-        menuService.completeOrderMenu(orderMenuId);
+        menuService.updateOrderMenu(orderMenuId, 3);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

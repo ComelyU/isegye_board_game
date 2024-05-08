@@ -59,4 +59,9 @@ public class OrderMenu {
     @OneToMany(mappedBy = "orderMenu", fetch = FetchType.LAZY)
     private final List<OrderMenuStatusLog> statusLogList = new ArrayList<>();
 
+    public void updateOrderStatusAndDelieveredAt(Integer orderStatus, LocalDateTime deliveredAt) {
+        this.orderStatus = orderStatus;
+        this.deliveredAt = deliveredAt;
+    }
+
 }
