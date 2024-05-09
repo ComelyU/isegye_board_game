@@ -51,7 +51,7 @@ public class TurtleController {
         description = "turtleId 로봇의 상태를 변경한다"
     )
     @PatchMapping("/{turtleId}")
-    public ResponseEntity<Integer> updateTurtle(@PathVariable int turtleId,
+    public ResponseEntity<Void> updateTurtle(@PathVariable int turtleId,
         @Valid @RequestBody UpdateTurtleRequest request){
 
         turtleService.updateTurtle(turtleId, request);
@@ -63,7 +63,7 @@ public class TurtleController {
         description = "turtleId 로봇을 폐기 처분한다"
     )
     @DeleteMapping("/{turtleId}")
-    public ResponseEntity<Integer> deleteTurtle(@PathVariable int turtleId){
+    public ResponseEntity<Void> deleteTurtle(@PathVariable int turtleId){
         turtleService.deleteTurtle(turtleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -74,7 +74,8 @@ public class TurtleController {
     )
     @GetMapping("/{storeId}/list")
     public ResponseEntity<List<Integer>> getTurtleList(@PathVariable int storeId){
-        return new ResponseEntity<>(turtleService.getAvailableTurtleList(storeId), HttpStatus.OK);
+        List<Integer> turtleList = turtleService.getAvailableTurtleList(storeId);
+        return new ResponseEntity<>(turtleList, HttpStatus.OK);
     }
 
     @Operation(
@@ -86,7 +87,7 @@ public class TurtleController {
         @PathVariable int turtleId, @Valid @RequestBody CreateOrderTurtleRequest request){
 
         //주문 정보가 들어있지 않은 경우
-        if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReturnGameId() == null){
+        if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReceiveGameId() == null){
             return new ResponseEntity<>(-1, HttpStatus.BAD_REQUEST);
         }
 
@@ -94,8 +95,9 @@ public class TurtleController {
         long turtleLogId = turtleService.createTurtleLog(turtleId,
             request.getOrderMenuId(),
             request.getOrderGameId(),
-            request.getReturnGameId(),
+            request.getReceiveGameId(),
             0);
+
         if(request.getOrderMenuId() != null) {
             menuService.updateOrderMenu(request.getOrderMenuId(), 2);
         }
