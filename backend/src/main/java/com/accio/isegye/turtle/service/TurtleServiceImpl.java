@@ -14,6 +14,7 @@ import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
 import com.accio.isegye.turtle.dto.StartOrderDto;
 import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
+import com.accio.isegye.turtle.dto.TurtleIdResponse;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.entity.Turtle;
 import com.accio.isegye.turtle.entity.TurtleLog;
@@ -23,14 +24,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.amqp.rabbit.annotation.Exchange;
-import org.springframework.amqp.rabbit.annotation.Queue;
-import org.springframework.amqp.rabbit.annotation.QueueBinding;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +43,7 @@ public class TurtleServiceImpl implements TurtleService{
     private final MqttGateway mqttGateway;
     private final MenuService menuService;
     private final GameService gameService;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -94,8 +91,11 @@ public class TurtleServiceImpl implements TurtleService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Integer> getAvailableTurtleList(int storeId) {
-        return turtleRepository.findIdByStoreIdAndIsWorking(storeId,0);
+    public List<TurtleIdResponse> getAvailableTurtleList(int storeId) {
+        return turtleRepository.findByStoreIdAndIsWorking(storeId,0)
+            .stream()
+            .map(id -> modelMapper.map(id, TurtleIdResponse.class))
+            .toList();
     }
 
     @Override

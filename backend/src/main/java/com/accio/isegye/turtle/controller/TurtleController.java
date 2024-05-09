@@ -4,6 +4,7 @@ import com.accio.isegye.game.service.GameService;
 import com.accio.isegye.menu.service.MenuService;
 import com.accio.isegye.turtle.dto.CreateOrderTurtleRequest;
 import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
+import com.accio.isegye.turtle.dto.TurtleIdResponse;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.service.TurtleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,19 +12,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -74,8 +72,8 @@ public class TurtleController {
         description = "storeId에 대기중인 로봇을 찾아낸다"
     )
     @GetMapping("/{storeId}/list")
-    public ResponseEntity<List<Integer>> getTurtleList(@PathVariable int storeId){
-        List<Integer> turtleList = turtleService.getAvailableTurtleList(storeId);
+    public ResponseEntity<?> getTurtleList(@PathVariable int storeId){
+        List<TurtleIdResponse> turtleList = turtleService.getAvailableTurtleList(storeId);
         return new ResponseEntity<>(turtleList, HttpStatus.OK);
     }
 
