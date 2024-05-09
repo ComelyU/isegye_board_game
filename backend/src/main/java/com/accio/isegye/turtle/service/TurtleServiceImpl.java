@@ -90,7 +90,7 @@ public class TurtleServiceImpl implements TurtleService{
     @Override
     @Transactional(readOnly = true)
     public List<Integer> getAvailableTurtleList(int storeId) {
-        return turtleRepository.findIdByStoreIdAndIsWorking(storeId,1);
+        return turtleRepository.findIdByStoreIdAndIsWorking(storeId,0);
     }
 
     @Override
