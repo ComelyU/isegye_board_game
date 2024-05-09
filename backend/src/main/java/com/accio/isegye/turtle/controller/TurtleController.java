@@ -3,6 +3,7 @@ package com.accio.isegye.turtle.controller;
 import com.accio.isegye.game.service.GameService;
 import com.accio.isegye.menu.service.MenuService;
 import com.accio.isegye.turtle.dto.CreateOrderTurtleRequest;
+import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.service.TurtleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -106,10 +107,22 @@ public class TurtleController {
         }
 
         //2. 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
-        turtleService.sendOrderToTurtle(turtleId, request.getOrderMenuId(), request.getOrderGameId(), turtleLogId);
+        turtleService.sendTurtleToCounter(turtleId, turtleLogId);
 
         //2. 끝나면 터틀봇 id를 반환한다
-        return new ResponseEntity<>(turtleLogId, HttpStatus.OK);
+        return new ResponseEntity<>(turtleLogId, HttpStatus.CREATED);
     }
+
+    @Operation(
+        summary = "터틀봇 배송 출발 요청",
+        description = "turtleId에 해당되는 로봇을 배송에 보낸다"
+    )
+    @PostMapping("/order/startOrder")
+    ResponseEntity<?> startOrder(@Valid @RequestBody StartTurtleOrderRequest request){
+        turtleService.startOrder(request);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
 
 }

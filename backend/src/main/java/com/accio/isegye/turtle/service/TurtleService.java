@@ -1,5 +1,6 @@
 package com.accio.isegye.turtle.service;
 
+import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import java.util.List;
 
@@ -15,9 +16,11 @@ public interface TurtleService {
 
     Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long receiveGameId, int commandType);
 
+    void sendTurtleToCounter(int turtleId, Long turtleLogId);
+
     void sendOrderToTurtle(int turtleId, Long orderMenuId, Long orderGameId, Long turtleLogId);
 
-    void startOrder(String message);
+    void startOrder(StartTurtleOrderRequest request);
 
     void receiveOrder(String message);
 }

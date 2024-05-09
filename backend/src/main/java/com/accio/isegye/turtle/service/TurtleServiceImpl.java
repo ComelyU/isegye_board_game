@@ -11,6 +11,7 @@ import com.accio.isegye.store.entity.Room;
 import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
 import com.accio.isegye.turtle.dto.StartOrderDto;
+import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.entity.Turtle;
 import com.accio.isegye.turtle.entity.TurtleLog;
@@ -120,6 +121,29 @@ public class TurtleServiceImpl implements TurtleService{
     }
 
     @Override
+    @Transactional
+    public void sendTurtleToCounter(int turtleId, Long turtleLogId) {
+        Turtle turtle = turtleRepository.findById(turtleId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "Turtle does not exist: " + turtleId));
+
+        Room room = roomRepository.findCounterByTurtleId(turtleId);
+
+        StartOrderDto dto = StartOrderDto.builder()
+            .turtleLogId(turtleLogId)
+            .coordinateX(room.getCoordinateX())
+            .coordinateY(room.getCoordinateY())
+            .build();
+
+        //StartOrderDto를 turtleId에 해당하는 로봇에게 보낸다
+        mqttGateway.sendToMqtt(dto.toString(), "ros_test/"+turtleId);
+
+        //로봇은 이제 대기상태가 아니다
+        turtle.updateIsWorking(1);
+        turtleRepository.save(turtle);
+
+    }
+
+    @Override
     public void sendOrderToTurtle(int turtleId, Long orderMenuId, Long orderGameId, Long turtleLogId) {
         //Room에서 필요한 정보를 가져온다
         Room room = null;
@@ -148,31 +172,29 @@ public class TurtleServiceImpl implements TurtleService{
     //1. 배송 출발
     @Override
     @Transactional
-    public void startOrder(String message){
-        log.info("Received startOrder message: {}", message);
-        JsonObject convertObject = new Gson().fromJson(message, JsonObject.class);
+    public void startOrder(StartTurtleOrderRequest request){
+//        JsonObject convertObject = new Gson().fromJson(message, JsonObject.class);
 
-        Long turtleLogId = convertObject.get("turtleLogId").getAsLong();
+//        Long turtleLogId = convertObject.get("turtleLogId").getAsLong();
 
-        TurtleLog turtleLog = turtleLogRepository.findById(turtleLogId)
+        TurtleLog turtleLog = turtleLogRepository.findById(request.getTurtleLogId())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
-                "TurtleLog does not exist: " + turtleLogId));
+                "TurtleLog does not exist: " + request.getTurtleId()));
 
         //기존의 turtleLog를 갱신한다
-        updateTurtleLogFromMessage(message, turtleLog);
+        updateTurtleLogFromMessage("start order", turtleLog);
 
         //새로운 turtlelog를 만들어서 해당 id를 전송한다
-        int turtleId = turtleLog.getTurtle().getId();
         Long orderMenuId = turtleLog.getOrderMenu()==null ? null : turtleLog.getOrderMenu().getId();
         Long orderGameId = turtleLog.getOrderGame()==null ? null : turtleLog.getOrderGame().getId();
 
-        Long newTurtleLogId = createTurtleLog(turtleId,
+        Long newTurtleLogId = createTurtleLog(request.getTurtleId(),
             orderMenuId,
             orderGameId,
             null
         , 1);
 
-        mqttGateway.sendToMqtt(newTurtleLogId.toString(), "ros_test/"+turtleId);
+        sendOrderToTurtle(request.getTurtleId(), orderMenuId, orderGameId, newTurtleLogId);
 
     }
 

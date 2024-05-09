@@ -34,4 +34,11 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         + "left join Room r on c.room.id = r.id"
         + " where og.id = ?1")
     Room findRoomByOrderGameId(Long orderGameId);
+
+    @Query("select r "
+        + "from Turtle t "
+        + "left join Store s on t.store.id = s.id "
+        + "left join Room r on s.id = r.store.id "
+        + "where r.roomNumber = 0")
+    Room findCounterByTurtleId(int turtleId);
 }
