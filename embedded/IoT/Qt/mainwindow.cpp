@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 	changeVideo(appDir + "/../src/default.mp4");
 
-	setWebView();
+	//setWebView();
 	mqttConnect();
 	connect(this, &MainWindow::requestVideoChange, this, &MainWindow::changeVideo);
 	connect(this, &MainWindow::requestWebView, this, &MainWindow::setWebView);
@@ -40,25 +40,25 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::setWebView() {
-  if (centralWidget() != nullptr) {
-         delete centralWidget();
-     }
-  webView = new QWebEngineView(this); // 새로운 객체 생성
-  webView->setUrl(QUrl("http://192.168.212.219:8000/index.html"));
-  setCentralWidget(webView);
+	if (centralWidget() != nullptr) {
+		delete centralWidget();
+	}
+	webView = new QWebEngineView(this); // 새로운 객체 생성
+	webView->setUrl(QUrl("http://192.168.212.219:8000/index.html"));
+	setCentralWidget(webView);
 }
 
 void MainWindow::changeVideo(const QString& videoPath) {	//영상 바꾸기
-  if (centralWidget() != nullptr) {
-         delete centralWidget();
-     }
-    videoWidget = new QVideoWidget();
-        setCentralWidget(videoWidget);
-        player->setVideoOutput(videoWidget);
-        playlist->clear();
-        playlist->addMedia(QUrl::fromLocalFile(videoPath));
-        playlist->setCurrentIndex(0);
-        playlist->setPlaybackMode(QMediaPlaylist::Loop);
+	if (centralWidget() != nullptr) {
+		delete centralWidget();
+	}
+	videoWidget = new QVideoWidget();
+	setCentralWidget(videoWidget);
+	player->setVideoOutput(videoWidget);
+	playlist->clear();
+	playlist->addMedia(QUrl::fromLocalFile(videoPath));
+	playlist->setCurrentIndex(0);
+	playlist->setPlaybackMode(QMediaPlaylist::Loop);
 
 	player->setPlaylist(playlist);
 	player->play();
@@ -74,33 +74,37 @@ void MainWindow::connectionLost(const std::string& cause)
 
 void MainWindow::messageArrived(mqtt::const_message_ptr msg)
 {
-  QString requestData = QString::fromStdString(msg->to_string());
+	QString requestData = QString::fromStdString(msg->to_string());
 
 	std::cout << "Message arrived: " << msg->to_string() << std::endl;
 	std::cout << "\ttopic: '" << msg->get_topic() << "'" << std::endl;
 	if (requestData == nowStatus) {		//이미 같은 테마
 		std::cout << "Already Playing" << std::endl;
-	      return ;
+		return;
 	}
 	else if (requestData == "webview") {
 		emit requestWebView();
 		std::cout << "Change webview!" << std::endl;
-		return ;
+		return;
 	}
 	else if (std::find(videoList.begin(), videoList.end(), requestData) != videoList.end()) {	// 요청에 따라 영상 변경
 		nowStatus = requestData;
 		emit requestVideoChange(appDir + "/../src/" + requestData + ".mp4");
-		std::cout << "Change Complete!" << std::endl;
-		return ;
+		std::cout << msg->to_string() << " Change Complete!" << std::endl;
+		return;
 	}
-	else if (requestData.toInt() >= 0 and requestData.toInt() <= 100) {
-		changeVolume(requestData.toInt());
-		std::cout << "Change Volume!" << std::endl;
-		return ;
+	else {
+		bool isNumber;
+		int requestDataInt = requestData.toInt(&isNumber);
+		if (isNumber && requestDataInt >= 0 && requestDataInt <= 100) {
+			changeVolume(requestDataInt);
+			std::cout << "Change Volume to " << requestDataInt << std::endl;
+			return;
+		}
+		else {
+			std::cerr << "Invalid request: " << requestData.toStdString() << std::endl;
+		}
 	}
-
-	else
-		std::cerr << "Invalid request: " << requestData.toStdString() << std::endl;
 
 }
 
@@ -130,7 +134,7 @@ void MainWindow::mqttConnect()
 		mqttClient.set_callback(*mqttCallback);
 		std::cout << "Set Callback" << std::endl;
 
-		//mqtt::message_ptr msg = mqtt::make_message(TOPIC, "west");
+		//mqtt::message_ptr msg = mqtt::make_message(TOPIC, "asdf");
 		//mqttClient.publish(msg)->wait();
 		//publish test
 	}
@@ -141,52 +145,3 @@ void MainWindow::mqttConnect()
 	}
 }
 
-
-
-//void MainWindow::socketThread() {
-//	QTcpSocket socket;
-//	while (true) {
-//		if (socket.state() != QAbstractSocket::ConnectedState) {
-//			socket.connectToHost("k10a706.p.ssafy.io", 1883); // 서버에 연결
-//			if (socket.waitForConnected()) {
-//				std::cout << "Connected to server." << std::endl;
-//				QString m = "pi";
-//				socket.write(m.toUtf8());
-//				socket.flush();
-//			}
-//			else {
-//				std::cerr << "Failed to connect to server. Retrying ..." << std::endl;
-//				QThread::msleep(1000);
-//				continue;
-//			}
-//		}
-
-//		if (socket.waitForReadyRead()) {
-//			QString requestData = socket.readAll();
-//			std::cout << "Received request: " << requestData.toStdString() << std::endl;
-
-//			if (requestData == nowStatus) {		//이미 같은 테마
-//				std::cout << "Already Playing" << std::endl;
-//				continue;
-//			}
-//			else if (std::find(videoList.begin(), videoList.end(), requestData) != videoList.end()) {	// 요청에 따라 영상 변경
-//				nowStatus = requestData;
-//				emit requestVideoChange(appDir + "/../src/" + requestData + ".mp4");
-//				std::cout << "Change Complete!" << std::endl;
-//			}
-//			else if(requestData.toInt()>=0 and requestData.toInt()<=100){
-//			    changeVolume(requestData.toInt());
-//			  }
-//			else if(requestData=="WebView"){
-//			    setWebView();
-//			  }
-//			else
-//				std::cerr << "Invalid request: " << requestData.toStdString() << std::endl;
-//		}
-
-//		if (socket.state() == QAbstractSocket::UnconnectedState) {
-//			std::cerr << "Connection to server lost. Retrying second..." << std::endl;
-//			QThread::msleep(1000);
-//		}
-//	}
-//}
