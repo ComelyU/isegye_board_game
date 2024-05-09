@@ -29,6 +29,16 @@ class CartManage private constructor() {
         }
     }
 
+    fun reduceItem(item: CartClass) {
+        val existingItem = items.find { it.name == item.name }
+        if (existingItem != null) {
+            existingItem.quantity--
+            if (existingItem.quantity == 0) {
+                removeItem(existingItem)
+            }
+        }
+    }
+
     fun removeItem(item: CartClass) {
         items.remove(item)
     }
