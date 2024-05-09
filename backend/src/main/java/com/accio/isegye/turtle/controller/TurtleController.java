@@ -51,7 +51,7 @@ public class TurtleController {
         description = "turtleId 로봇의 상태를 변경한다"
     )
     @PatchMapping("/{turtleId}")
-    public ResponseEntity<Integer> updateTurtle(@PathVariable int turtleId,
+    public ResponseEntity<Void> updateTurtle(@PathVariable int turtleId,
         @Valid @RequestBody UpdateTurtleRequest request){
 
         turtleService.updateTurtle(turtleId, request);
@@ -63,7 +63,7 @@ public class TurtleController {
         description = "turtleId 로봇을 폐기 처분한다"
     )
     @DeleteMapping("/{turtleId}")
-    public ResponseEntity<Integer> deleteTurtle(@PathVariable int turtleId){
+    public ResponseEntity<Void> deleteTurtle(@PathVariable int turtleId){
         turtleService.deleteTurtle(turtleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
