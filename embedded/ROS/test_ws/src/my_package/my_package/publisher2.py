@@ -7,7 +7,7 @@ class MinimalPublisher(Node):
 
     def __init__(self):
         super().__init__('minimal_publisher')
-        self.publisher_ = self.create_publisher(String, 'emoji', 10)
+        self.publisher_ = self.create_publisher(String, 'display', 10)
         self.get_logger().info('Minimal Publisher Node Initialized')
 
     def publish_string(self, user_input):

@@ -33,15 +33,13 @@ private:
 	QVector<QString>emoji_list;
 	QLabel* label;
 	rclcpp::Node::SharedPtr node;
-	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr emoji_subscription;
-	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr location_subscription;
+	rclcpp::Subscription <std_msgs::msg::String>::SharedPtr subscription;
 	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher;
 
 	void setEmoji(QString status);
 	void setButton();
 	void msgPub();
 	void msgReceived(const std_msgs::msg::String::SharedPtr msg);
-
 	void runRos();
 signals:
 	void emojiReceivedSignal(const QString &data);
