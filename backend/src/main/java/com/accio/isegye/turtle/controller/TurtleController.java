@@ -83,12 +83,12 @@ public class TurtleController {
         description = "turtleId에 해당되는 로봇을 호출한다"
     )
     @PostMapping("/order/{turtleId}")
-    public ResponseEntity<Integer> orderTurtle(
+    public ResponseEntity<Long> orderTurtle(
         @PathVariable int turtleId, @Valid @RequestBody CreateOrderTurtleRequest request){
 
         //주문 정보가 들어있지 않은 경우
         if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReceiveGameId() == null){
-            return new ResponseEntity<>(-1, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST);
         }
 
         //1. 터틀봇 로그, 메뉴 로그를 작성하고 주문 테이블 갱신한다
@@ -109,7 +109,7 @@ public class TurtleController {
         turtleService.sendOrderToTurtle(turtleId, request.getOrderMenuId(), request.getOrderGameId(), turtleLogId);
 
         //2. 끝나면 터틀봇 id를 반환한다
-        return new ResponseEntity<>(turtleId, HttpStatus.OK);
+        return new ResponseEntity<>(turtleLogId, HttpStatus.OK);
     }
 
 }
