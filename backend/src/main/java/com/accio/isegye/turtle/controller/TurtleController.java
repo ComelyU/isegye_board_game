@@ -74,7 +74,8 @@ public class TurtleController {
     )
     @GetMapping("/{storeId}/list")
     public ResponseEntity<List<Integer>> getTurtleList(@PathVariable int storeId){
-        return new ResponseEntity<>(turtleService.getAvailableTurtleList(storeId), HttpStatus.OK);
+        List<Integer> turtleList = turtleService.getAvailableTurtleList(storeId);
+        return new ResponseEntity<>(turtleList, HttpStatus.OK);
     }
 
     @Operation(
