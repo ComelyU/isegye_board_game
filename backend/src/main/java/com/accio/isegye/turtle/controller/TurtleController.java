@@ -86,12 +86,16 @@ public class TurtleController {
         @PathVariable int turtleId, @Valid @RequestBody CreateOrderTurtleRequest request){
 
         //주문 정보가 들어있지 않은 경우
-        if(request.getOrderMenuId() == null && request.getOrderGameId() == null){
+        if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReturnGameId() == null){
             return new ResponseEntity<>(-1, HttpStatus.BAD_REQUEST);
         }
 
         //1. 터틀봇 로그, 메뉴 로그를 작성하고 주문 테이블 갱신한다
-        long turtleLogId = turtleService.createTurtleLog(turtleId, request.getOrderMenuId(), request.getOrderGameId(), 0);
+        long turtleLogId = turtleService.createTurtleLog(turtleId,
+            request.getOrderMenuId(),
+            request.getOrderGameId(),
+            request.getReturnGameId(),
+            0);
         if(request.getOrderMenuId() != null) {
             menuService.updateOrderMenu(request.getOrderMenuId(), 2);
         }
@@ -100,14 +104,6 @@ public class TurtleController {
         }
 
         //2. 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
-        /*
-         *
-         * 로봇에게 메시지 보내는 것을 넣을 것
-         * coordinateX, coordinateY, turtleLogId
-         *
-         * 로봇에게서 반환 메시지를 받으면 로그 업데이트 고려
-         *
-         * */
         turtleService.sendOrderToTurtle(turtleId, request.getOrderMenuId(), request.getOrderGameId(), turtleLogId);
 
         //2. 끝나면 터틀봇 id를 반환한다

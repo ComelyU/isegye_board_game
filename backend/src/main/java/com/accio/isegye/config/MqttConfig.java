@@ -1,7 +1,9 @@
 package com.accio.isegye.config;
 
+import com.accio.isegye.turtle.service.TurtleService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,9 @@ import org.springframework.messaging.handler.annotation.Header;
 @Slf4j
 @Configuration
 public class MqttConfig {
+
+    @Autowired
+    TurtleService turtleService;
 
     @Value("${spring.rabbitmq.username}")
     private String userName;
@@ -54,37 +59,42 @@ public class MqttConfig {
 //    /**
 //     * 수신
 //     * */
-//    @Bean
-//    public MessageChannel mqttInputChannel(){
-//        return new DirectChannel();
-//    }
-//
-//    @Bean
-//    public MessageProducer inbound(){
-//        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("serverIn",
-//            mqttPahoClientFactory(), "#");
-//
-//        adapter.setCompletionTimeout(5000);
-//        adapter.setConverter(new DefaultPahoMessageConverter());
-//        adapter.setQos(2);
-//        adapter.setOutputChannel(mqttInputChannel());
-//
-//        return adapter;
-//    }
-//
-//    @Bean
-//    @ServiceActivator(inputChannel = "mqttInputChannel")
-//    public MessageHandler handler(){
-//        return new MessageHandler() {
-//            @Override
-//            public void handleMessage(Message<?> message) throws MessagingException {
-//                String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
-//                log.info("Topic : {}", topic);
-//                log.info("Payload : {}", message.getPayload());
-//
-//            }
-//        };
-//    }
+    @Bean
+    public MessageChannel mqttInputChannel(){
+        return new DirectChannel();
+    }
+
+    @Bean
+    public MessageProducer inbound(){
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("serverIn",
+            mqttPahoClientFactory(), "#");
+
+        adapter.setCompletionTimeout(5000);
+        adapter.setConverter(new DefaultPahoMessageConverter());
+        adapter.setQos(2);
+        adapter.setOutputChannel(mqttInputChannel());
+
+        return adapter;
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "mqttInputChannel")
+    public MessageHandler handler(){
+        return new MessageHandler() {
+            @Override
+            public void handleMessage(Message<?> message) throws MessagingException {
+                String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
+                log.info("Topic : {}", topic);
+                log.info("Payload : {}", message.getPayload());
+                if(topic.equals("ros_test/startOrder")){
+                    turtleService.startOrder(message.getPayload().toString());
+                }else if(topic.equals("ros_test/receiveOrder")){
+                    turtleService.receiveOrder(message.getPayload().toString());
+                }
+
+            }
+        };
+    }
 
     /**
      * 송신

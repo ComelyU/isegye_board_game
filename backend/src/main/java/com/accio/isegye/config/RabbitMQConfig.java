@@ -1,5 +1,6 @@
 package com.accio.isegye.config;
 
+import com.accio.isegye.rabbitmq.MessageService;
 import jakarta.validation.Valid;
 
 import org.springframework.amqp.core.Binding;
@@ -11,8 +12,10 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,43 +44,43 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing.key}")
     private String routingKey;
 
-    /**
-     * 지정된 큐 이름으로 Queue 빈을 생성
-     *
-     * @return Queue 빈 객체
-     */
-    @Bean
-    public Queue queue() {
-        return new Queue(queueName);
-    }
-
-    /**
-     * 지정된 익스체인지 이름으로 DirectExchange 빈을 생성
-     *
-     * @return TopicExchange 빈 객체
-     */
+//    /**
+//     * 지정된 큐 이름으로 Queue 빈을 생성
+//     *
+//     * @return Queue 빈 객체
+//     */
 //    @Bean
-//    public DirectExchange exchange() {
-//        return new DirectExchange(exchangeName);
+//    public Queue queue() {
+//        return new Queue(queueName);
 //    }
 
-    @Bean
-    public TopicExchange exchangeTopic(){
-        return new TopicExchange(exchangeName);
-    }
-
-    /**
-     * 주어진 큐와 익스체인지를 바인딩하고 라우팅 키를 사용하여 Binding 빈을 생성
-     *
-     * @param queue    바인딩할 Queue
-     * @param exchange 바인딩할 TopicExchange
-     * @return Binding 빈 객체
-     */
-    @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
-//        return new Binding(queueName, DestinationType.QUEUE, exchangeName, routingKey, null);
-    }
+//    /**
+//     * 지정된 익스체인지 이름으로 DirectExchange 빈을 생성
+//     *
+//     * @return TopicExchange 빈 객체
+//     */
+////    @Bean
+////    public DirectExchange exchange() {
+////        return new DirectExchange(exchangeName);
+////    }
+//
+//    @Bean
+//    public TopicExchange exchangeTopic(){
+//        return new TopicExchange(exchangeName);
+//    }
+//
+//    /**
+//     * 주어진 큐와 익스체인지를 바인딩하고 라우팅 키를 사용하여 Binding 빈을 생성
+//     *
+//     * @param queue    바인딩할 Queue
+//     * @param exchange 바인딩할 TopicExchange
+//     * @return Binding 빈 객체
+//     */
+//    @Bean
+//    public Binding binding(Queue queue, TopicExchange exchange) {
+//        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
+////        return new Binding(queueName, DestinationType.QUEUE, exchangeName, routingKey, null);
+//    }
 
     /**
      * RabbitMQ 연결을 위한 ConnectionFactory 빈을 생성하여 반환
@@ -107,15 +110,16 @@ public class RabbitMQConfig {
 //        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
         return rabbitTemplate;
     }
+//
+//    /**
+//     * Jackson 라이브러리를 사용하여 메시지를 JSON 형식으로 변환하는 MessageConverter 빈을 생성
+//     *
+//     * @return MessageConverter 객체
+//     */
+//    @Bean
+//    public MessageConverter jackson2JsonMessageConverter() {
+//        return new Jackson2JsonMessageConverter();
+//    }
 
-    /**
-     * Jackson 라이브러리를 사용하여 메시지를 JSON 형식으로 변환하는 MessageConverter 빈을 생성
-     *
-     * @return MessageConverter 객체
-     */
-    @Bean
-    public MessageConverter jackson2JsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
 
 }

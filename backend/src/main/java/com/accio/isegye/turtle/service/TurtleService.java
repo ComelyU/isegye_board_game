@@ -13,7 +13,11 @@ public interface TurtleService {
 
     List<Integer> getAvailableTurtleList(int storeId);
 
-    Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, int commandType);
+    Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long returnGameId, int commandType);
 
     void sendOrderToTurtle(int turtleId, Long orderMenuId, Long orderGameId, Long turtleLogId);
+
+    void startOrder(String message);
+
+    void receiveOrder(String message);
 }

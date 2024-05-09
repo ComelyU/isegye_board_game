@@ -2,6 +2,9 @@ package com.accio.isegye.rabbitmq;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +39,13 @@ public class MessageService {
      * @param message 구독한 메시지를 담고 있는 MessageDto 객체
      */
     @RabbitListener(queues = "isegye.queue")
+//    @RabbitListener(
+//        ackMode = "MANUAL",
+//        bindings = @QueueBinding(
+//            value = @Queue(value = "${rabbitmq.queue.name}", durable = "true", autoDelete = "false"),
+//            exchange = @Exchange(value = "amq.topic", type = "topic"),
+//            key = "ros_test.*"
+//        ))
     public void receiveMessage(String message) {
         log.info("Received message: {}", message);
     }
