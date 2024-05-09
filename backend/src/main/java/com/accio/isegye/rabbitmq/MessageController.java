@@ -38,8 +38,23 @@ public class MessageController {
 
     @RequestMapping(value = "/send/mqtt", method = RequestMethod.POST)
     public ResponseEntity<?> sendMqtt(@RequestBody String mqttMessage) {
+//        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
+//        mqttGateway.sendToMqtt(convertObject.get("content").toString(), "ros_test");
+        mqttGateway.sendToMqtt(mqttMessage, "ros_test");
+        return ResponseEntity.ok("Message sent to MQTT!");
+    }
+
+    @RequestMapping(value = "/send/order/start", method = RequestMethod.POST)
+    public ResponseEntity<?> sendStartOrder(@RequestBody String mqttMessage) {
         JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
-        mqttGateway.sendToMqtt(convertObject.get("content").toString(), "ros_test");
+        mqttGateway.sendToMqtt(convertObject.toString(), "ros_test/startOrder");
+        return ResponseEntity.ok("Message sent to MQTT!");
+    }
+
+    @RequestMapping(value = "/send/order/receive", method = RequestMethod.POST)
+    public ResponseEntity<?> sendReceiveOrder(@RequestBody String mqttMessage) {
+        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
+        mqttGateway.sendToMqtt(convertObject.toString(), "ros_test/receiveOrder");
         return ResponseEntity.ok("Message sent to MQTT!");
     }
 

@@ -20,7 +20,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -29,6 +31,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TurtleServiceImpl implements TurtleService{
@@ -92,7 +95,7 @@ public class TurtleServiceImpl implements TurtleService{
 
     @Override
     @Transactional
-    public Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, int commandType) {
+    public Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long returnGameId, int commandType) {
         TurtleLog turtleLog = TurtleLog.builder()
             .turtle(turtleRepository.findById(turtleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
@@ -136,21 +139,17 @@ public class TurtleServiceImpl implements TurtleService{
             .build();
 
         //StartOrderDto를 turtleId에 해당하는 로봇에게 보낸다
-        mqttGateway.sendToMqtt(dto.toString(), "ros_test."+turtleId);
+        mqttGateway.sendToMqtt(dto.toString(), "ros_test/"+turtleId);
 
         //끝
     }
 
     //로그 갱신
     //1. 배송 출발
-//    @RabbitListener(bindings = @QueueBinding(
-//        value = @Queue(value = "${rabbitmq.queue.name}", durable = "true"),
-//        exchange = @Exchange(value = "exchangeTopic1", type = "topic"),
-//        key = "ros_test.startOrder"
-//    ))
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    @Override
     @Transactional
-    private void startOrder(String message){
+    public void startOrder(String message){
+        log.info("Received startOrder message: {}", message);
         JsonObject convertObject = new Gson().fromJson(message, JsonObject.class);
 
         Long turtleLogId = convertObject.get("turtleLogId").getAsLong();
@@ -164,16 +163,20 @@ public class TurtleServiceImpl implements TurtleService{
 
         //새로운 turtlelog를 만들어서 해당 id를 전송한다
         int turtleId = turtleLog.getTurtle().getId();
+        Long orderMenuId = turtleLog.getOrderMenu()==null ? null : turtleLog.getOrderMenu().getId();
+        Long orderGameId = turtleLog.getOrderGame()==null ? null : turtleLog.getOrderGame().getId();
 
         Long newTurtleLogId = createTurtleLog(turtleId,
-            turtleLog.getOrderMenu().getId(),
-            turtleLog.getOrderGame().getId()
+            orderMenuId,
+            orderGameId,
+            null
         , 1);
 
-        mqttGateway.sendToMqtt(newTurtleLogId.toString(), "ros_test."+turtleId);
+        mqttGateway.sendToMqtt(newTurtleLogId.toString(), "ros_test/"+turtleId);
 
     }
 
+    @Transactional
     public void updateTurtleLogFromMessage(String message, TurtleLog turtleLog){
         //해당 터틀로그의 명령 완료 시간을 갱신
         turtleLog.setCommandEndTime(LocalDateTime.now());
@@ -187,18 +190,13 @@ public class TurtleServiceImpl implements TurtleService{
 
     //로그 갱신
     //2. 수령 완료
-//    @RabbitListener(bindings = @QueueBinding(
-//        value = @Queue(value = "${rabbitmq.queue.name}", durable = "true"),
-//        exchange = @Exchange(value = "exchangeTopic2", type = "topic"),
-//        key = "ros_test.receive"
-//    ))
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    @Override
     @Transactional
-    private void receivedOrder(String message){
+    public void receiveOrder(String message){
+        log.info("Received receiveOrder message: {}", message);
         JsonObject convertObject = new Gson().fromJson(message, JsonObject.class);
 
-        Long turtleLogId = convertObject.get("turtleLogId").getAsLong();
-
+        long turtleLogId = convertObject.get("turtleLogId").getAsLong();
         TurtleLog turtleLog = turtleLogRepository.findById(turtleLogId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
                 "TurtleLog does not exist: " + turtleLogId));
@@ -211,6 +209,7 @@ public class TurtleServiceImpl implements TurtleService{
 
     }
 
+    @Transactional
     private void updateOrder(TurtleLog turtleLog){
         OrderMenu orderMenu = turtleLog.getOrderMenu();
         OrderGame orderGame = turtleLog.getOrderGame();
