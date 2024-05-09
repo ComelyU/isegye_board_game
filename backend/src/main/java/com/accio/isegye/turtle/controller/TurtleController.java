@@ -87,7 +87,7 @@ public class TurtleController {
         @PathVariable int turtleId, @Valid @RequestBody CreateOrderTurtleRequest request){
 
         //주문 정보가 들어있지 않은 경우
-        if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReturnGameId() == null){
+        if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReceiveGameId() == null){
             return new ResponseEntity<>(-1, HttpStatus.BAD_REQUEST);
         }
 
@@ -95,8 +95,9 @@ public class TurtleController {
         long turtleLogId = turtleService.createTurtleLog(turtleId,
             request.getOrderMenuId(),
             request.getOrderGameId(),
-            request.getReturnGameId(),
+            request.getReceiveGameId(),
             0);
+
         if(request.getOrderMenuId() != null) {
             menuService.updateOrderMenu(request.getOrderMenuId(), 2);
         }

@@ -95,7 +95,7 @@ public class TurtleServiceImpl implements TurtleService{
 
     @Override
     @Transactional
-    public Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long returnGameId, int commandType) {
+    public Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long receiveGameId, int commandType) {
         TurtleLog turtleLog = TurtleLog.builder()
             .turtle(turtleRepository.findById(turtleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
