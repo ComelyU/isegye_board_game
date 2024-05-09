@@ -5,8 +5,10 @@ import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
 import com.accio.isegye.game.entity.OrderGame;
 import com.accio.isegye.game.repository.OrderGameRepository;
+import com.accio.isegye.game.service.GameService;
 import com.accio.isegye.menu.entity.OrderMenu;
 import com.accio.isegye.menu.repository.OrderMenuRepository;
+import com.accio.isegye.menu.service.MenuService;
 import com.accio.isegye.store.entity.Room;
 import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
@@ -43,6 +45,8 @@ public class TurtleServiceImpl implements TurtleService{
     private final StoreRepository storeRepository;
     private final RoomRepository roomRepository;
     private final MqttGateway mqttGateway;
+    private final MenuService menuService;
+    private final GameService gameService;
 
 
     @Override
@@ -147,12 +151,12 @@ public class TurtleServiceImpl implements TurtleService{
     public void sendOrderToTurtle(int turtleId, Long orderMenuId, Long orderGameId, Long turtleLogId) {
         //Room에서 필요한 정보를 가져온다
         Room room = null;
-        if(orderMenuId != null){
+        if(orderMenuRepository.existsById(orderMenuId)){
             room = roomRepository.findRoomByOrderMenuId(orderMenuId);
-        }else if(orderGameId != null){
+        }else if(orderGameRepository.existsById(orderGameId)){
             room = roomRepository.findRoomByOrderGameId(orderGameId);
         }else{
-            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "주문하지 않았습니다");
+            throw new RuntimeException(new CustomException(ErrorCode.NOT_FOUND_ERROR, "Room does not exist"));
         }
 
         //StartOrderDto를 조립한다
@@ -173,16 +177,24 @@ public class TurtleServiceImpl implements TurtleService{
     @Override
     @Transactional
     public void startOrder(StartTurtleOrderRequest request){
-//        JsonObject convertObject = new Gson().fromJson(message, JsonObject.class);
-
-//        Long turtleLogId = convertObject.get("turtleLogId").getAsLong();
-
         TurtleLog turtleLog = turtleLogRepository.findById(request.getTurtleLogId())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
                 "TurtleLog does not exist: " + request.getTurtleId()));
 
+        if(turtleLog.getTurtle().getId() != request.getTurtleId()){
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "해당 주문은 해당 로봇의 작업이 아닙니다");
+        }
+
         //기존의 turtleLog를 갱신한다
-        updateTurtleLogFromMessage("start order", turtleLog);
+        updateTurtleLogFromMessage(request.toString(), turtleLog);
+
+        //배송중으로 변경
+        if(turtleLog.getOrderGame() != null){
+            //********************************게임 주문 테이블 갱신 추가 ***********************************
+        }
+        if(turtleLog.getOrderMenu() != null){
+            menuService.updateOrderMenu(turtleLog.getOrderMenu().getId(), 2);
+        }
 
         //새로운 turtlelog를 만들어서 해당 id를 전송한다
         Long orderMenuId = turtleLog.getOrderMenu()==null ? null : turtleLog.getOrderMenu().getId();
