@@ -3,6 +3,7 @@ import MainPage from '@/components/MainPage.vue'
 import PartnerShip from '@/components/PartnerShip.vue'
 import BranchInfo from '@/components/BranchInfo.vue'
 import BrandIntroduce from '@/components/BrandIntroduce.vue'
+import SeatsInfo from '@/components/SeatsInfo.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +27,12 @@ const router = createRouter({
         path: '/branchinfo',
         name: 'BranchInfo',
         component: BranchInfo
+    },
+    {
+      path: '/branchinfo/:storename/:storeid',
+      name: 'SeatsInfo',
+      component: SeatsInfo,
+      props: true
     },
   ]
 })

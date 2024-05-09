@@ -38,7 +38,7 @@
     <footer class="footer">
       <p>@ISEGYE ssafy A706 </p>
       <p>본사: 서울시 강남구 테헤란로 212, 멀티캠퍼스 1501호</p>
-      <p>대표: 삼성 이씨 이상협</p>
+      <p>대표: 大 상 협</p>
     </footer>
   </div>  
 </template>
