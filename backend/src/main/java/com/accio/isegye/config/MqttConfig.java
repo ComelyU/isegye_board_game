@@ -86,9 +86,7 @@ public class MqttConfig {
                 String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
                 log.info("Topic : {}", topic);
                 log.info("Payload : {}", message.getPayload());
-                if(topic.equals("ros_test/startOrder")){
-                    turtleService.startOrder(message.getPayload().toString());
-                }else if(topic.equals("ros_test/receiveOrder")){
+                if(topic.equals("ros_test/receiveOrder")){
                     turtleService.receiveOrder(message.getPayload().toString());
                 }
 

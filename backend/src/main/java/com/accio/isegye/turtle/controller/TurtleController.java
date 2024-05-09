@@ -3,6 +3,7 @@ package com.accio.isegye.turtle.controller;
 import com.accio.isegye.game.service.GameService;
 import com.accio.isegye.menu.service.MenuService;
 import com.accio.isegye.turtle.dto.CreateOrderTurtleRequest;
+import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.service.TurtleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,36 +81,41 @@ public class TurtleController {
 
     @Operation(
         summary = "배송을 위한 로봇 호출",
-        description = "turtleId에 해당되는 로봇을 호출한다"
+        description = "turtleId에 해당되는 로봇을 카운터로 호출한다"
     )
     @PostMapping("/order/{turtleId}")
-    public ResponseEntity<Integer> orderTurtle(
+    public ResponseEntity<?> orderTurtle(
         @PathVariable int turtleId, @Valid @RequestBody CreateOrderTurtleRequest request){
 
         //주문 정보가 들어있지 않은 경우
         if(request.getOrderMenuId() == null && request.getOrderGameId() == null && request.getReceiveGameId() == null){
-            return new ResponseEntity<>(-1, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("주문이 들어있지 않습니다", HttpStatus.BAD_REQUEST);
         }
 
-        //1. 터틀봇 로그, 메뉴 로그를 작성하고 주문 테이블 갱신한다
+        //1. 터틀봇 로그를 작성
         long turtleLogId = turtleService.createTurtleLog(turtleId,
             request.getOrderMenuId(),
             request.getOrderGameId(),
             request.getReceiveGameId(),
-            0);
-
-        if(request.getOrderMenuId() != null) {
-            menuService.updateOrderMenu(request.getOrderMenuId(), 2);
-        }
-        if(request.getOrderGameId() != null){
-            //********************************게임 주문 테이블 갱신 추가 ***********************************
-        }
+            0);//카운터로
 
         //2. 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
-        turtleService.sendOrderToTurtle(turtleId, request.getOrderMenuId(), request.getOrderGameId(), turtleLogId);
+        turtleService.sendTurtleToCounter(turtleId, turtleLogId);
 
-        //2. 끝나면 터틀봇 id를 반환한다
-        return new ResponseEntity<>(turtleId, HttpStatus.OK);
+        //3. 끝나면 터틀봇로그 id를 반환한다
+        return new ResponseEntity<>(turtleLogId, HttpStatus.CREATED);
     }
+
+    @Operation(
+        summary = "터틀봇 배송 출발 요청",
+        description = "turtleId에 해당되는 로봇을 배송에 보낸다"
+    )
+    @PostMapping("/order/startOrder")
+    ResponseEntity<?> startOrder(@Valid @RequestBody StartTurtleOrderRequest request){
+        turtleService.startOrder(request);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
 
 }

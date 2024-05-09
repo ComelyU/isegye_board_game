@@ -39,13 +39,6 @@ public class MessageService {
      * @param message 구독한 메시지를 담고 있는 MessageDto 객체
      */
     @RabbitListener(queues = "isegye.queue")
-//    @RabbitListener(
-//        ackMode = "MANUAL",
-//        bindings = @QueueBinding(
-//            value = @Queue(value = "${rabbitmq.queue.name}", durable = "true", autoDelete = "false"),
-//            exchange = @Exchange(value = "amq.topic", type = "topic"),
-//            key = "ros_test.*"
-//        ))
     public void receiveMessage(String message) {
         log.info("Received message: {}", message);
     }

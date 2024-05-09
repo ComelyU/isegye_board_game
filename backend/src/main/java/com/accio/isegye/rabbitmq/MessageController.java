@@ -23,31 +23,11 @@ public class MessageController {
     @Autowired
     private MqttGateway mqttGateway;
 
-//
-//    /**
-//     * Queue로 메시지를 발행
-//     *
-//     * @param messageDto 발행할 메시지의 DTO 객체
-//     * @return ResponseEntity 객체로 응답을 반환
-//     */
-//    @RequestMapping(value = "/send/message", method = RequestMethod.POST)
-//    public ResponseEntity<?> sendMessage(@RequestBody MessageDto messageDto) {
-//        messageService.sendMessage(messageDto);
-//        return ResponseEntity.ok("Message sent to RabbitMQ!");
-//    }
-
     @RequestMapping(value = "/send/mqtt", method = RequestMethod.POST)
     public ResponseEntity<?> sendMqtt(@RequestBody String mqttMessage) {
 //        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
 //        mqttGateway.sendToMqtt(convertObject.get("content").toString(), "ros_test");
         mqttGateway.sendToMqtt(mqttMessage, "ros_test");
-        return ResponseEntity.ok("Message sent to MQTT!");
-    }
-
-    @RequestMapping(value = "/send/order/start", method = RequestMethod.POST)
-    public ResponseEntity<?> sendStartOrder(@RequestBody String mqttMessage) {
-        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
-        mqttGateway.sendToMqtt(convertObject.toString(), "ros_test/startOrder");
         return ResponseEntity.ok("Message sent to MQTT!");
     }
 
