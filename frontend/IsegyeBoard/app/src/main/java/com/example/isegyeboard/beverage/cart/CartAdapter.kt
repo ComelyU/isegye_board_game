@@ -72,41 +72,18 @@ class CartAdapter : ListAdapter<CartClass, CartAdapter.CartViewHolder>(DiffCallb
     }
 
     fun increaseQuantity(cartItem: CartClass) {
-        cartItem.quantity++
-        updateTotalPrice()
-        notifyDataSetChanged()
+        val cart = CartManage.getInstance()
+
+        cart.addItem(cartItem) // 장바구니에 음료 추가
+        updateCartItems(cart.getItems())
         cartUpdateListener.onCartUpdated()
     }
 
     fun decreaseQuantity(cartItem: CartClass) {
-        if (cartItem.quantity > 0) {
-            cartItem.quantity--
-            if (cartItem.quantity == 0) {
-                removeItem(cartItem)
-                notifyDataSetChanged()
-                cartUpdateListener.onCartUpdated()
-            } else {
-                updateTotalPrice()
-                notifyDataSetChanged()
-                cartUpdateListener.onCartUpdated()
-            }
-        }
-    }
+        val cart = CartManage.getInstance()
 
-    fun removeItem(cartItem: CartClass) {
-        val position = currentList.indexOf(cartItem)
-        if (position != RecyclerView.NO_POSITION) {
-            val newList = currentList.toMutableList()
-            newList.removeAt(position)
-            submitList(newList)
-            updateTotalPrice()
-            notifyDataSetChanged()
-        }
-    }
-
-    private fun updateTotalPrice() {
-        // 총합 가격 계산
-        val totalPrice = calculateTotalPrice()
-        // 여기에서 총합 가격을 업데이트할 수 있는 뷰에 적용하세요.
+        cart.reduceItem(cartItem)
+        updateCartItems(cart.getItems())
+        cartUpdateListener.onCartUpdated()
     }
 }
