@@ -1,6 +1,7 @@
 package com.accio.isegye.turtle.service;
 
 import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
+import com.accio.isegye.turtle.dto.TurtleIdResponse;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface TurtleService {
 
     void deleteTurtle(int turtleId);
 
-    List<Integer> getAvailableTurtleList(int storeId);
+    List<TurtleIdResponse> getAvailableTurtleList(int storeId);
 
     Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long receiveGameId, int commandType);
 
