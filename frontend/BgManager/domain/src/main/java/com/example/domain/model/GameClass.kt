@@ -7,4 +7,5 @@ data class GameClass(
     val stockLocation: String,
     val orderType: Int,
     val orderStatus: Int,
+    val roomNumber: Int,
 )

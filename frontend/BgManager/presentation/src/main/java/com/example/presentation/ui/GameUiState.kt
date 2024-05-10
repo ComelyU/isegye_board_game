@@ -3,6 +3,7 @@ package com.example.presentation.ui
 data class GameUiState (
     val gameOrderId: Int,
     val customerId: Int,
+    val roomNumber: Int,
     val gameName: String,
     val stockLocation: String,
     val orderType: Int,
@@ -28,4 +29,7 @@ data class GameUiState (
             1 -> "반납 요청"
             else -> "주문 오류"
         }
+
+    val roomNumberString: String
+        get() = "$roomNumber 번 룸"
 }

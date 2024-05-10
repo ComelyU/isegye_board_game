@@ -1,13 +1,13 @@
 package com.example.domain.usecase
 
-import com.example.domain.model.TurtleBotClass
+import com.example.domain.model.TurtleClass
 import com.example.domain.repository.Repository
 import javax.inject.Inject
 
-class TurtleBotUseCase @Inject constructor(
+class TurtleUseCase @Inject constructor(
     private val repository: Repository,
 ) {
 
-    suspend operator fun invoke(): Result<TurtleBotClass> =
+    suspend operator fun invoke(): Result<List<TurtleClass>> =
         repository.turtleRepo()
 }
