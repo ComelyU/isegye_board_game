@@ -47,6 +47,9 @@ export default {
       try {
         const response = await axios.get(process.env.VUE_APP_API_URL + `stores/${this.storeid}/room-lists`);
         this.storelist = response.data; // 서버에서 받은 데이터로 storelist 업데이트
+        console.log(process.env.VUE_APP_API_URL + `stores/${this.storeid}/room-lists`)
+        console.log(this.storeid)
+        console.log(this.storelist)
       } catch (error) {
         console.error("Room lists fetching error: ", error);
         // 에러 핸들링 코드 작성
