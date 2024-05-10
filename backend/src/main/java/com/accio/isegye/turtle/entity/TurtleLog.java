@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -61,4 +62,19 @@ public class TurtleLog {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_game_id")
     private OrderGame orderGame;
+
+    @Override
+    public String toString() {
+        return "TurtleLog{" +
+            "id=" + id +
+            ", turtle=" + turtle +
+            ", commandType=" + commandType +
+            ", commandStartTime=" + commandStartTime +
+            ", commandEndTime=" + commandEndTime +
+            ", isSuccess=" + isSuccess +
+            ", logMessage='" + logMessage + '\'' +
+            ", orderMenu=" + orderMenu +
+            ", orderGame=" + orderGame +
+            '}';
+    }
 }

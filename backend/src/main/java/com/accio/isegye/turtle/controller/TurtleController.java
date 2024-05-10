@@ -3,8 +3,9 @@ package com.accio.isegye.turtle.controller;
 import com.accio.isegye.game.service.GameService;
 import com.accio.isegye.menu.service.MenuService;
 import com.accio.isegye.turtle.dto.CreateOrderTurtleRequest;
-import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
+import com.accio.isegye.turtle.dto.TurtleOrderRequest;
 import com.accio.isegye.turtle.dto.TurtleIdResponse;
+import com.accio.isegye.turtle.dto.TurtleOrderResponse;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.service.TurtleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -91,29 +92,23 @@ public class TurtleController {
         }
 
         //1. 터틀봇 로그를 작성
-        long turtleLogId = turtleService.createTurtleLog(turtleId,
+        //1.1 주문용 터틀봇 로그 ID
+        Long turtleOrderLogId = turtleService.createTurtleLog(turtleId,
             request.getOrderMenuId(),
             request.getOrderGameId(),
+            0);//카운터로
+
+        //1.2 회수용 터틀봇 로그 ID
+        Long turtleReceiveLogId = turtleService.createTurtleLog(turtleId,
+            null,
             request.getReceiveGameId(),
             0);//카운터로
 
         //2. 로봇에게 카운터의 주소 및 행동로그 id를 보낸다
-        turtleService.sendTurtleToCounter(turtleId, turtleLogId);
+        TurtleOrderResponse response = turtleService.sendTurtleToCounter(turtleId, turtleOrderLogId, turtleReceiveLogId);
 
         //3. 끝나면 터틀봇로그 id를 반환한다
-        return new ResponseEntity<>(turtleLogId, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
-    @Operation(
-        summary = "터틀봇 배송 출발 요청",
-        description = "turtleId에 해당되는 로봇을 배송에 보낸다"
-    )
-    @PostMapping("/order/startOrder")
-    ResponseEntity<?> startOrder(@Valid @RequestBody StartTurtleOrderRequest request){
-        turtleService.startOrder(request);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-
 
 }

@@ -41,4 +41,6 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
         + "left join Room r on s.id = r.store.id "
         + "where r.roomNumber = 0 and t.id = ?1")
     Room findCounterByTurtleId(int turtleId);
+
+    Room findByRoomNumber(int roomNumber);
 }

@@ -1,6 +1,7 @@
 package com.accio.isegye.rabbitmq;
 
 import com.accio.isegye.config.MqttConfig.MqttGateway;
+import com.accio.isegye.turtle.dto.TurtleOrderRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,10 @@ public class MessageController {
         return ResponseEntity.ok("Message sent to MQTT!");
     }
 
-    @RequestMapping(value = "/send/order/receive", method = RequestMethod.POST)
-    public ResponseEntity<?> sendReceiveOrder(@RequestBody String mqttMessage) {
-        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
-        mqttGateway.sendToMqtt(convertObject.toString(), "ros_test/receiveOrder");
+    @RequestMapping(value = "/send/order", method = RequestMethod.POST)
+    public ResponseEntity<?> sendReceiveOrder(@RequestBody TurtleOrderRequest request) {
+//        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
+        mqttGateway.sendToMqtt(request.toString(), "server/"+request.getTurtleId());
         return ResponseEntity.ok("Message sent to MQTT!");
     }
 

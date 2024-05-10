@@ -427,6 +427,52 @@ public class GameServiceImpl implements GameService{
         return null;
     }
 
+    @Override
+    @Transactional
+    public void updateOrderGameStatus(Long orderGameId, int orderStatus) {
+        OrderGame orderGame = orderGameRepository.findById(orderGameId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "해당하는 게임 주문을 찾을 수 없습니다"));
+
+        // 현재 주문 상태와 변경하려는 주문 상태가 같은 경우
+        if(orderGame.getOrderStatus() == orderStatus) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "현재 주문 상태와 변경 주문 상태가 같습니다");
+        }
+
+        // 배달 완료 처리된 주문에 대해서 상태를 변경하려는 경우
+        if(orderGame.getOrderStatus() == 2) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "배달 완료된 주문입니다");
+        }
+
+        // 취소 처리된 주문에 대해서 상태를 변경하려는 경우
+        if(orderGame.getOrderStatus() == 3) {
+            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "이미 취소된 주문입니다");
+        }
+
+        orderGameStatusLogRepository.save(
+            OrderGameStatusLog.builder()
+                .orderGame(orderGame)
+                .beforeStatus(orderGame.getOrderStatus())
+                .afterStatus(orderStatus)
+                .build()
+        );
+
+        if(orderStatus == 2) { // 배달 완료로 상태를 변경하려는 경우
+            orderGame.updateOrderStatusAndDelieveredAt(orderStatus, LocalDateTime.now());
+
+            if(orderGame.getOrderType() == 1) { // 회수 요청인 경우 재고 보유 여부 true
+                orderGame.getStock().updateIsAvailableAndStockLocation(1, orderGame.getStock().getStockLocation());
+            }
+        } else { // 다른 상태로 변경하는 경우
+            orderGame.updateOrderStatusAndDelieveredAt(orderStatus, null);
+
+            if(orderGame.getOrderType() == 0 && orderStatus == 3) { // 주문 요청이면서 변경하려는 상태가 주문 취소 상태인 경우 재고 보유 여부 true
+                orderGame.getStock().updateIsAvailableAndStockLocation(1, orderGame.getStock().getStockLocation());
+            }
+        }
+
+        return;
+    }
+
 
     // 게임 주문 삭제
     @Override
