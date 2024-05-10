@@ -12,4 +12,9 @@ public class CreateStoreRequest {
     @NotBlank
     private String storeName;
     private int hourFee;
+    private String latitude;
+    private String longitude;
+    private String address;
+    private String hours;
+    private String phone;
 }

@@ -38,6 +38,11 @@ public class Store extends BaseTimeEntity {
 
     private String storeName;
     private int hourFee;
+    private String latitude;
+    private String longitude;
+    private String address;
+    private String hours;
+    private String phone;
 
     //터틀봇 정보
     @OneToMany(mappedBy = "store", orphanRemoval = true, fetch = FetchType.LAZY)

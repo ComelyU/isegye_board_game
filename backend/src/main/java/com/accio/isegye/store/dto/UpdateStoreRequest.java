@@ -13,4 +13,9 @@ public class UpdateStoreRequest {
     private String storeName;
 
     private Integer hourFee;
+    private String latitude;
+    private String longitude;
+    private String address;
+    private String hours;
+    private String phone;
 }

@@ -56,6 +56,11 @@ public class StoreServiceImpl implements StoreService{
         Store store = Store.builder()
             .storeName(storeRequest.getStoreName())
             .hourFee(storeRequest.getHourFee())
+            .latitude(storeRequest.getLatitude())
+            .longitude(storeRequest.getLongitude())
+            .address(storeRequest.getAddress())
+            .hours(storeRequest.getHours())
+            .phone(storeRequest.getPhone())
             .build();
 
         Store save = storeRepository.save(store);
