@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class CreateOrderTurtleRequest {
     private Long orderMenuId;
     private Long orderGameId;
-    private Long receiveGameId; // 반환 요청 id
+    private Long receiveGameId; // 반환하고 싶은 orderGameId
 }

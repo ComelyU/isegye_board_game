@@ -71,7 +71,7 @@ public class MqttConfig {
 
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setQos(2);
+        adapter.setQos(0);
         adapter.setOutputChannel(mqttInputChannel());
 
         return adapter;
@@ -86,8 +86,8 @@ public class MqttConfig {
                 String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
                 log.info("Topic : {}", topic);
                 log.info("Payload : {}", message.getPayload());
-                if(topic.equals("ros_test/receiveOrder")){
-                    turtleService.receiveOrder(message.getPayload().toString());
+                if(topic.startsWith("server")){
+                    turtleService.updateTurtleOrder(message.getPayload().toString());
                 }
 
             }

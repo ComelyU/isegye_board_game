@@ -1,6 +1,8 @@
 package com.accio.isegye.turtle.service;
 
 import com.accio.isegye.config.MqttConfig.MqttGateway;
+import com.accio.isegye.customer.entity.Customer;
+import com.accio.isegye.customer.repository.CustomerRepository;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
 import com.accio.isegye.game.entity.OrderGame;
@@ -13,8 +15,9 @@ import com.accio.isegye.store.entity.Room;
 import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
 import com.accio.isegye.turtle.dto.StartOrderDto;
-import com.accio.isegye.turtle.dto.StartTurtleOrderRequest;
+import com.accio.isegye.turtle.dto.TurtleOrderRequest;
 import com.accio.isegye.turtle.dto.TurtleIdResponse;
+import com.accio.isegye.turtle.dto.TurtleOrderResponse;
 import com.accio.isegye.turtle.dto.UpdateTurtleRequest;
 import com.accio.isegye.turtle.entity.Turtle;
 import com.accio.isegye.turtle.entity.TurtleLog;
@@ -40,6 +43,7 @@ public class TurtleServiceImpl implements TurtleService{
     private final OrderGameRepository orderGameRepository;
     private final StoreRepository storeRepository;
     private final RoomRepository roomRepository;
+    private final CustomerRepository customerRepository;
     private final MqttGateway mqttGateway;
     private final MenuService menuService;
     private final GameService gameService;
@@ -100,7 +104,12 @@ public class TurtleServiceImpl implements TurtleService{
 
     @Override
     @Transactional
-    public Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, Long receiveGameId, int commandType) {
+    public Long createTurtleLog(int turtleId, Long orderMenuId, Long orderGameId, int commandType) {
+
+        if(orderMenuId == null && orderGameId == null){
+            return -1L; // 로그를 만들지 않았다.
+        }
+
         TurtleLog turtleLog = TurtleLog.builder()
             .turtle(turtleRepository.findById(turtleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
@@ -126,88 +135,49 @@ public class TurtleServiceImpl implements TurtleService{
 
     @Override
     @Transactional
-    public void sendTurtleToCounter(int turtleId, Long turtleLogId) {
+    public TurtleOrderResponse sendTurtleToCounter(int turtleId, Long turtleOrderLogId, Long turtleReceiveLogId) {
         Turtle turtle = turtleRepository.findById(turtleId)
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "Turtle does not exist: " + turtleId));
 
         Room room = roomRepository.findCounterByTurtleId(turtleId);
 
         StartOrderDto dto = StartOrderDto.builder()
-            .turtleLogId(turtleLogId)
+            .turtleOrderLogId(turtleOrderLogId)
+            .turtleReceiveLogId(turtleReceiveLogId)
             .coordinateX(room.getCoordinateX())
             .coordinateY(room.getCoordinateY())
             .build();
 
         //StartOrderDto를 turtleId에 해당하는 로봇에게 보낸다
-        mqttGateway.sendToMqtt(dto.toString(), "ros_test/"+turtleId);
+        mqttGateway.sendToMqtt(dto.toString(), "turtlebot/"+turtleId);
 
         //로봇은 이제 대기상태가 아니다
         turtle.updateIsWorking(1);
         turtleRepository.save(turtle);
 
+        return TurtleOrderResponse.builder()
+            .turtleId(turtleId)
+            .turtleOrderLogId(turtleOrderLogId)
+            .turtleReceiveLogId(turtleReceiveLogId)
+            .build();
+
     }
 
     @Override
-    public void sendOrderToTurtle(int turtleId, Long orderMenuId, Long orderGameId, Long turtleLogId) {
-        //Room에서 필요한 정보를 가져온다
-        Room room = null;
-        if(orderMenuRepository.existsById(orderMenuId)){
-            room = roomRepository.findRoomByOrderMenuId(orderMenuId);
-        }else if(orderGameRepository.existsById(orderGameId)){
-            room = roomRepository.findRoomByOrderGameId(orderGameId);
-        }else{
-            throw new RuntimeException(new CustomException(ErrorCode.NOT_FOUND_ERROR, "Room does not exist"));
-        }
+    public void sendOrderToTurtle(int turtleId, Room room, Long turtleOrderLogId, Long turtleReceiveOrderId) {
 
         //StartOrderDto를 조립한다
         StartOrderDto dto = StartOrderDto.builder()
-            .turtleLogId(turtleLogId)
+            .turtleOrderLogId(turtleOrderLogId)
+            .turtleReceiveLogId(turtleReceiveOrderId)
             .coordinateX(room.getCoordinateX())
             .coordinateY(room.getCoordinateY())
             .build();
 
         //StartOrderDto를 turtleId에 해당하는 로봇에게 보낸다
-        mqttGateway.sendToMqtt(dto.toString(), "ros_test/"+turtleId);
+        mqttGateway.sendToMqtt(dto.toString(), "turtlebot/"+turtleId);
 
         //끝
-    }
-
-    //로그 갱신
-    //1. 배송 출발
-    @Override
-    @Transactional
-    public void startOrder(StartTurtleOrderRequest request){
-        TurtleLog turtleLog = turtleLogRepository.findById(request.getTurtleLogId())
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
-                "TurtleLog does not exist: " + request.getTurtleId()));
-
-        if(turtleLog.getTurtle().getId() != request.getTurtleId()){
-            throw new CustomException(ErrorCode.BAD_REQUEST_ERROR, "해당 주문은 해당 로봇의 작업이 아닙니다");
-        }
-
-        //기존의 turtleLog를 갱신한다
-        updateTurtleLogFromMessage(request.toString(), turtleLog);
-
-        //배송중으로 변경
-        if(turtleLog.getOrderGame() != null){
-            //********************************게임 주문 테이블 갱신 추가 ***********************************
-        }
-        if(turtleLog.getOrderMenu() != null){
-            menuService.updateOrderMenu(turtleLog.getOrderMenu().getId(), 2);
-        }
-
-        //새로운 turtlelog를 만들어서 해당 id를 전송한다
-        Long orderMenuId = turtleLog.getOrderMenu()==null ? null : turtleLog.getOrderMenu().getId();
-        Long orderGameId = turtleLog.getOrderGame()==null ? null : turtleLog.getOrderGame().getId();
-
-        Long newTurtleLogId = createTurtleLog(request.getTurtleId(),
-            orderMenuId,
-            orderGameId,
-            null
-        , 1);
-
-        sendOrderToTurtle(request.getTurtleId(), orderMenuId, orderGameId, newTurtleLogId);
-
     }
 
     @Transactional
@@ -222,41 +192,145 @@ public class TurtleServiceImpl implements TurtleService{
         turtleLogRepository.save(turtleLog);
     }
 
-    //로그 갱신
-    //2. 수령 완료
     @Override
     @Transactional
-    public void receiveOrder(String message){
-        log.info("Received receiveOrder message: {}", message);
-        JsonObject convertObject = new Gson().fromJson(message, JsonObject.class);
+    public void updateTurtleOrder(String message) { // turtlebot으로부터 메세지를 받았을 경우
+        log.info("Received updateTurtleOrder message: {}", message);
+        TurtleOrderRequest orderRequest = new Gson().fromJson(message, TurtleOrderRequest.class);
 
-        long turtleLogId = convertObject.get("turtleLogId").getAsLong();
-        TurtleLog turtleLog = turtleLogRepository.findById(turtleLogId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
-                "TurtleLog does not exist: " + turtleLogId));
+        log.info("orderRequest : {}", orderRequest.toString());
 
-        //기존의 turtleLog를 갱신한다
-        updateTurtleLogFromMessage(message, turtleLog);
+        //모든 명령을 완수 후 제자리로 돌아갔을 경우 turtle.isWorking을 0으로 바꾼다
+        TurtleLog turtleOrderLog = TurtleLog.builder().build();
+        TurtleLog turtleReceiveLog = TurtleLog.builder().build();
 
-        //메뉴, 게임 주문 배송 완료 갱신
-        updateOrder(turtleLog);
+        boolean orderReturn = false;
+        boolean receiveReturn = false;
+        if(orderRequest.getTurtleOrderLogId() > 0){
+            turtleOrderLog = turtleLogRepository.findById(orderRequest.getTurtleOrderLogId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
+                    "TurtleOrderLog does not exist: " + orderRequest.getTurtleOrderLogId()));
+            if(turtleOrderLog.getCommandType() == 255) orderReturn = true;
+        }
+        if(orderRequest.getTurtleReceiveLogId() > 0){
+            turtleReceiveLog = turtleLogRepository.findById(orderRequest.getTurtleReceiveLogId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
+                    "TurtleReceiveLog does not exist: " + orderRequest.getTurtleReceiveLogId()));
+            if(turtleReceiveLog.getCommandType() == 255) receiveReturn = true;
+        }
+        if(orderReturn && receiveReturn){
+            updateTurtleLogFromMessage(orderRequest.toString(), turtleOrderLog);
+            updateTurtleLogFromMessage(orderRequest.toString(), turtleReceiveLog);
+            Turtle turtle = turtleRepository.findById(orderRequest.getTurtleId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR ,"Turtle does not exist: " + orderRequest.getTurtleId()));
+            turtle.updateIsWorking(0);
+            turtleRepository.save(turtle);
+            return;
+        }
+
+        Long newTurtleOrderLogId = -1L;
+        Long newTurtleReceiveLogId = -1L;
+        Room room = roomRepository.findByRoomNumber(255);
+        int commandType = room.getRoomNumber();
+
+        /*
+        * 배송
+        * */
+        if(orderRequest.getTurtleOrderLogId() > 0){
+            turtleOrderLog = turtleLogRepository.findById(orderRequest.getTurtleOrderLogId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
+                    "TurtleOrderLog does not exist: " + orderRequest.getTurtleOrderLogId()));
+
+            log.info("turtleOrderLog : {}", turtleOrderLog.getId());
+
+            if(turtleOrderLog.getCommandType() == 0){// 점주 위치로
+                //목표 방 검색
+                if(turtleOrderLog.getOrderMenu() != null){ //메뉴 배송
+                    room = roomRepository.findRoomByOrderMenuId(turtleOrderLog.getOrderMenu().getId());
+                    //배송 정보 갱신
+                    OrderMenu orderMenu = turtleOrderLog.getOrderMenu();
+                    log.info("orderMenu.id : {}", orderMenu.getId());
+                    log.info("orderMenu.orderStatus : {}", orderMenu.getOrderStatus());
+                    if(orderMenu.getOrderStatus() == 1){
+                        menuService.updateOrderMenu(orderMenu.getId(), 2);
+                    }
+                }
+                if(turtleOrderLog.getOrderGame() != null){ // 게임 배송
+                    if(room.getRoomNumber()==255){ // 메뉴 배송에서 바뀌지 않았을 경우
+                        room = roomRepository.findRoomByOrderGameId(turtleOrderLog.getOrderGame().getId());    
+                    }
+                    if(turtleOrderLog.getOrderGame().getOrderStatus() == 0){
+                        gameService.updateOrderGameStatus(turtleOrderLog.getOrderGame().getId(), 1);
+                    }
+                }
+
+                commandType = room.getRoomNumber(); // 목표 갱신
+            }else{ // 목표 방인 경우
+                if(turtleOrderLog.getOrderMenu() != null) { //메뉴 배송
+                    //배송 정보 갱신
+                    menuService.updateOrderMenu(turtleOrderLog.getOrderMenu().getId(), 3);
+                }
+                if(turtleOrderLog.getOrderGame() != null){ // 게임 배송
+                    if(turtleOrderLog.getOrderGame().getOrderStatus() != 2){
+                        gameService.updateOrderGameStatus(turtleOrderLog.getOrderGame().getId(), 2);
+                    }
+                    Customer customer = customerRepository.findCustomerByOrderGameId(turtleOrderLog.getOrderGame().getId());
+
+                    if(customer.getIsTheme() == 1){ // 테마를 사용한다
+                        room = roomRepository.findRoomByOrderGameId(turtleOrderLog.getOrderGame().getId());
+                        String theme = turtleOrderLog.getOrderGame().getStock().getGame().getTheme().getThemeType();
+                        mqttGateway.sendToMqtt(theme, "display/"+room.getId());
+                    }
+
+                }
+
+            }
+
+            //기존의 turtleLog를 갱신한다
+            updateTurtleLogFromMessage(orderRequest.toString(), turtleOrderLog);
+
+            //새로운 turtleOrderLog 생성
+            Long orderMenuId = turtleOrderLog.getOrderMenu()==null ? null : turtleOrderLog.getOrderMenu().getId();
+            Long orderGameId = turtleOrderLog.getOrderGame()==null ? null : turtleOrderLog.getOrderGame().getId();
+            newTurtleOrderLogId = createTurtleLog(orderRequest.getTurtleId(), orderMenuId, orderGameId,commandType);
+            
+        }
+
+        /*
+        * 회수
+        * */
+        if(orderRequest.getTurtleReceiveLogId() > 0){
+            turtleReceiveLog = turtleLogRepository.findById(orderRequest.getTurtleReceiveLogId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR,
+                    "TurtleReceiveLog does not exist: " + orderRequest.getTurtleReceiveLogId()));
+
+            if(turtleReceiveLog.getCommandType() == 0) {// 현재 점주 위치
+                //목표 방 검색
+                if(turtleReceiveLog.getOrderGame().getOrderStatus() == 0){ // 회수하러 출발
+                    room = roomRepository.findRoomByOrderGameId(
+                        turtleReceiveLog.getOrderGame().getId());
+                    commandType = room.getRoomNumber(); // 목표 갱신
+                    gameService.updateOrderGameStatus(turtleReceiveLog.getOrderGame().getId(), 1);
+                }else{ //아닐 경우 대기 장소로
+                    gameService.updateOrderGameStatus(turtleReceiveLog.getOrderGame().getId(), 2);
+                }
+
+            }else if(turtleReceiveLog.getCommandType() > 0){ // 현재 목표 방
+                room = roomRepository.findCounterByTurtleId(orderRequest.getTurtleId());
+                commandType = room.getRoomNumber();
+            }
+
+            //기존의 turtleLog를 갱신한다
+            updateTurtleLogFromMessage(orderRequest.toString(), turtleReceiveLog);
+
+            //새로운 turtleLog를 생성한다
+            Long orderGameId = turtleReceiveLog.getOrderGame().getId();
+            newTurtleReceiveLogId = createTurtleLog(orderRequest.getTurtleId(), null, orderGameId, commandType);
+
+        }
+
+        sendOrderToTurtle(orderRequest.getTurtleId(), room, newTurtleOrderLogId, newTurtleReceiveLogId);
 
     }
-
-    @Transactional
-    private void updateOrder(TurtleLog turtleLog){
-        OrderMenu orderMenu = turtleLog.getOrderMenu();
-        OrderGame orderGame = turtleLog.getOrderGame();
-
-        if(orderMenu != null){
-            orderMenu.updateOrderStatusAndDelieveredAt(3, LocalDateTime.now());
-        }
-        if(orderGame != null){
-            orderGame.updateOrderStatusAndDelieveredAt(3, LocalDateTime.now());
-        }
-    }
-
-    //반납 요청
-
 
 }

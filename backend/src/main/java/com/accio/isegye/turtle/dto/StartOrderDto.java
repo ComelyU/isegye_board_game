@@ -13,13 +13,25 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Data
 public class StartOrderDto {
-    @NotNull
-    private Long turtleLogId;
+
+    private Long turtleOrderLogId;
+
+    private Long turtleReceiveLogId;
+
     @NotNull
     private String coordinateX;
     @NotNull
     private String coordinateY;
+
+    @Override
+    public String toString() {
+        return "{" +
+            "\"turtleOrderLogId\" : " + turtleOrderLogId +
+            ", \"turtleReceiveLogId\" : " + turtleReceiveLogId +
+            ", \"coordinateX\" : \"" + coordinateX + '\"' +
+            ", \"coordinateY\" : \"" + coordinateY + '\"' +
+            '}';
+    }
 }

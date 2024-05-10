@@ -14,4 +14,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
         + " LEFT JOIN OrderMenuDetail d ON m.id = d.orderMenu.id\n"
         + " WHERE c.id = ?1")
     Integer getMenuFeeByCustomerId(int customerId);
+
+    @Query("select c "
+        + "from OrderGame og "
+        + "left join Customer c on og.customer.id = c.id "
+        + "where og.id = ?1")
+    Customer findCustomerByOrderGameId(long orderGameId);
 }

@@ -79,6 +79,9 @@ public interface GameService {
     // 게임 주문의 상태 변경
     Void updateOrderGameStatus(Long orderGameId, UpdateOrderGameRequest dto);
 
+    // 게임 주문의 상태 변경 2
+    void updateOrderGameStatus(Long orderGameId, int orderStatus);
+
     // 게임 주문 삭제
     Void deleteOrderGame(Long orderGameId);
 }

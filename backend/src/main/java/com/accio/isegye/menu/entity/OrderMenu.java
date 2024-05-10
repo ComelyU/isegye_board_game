@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -64,4 +65,17 @@ public class OrderMenu {
         this.deliveredAt = deliveredAt;
     }
 
+    @Override
+    public String toString() {
+        return "OrderMenu{" +
+            "id=" + id +
+            ", customer=" + customer +
+            ", orderStatus=" + orderStatus +
+            ", createdAt=" + createdAt +
+            ", deliveredAt=" + deliveredAt +
+            ", turtleLogList=" + turtleLogList +
+            ", orderMenuDetailList=" + orderMenuDetailList +
+            ", statusLogList=" + statusLogList +
+            '}';
+    }
 }
