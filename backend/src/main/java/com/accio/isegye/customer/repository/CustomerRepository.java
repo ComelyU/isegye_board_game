@@ -20,4 +20,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
         + "left join Customer c on og.customer.id = c.id "
         + "where og.id = ?1")
     Customer findCustomerByOrderGameId(long orderGameId);
+
+    boolean existsByEndTimeIsNotNullAndRoomId(int roomId);
 }

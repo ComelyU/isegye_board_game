@@ -82,4 +82,9 @@ public class CustomerServiceImpl implements CustomerService{
 
         return update.getIsTheme();
     }
+
+    @Override
+    public Integer findRoom(int customerId) {
+        return roomRepository.findByCustomerId(customerId).getId();
+    }
 }

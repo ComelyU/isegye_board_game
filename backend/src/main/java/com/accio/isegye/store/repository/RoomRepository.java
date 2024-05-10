@@ -4,6 +4,7 @@ import com.accio.isegye.store.dto.RoomResponse;
 import com.accio.isegye.store.entity.Room;
 import java.util.Arrays;
 import java.util.List;
+import javax.net.ssl.SSLSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,11 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query("select r.iotId from Room r where r.id=?1")
     String findIotIdById(int id);
 
+    @Query("select r "
+        + "from Room r "
+        + "where r.store.id = ?1 "
+        + "and r.roomNumber not in (0, 255) "
+        + "and r.deletedAt is null ")
     List<Room> findAllByDeletedAtIsNullAndStoreId(int storeId);
 
     @Query("select r.id from Room r where r.store.id = ?1 and r.roomNumber = ?2")
@@ -43,4 +49,10 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     Room findCounterByTurtleId(int turtleId);
 
     Room findByRoomNumber(int roomNumber);
+
+    @Query("select r "
+        + "from Customer c "
+        + "left join Room r on c.room.id = r.id "
+        + "where c.id = ?1 ")
+    Room findByCustomerId(int customerId);
 }

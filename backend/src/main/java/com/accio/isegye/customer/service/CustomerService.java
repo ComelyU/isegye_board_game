@@ -10,4 +10,6 @@ public interface CustomerService {
     int endCustomer(int customerId);
 
     Integer toggleTheme(int customerId);
+
+    Integer findRoom(int customerId);
 }
