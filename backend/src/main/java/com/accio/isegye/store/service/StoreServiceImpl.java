@@ -1,5 +1,6 @@
 package com.accio.isegye.store.service;
 
+import com.accio.isegye.customer.repository.CustomerRepository;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
 import com.accio.isegye.store.dto.CreateRoomRequest;
@@ -27,6 +28,7 @@ public class StoreServiceImpl implements StoreService{
 
     private final StoreRepository storeRepository;
     private final RoomRepository roomRepository;
+    private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
 
     // Store와 StoreResponse 매핑
@@ -234,13 +236,19 @@ public class StoreServiceImpl implements StoreService{
     @Transactional
     public List<RoomResponse> getAvailableRoomList(int storeId) {
         //방에서 아직 끝나지 않은 Customer를 찾는다
-        List<Room> roomList = roomRepository.findAllByDeletedAtIsNullAndStoreId(storeId)
-            .stream().filter(room
-                -> room.getCustomerList().stream().noneMatch(customer
-                -> customer.getEndTime() == null))
+        List<RoomResponse> roomList = roomRepository.findAllByDeletedAtIsNullAndStoreId(storeId)
+            .stream()
+            .map(this::getRoomResponse)
             .toList();
 
-        return roomList.stream().map(this::getRoomResponse).toList();
+        roomList.stream()
+            .filter(roomResponse ->
+                customerRepository.existsByEndTimeIsNotNullAndRoomId(roomResponse.getId())
+            )
+            .findAny()
+            .ifPresent(roomResponse -> roomResponse.setIsUsed(0));
+
+        return roomList;
     }
 
 

@@ -1,5 +1,6 @@
 package com.accio.isegye.customer.controller;
 
+import com.accio.isegye.config.MqttConfig.MqttGateway;
 import com.accio.isegye.customer.dto.CreateCustomerRequest;
 import com.accio.isegye.customer.dto.CustomerResponse;
 import com.accio.isegye.customer.service.CustomerService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
 
     private final CustomerService customerService;
-
+    private final MqttGateway mqttGateway;
     @Operation(
         summary = "고객 시작",
         description = "고객 테이블 생성"
@@ -59,5 +61,15 @@ public class CustomerController {
     /*
     * 테마 음량 조절 기능
     * */
+    @Operation(
+        summary = "테마 음량 조절",
+        description = "고객의 방의 음량을 조절한다"
+    )
+    @PostMapping("/{customerId}/sound")
+    public ResponseEntity<?> changeVolume(@PathVariable int customerId, @RequestParam String volume){
+        int roomId = customerService.findRoom(customerId);
+        mqttGateway.sendToMqtt(volume, "display/" + roomId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }
