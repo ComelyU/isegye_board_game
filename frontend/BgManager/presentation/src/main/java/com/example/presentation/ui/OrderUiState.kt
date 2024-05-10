@@ -4,10 +4,11 @@ data class OrderUiState(
     val orderId: Int,
     val customerId: Int,
     val orderStatus: Int,
+    val roomNumber: Int,
     val orderDetail: List<OrderDetailState>
 ) {
-    val customerIdString: String
-        get() = customerId.toString()
+    val orderIdString: String
+        get() = orderId.toString()
 
     val orderStatusString: String
         get() = when (orderStatus) {
@@ -16,4 +17,7 @@ data class OrderUiState(
             2 -> "배송 완료"
             else -> "배송 오류"
         }
+
+    val roomNumberString: String
+        get() = "$roomNumber 번 룸"
 }

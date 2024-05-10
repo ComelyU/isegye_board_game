@@ -8,14 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.presentation.databinding.ItemlayoutOrderBinding
 import com.example.presentation.ui.OrderUiState
 
-class OrderAdapter : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(OrderDiffCallback()) {
+class OrderAdapter(private val orderOnClickListener: OrderOnClickListener)
+    : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(OrderDiffCallback()) {
 
-    class OrderViewHolder(private val binding: ItemlayoutOrderBinding) : RecyclerView.ViewHolder(binding.root) {
+    class OrderViewHolder(private val binding: ItemlayoutOrderBinding, private val clickListener: OrderOnClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: OrderUiState) {
             binding.orderItem = item
+            binding.cartButton.setOnClickListener {
+                clickListener.onOrderClicked(item.orderId, item.roomNumber)
+            }
             binding.executePendingBindings()
-            println("어댑터 뷰홀더 들어옴 ${binding.orderItem}")
+//            println("어댑터 뷰홀더 들어옴 ${binding.orderItem}")
 
             val adapter = OrderDetailAdapter(item.orderDetail)
             binding.orderDetailsRV.adapter = adapter
@@ -25,13 +30,13 @@ class OrderAdapter : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(Ord
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemlayoutOrderBinding.inflate(inflater, parent, false)
-        return OrderViewHolder(binding)
+        return OrderViewHolder(binding, orderOnClickListener)
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
 //        val item = itemList[position]
         val item = getItem(position)
-        println("바인드 뷰홀더 들어옴 $item")
+//        println("바인드 뷰홀더 들어옴 $item")
         holder.bind(item)
     }
 
@@ -45,4 +50,7 @@ class OrderAdapter : ListAdapter<OrderUiState, OrderAdapter.OrderViewHolder>(Ord
         }
     }
 
+    interface OrderOnClickListener {
+        fun onOrderClicked(orderId: Int, roomNumber: Int)
+    }
 }

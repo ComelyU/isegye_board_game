@@ -6,18 +6,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.presentation.adapter.GameAdapter
 import com.example.presentation.adapter.OrderAdapter
+import com.example.presentation.adapter.TurtleAdapter
 import com.example.presentation.databinding.ActivityMainBinding
 import com.example.presentation.ui.UiState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity :
+    AppCompatActivity(),
+    TurtleAdapter.TurtleOnClickListener,
+    GameAdapter.GameOnClickListener,
+    OrderAdapter.OrderOnClickListener
+{
 
     private val viewModel: MainViewModel by viewModels()
 
     private var _binding: ActivityMainBinding? = null
     private lateinit var orderAdapter: OrderAdapter
     private lateinit var gameAdapter: GameAdapter
+    private lateinit var turtleAdapter: TurtleAdapter
 
     private val binding
         get() = _binding!!
@@ -30,10 +37,13 @@ class MainActivity : AppCompatActivity() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        orderAdapter = OrderAdapter()
-        gameAdapter = GameAdapter()
+        orderAdapter = OrderAdapter(this)
+        gameAdapter = GameAdapter(this)
+        turtleAdapter = TurtleAdapter(this)
+
         binding.mainRV.adapter = orderAdapter
         binding.gameRV.adapter = gameAdapter
+        binding.turtleRV.adapter = turtleAdapter
 
         viewModel.loadData()
 
@@ -46,9 +56,25 @@ class MainActivity : AppCompatActivity() {
                 is UiState -> {
                     orderAdapter.submitList(uiState.orders)
                     gameAdapter.submitList(uiState.games)
+                    turtleAdapter.submitList(uiState.turtles)
                 }
                 // 다른 상태 처리
             }
         })
+    }
+
+    override fun onTurtleClicked(turtleId: Int) {
+        // 여기서 selectTurtle 함수를 호출합니다.
+        viewModel.selectTurtle(turtleId)
+    }
+
+    override fun onGameClicked(gameOrderId: Int, orderType: Int, roomNumber: Int) {
+        // 여기서 selectTurtle 함수를 호출합니다.
+        viewModel.selectGame(gameOrderId, orderType, roomNumber)
+    }
+
+    override fun onOrderClicked(orderId: Int, roomNumber: Int) {
+        // 여기서 selectTurtle 함수를 호출합니다.
+        viewModel.selectMenuId(orderId, roomNumber)
     }
 }
