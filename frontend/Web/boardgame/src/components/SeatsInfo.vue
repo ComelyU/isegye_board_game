@@ -45,7 +45,7 @@ export default {
   methods: {
     async fetchRoomLists() {
       try {
-        const response = await axios.get(`https://k10a706.p.ssafy.io/api/stores/${this.storeid}/room-lists`);
+        const response = await axios.get(process.env.VUE_APP_API_URL + `stores/${this.storeid}/room-lists`);
         this.storelist = response.data; // 서버에서 받은 데이터로 storelist 업데이트
       } catch (error) {
         console.error("Room lists fetching error: ", error);
