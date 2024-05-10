@@ -27,26 +27,36 @@
 </template>
 
 <script>
+import axios from 'axios';
 import KakaoMap from '@/components/KakaoMap.vue'
-// import SeatsInfo from '@/components/SeatsInfo.vue'
 
 export default {
     components:{
         KakaoMap,
-        // SeatsInfo
     },
-    // mounted() {
-    //   console.log(this.$route.params);
-    // },
     data() {
     return {
       branches: [
         { id: "1", storename: "멀티캠퍼스 역삼점", latitude: 37.5012647456244, longitude: 127.03958123605, address: '역삼역 1번출구 역삼 멀티캠퍼스 15층', hours: '11:00 ~ 22:00', phone: '000-0000-0000' },
-        { id: "2", storename: "깊은 저 바닷속 파인애플점", latitude: 37.4992647456244, longitude: 129.13958123605, address: '뚱이네, 징징이네 옆집', hours: '5:00 ~ 13:00', phone: '000-0000-0000' },
+        { id: "2", storename: "깊은 저 바닷속 파인애플점", latitude: 37.4992647456244, longitude: 129.13958123605, address: '뚱이네, 징징이네 옆집', hours: '11:00 ~ 22:00', phone: '000-0000-0000' },
         { id: "3", storename: "강남역점", latitude: 37.4980647456244, longitude: 127.02875123605, address: '강남역 1번출구', hours: '오전 11:00 ~ 22:00', phone: '010-0000-0000' },
       ]
     };
-  }
+  },
+  mounted() {
+    this.fetchStoreLists();
+  },
+  methods: {
+    async fetchStoreLists() {
+      try {
+        const response = await axios.get(process.env.VUE_APP_API_URL + `stores/`);
+        this.branches = response.data; // 서버에서 받은 데이터로 storelist 업데이트
+      } catch (error) {
+        console.error("Room lists fetching error: ", error);
+        // 에러 핸들링 코드 작성
+      }
+    }
+  },
 }
 
 </script>

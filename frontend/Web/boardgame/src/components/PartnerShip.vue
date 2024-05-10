@@ -14,9 +14,9 @@
                 <div class="m-5 ps-5 pe-5">
                     <h4 class="text-center">CONTECT US</h4>
                     <p>대표 : 大 상 협</p>
-                    <p>number : 000-0000-0000</p>
-                    <p>mail : isegyeboardgame@isegye.com</p>
-                    <p>address : 서울시 강남구 테헤란로 212, 멀티캠퍼스 1501호</p>
+                    <p>연락처 : 000-0000-0000</p>
+                    <p>메일 : isegyeboardgame@isegye.com</p>
+                    <p>본사 주소 : 서울시 강남구 테헤란로 212, 멀티캠퍼스 1501호</p>
                 </div>
                 
             </div>
