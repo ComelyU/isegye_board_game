@@ -64,12 +64,16 @@ class Beverage : Fragment(), CartUpdateListener {
         val menuOrder = view.findViewById<TextView>(R.id.orderButton)
         menuOrder.setOnClickListener{
             val cartItems = CartManage.getInstance().getItems()
-            sendOrder(customerId!!, cartItems)
+            if (cartItems.isEmpty()) {
+                showEmptyDialog()
+            } else {
+                showOrderConfirmDialog(customerId!!, cartItems)
+            }
         }
 
         val delCart = view.findViewById<TextView>(R.id.cartDeleteButton)
         delCart.setOnClickListener{
-            clearCartButton(view)
+            showClearDialog(view)
         }
 
         return view
@@ -97,6 +101,7 @@ class Beverage : Fragment(), CartUpdateListener {
     }
 
     private fun sendOrder(customerId: String, cartItems: List<CartClass>) {
+
         val client = BaseApi.getInstance().create(BeverageApi::class.java)
 
         val createOrderMenuRequestList = cartItems.map { CreateOrderMenuRequest(it.id, it.quantity) }
@@ -141,18 +146,60 @@ class Beverage : Fragment(), CartUpdateListener {
         alertDialog.show()
     }
 
+    private fun showOrderConfirmDialog(customerId: String, cartItems: List<CartClass>) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("주문확인")
+            setMessage("장바구니에 담긴 품목을 주문하시겠습니까?")
+            setPositiveButton("확인") { _, _ ->
+                sendOrder(customerId, cartItems)
+            }
+            setNegativeButton("취소") {dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun showEmptyDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("주문실패")
+            setMessage("장바구니가 비어있습니다.")
+            setPositiveButton("확인") {dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
     override fun onCartUpdated() {
         cartViewModel.updateCartItems(CartManage.getInstance().getItems())
         updateTotalPrice(cartAdapter.currentList)
     }
 
-    private fun clearCartButton(v: View) {
-        CartManage.getInstance().clearCart()
-        updateCartItems()
+    private fun showClearDialog(v: View) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("장바구니 비우기")
+            setMessage("장바구니를 비우시겠습니까?")
+            setPositiveButton("확인") {dialog, _ ->
+                dialog.dismiss()
+                CartManage.getInstance().clearCart()
+                updateCartItems()
 
-        val activity = v.context as? AppCompatActivity
-        activity?.recreate()
+                val activity = v.context as? AppCompatActivity
+                activity?.recreate()
 
-        (context as? CartUpdateListener)?.onCartUpdated()
+                (context as? CartUpdateListener)?.onCartUpdated()
+            }
+            setNegativeButton("취소") {dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

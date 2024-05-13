@@ -16,7 +16,6 @@ class GameHistoryAdapter(private val context: Context, private var dataList: Lis
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val nameTextView: TextView = itemView.findViewById(R.id.historyItemName)
         val quanTextView: TextView = itemView.findViewById(R.id.historyItemQuan)
-        val historyIdTextView: TextView = itemView.findViewById(R.id.historyId)
         val orderStatusTextView: TextView = itemView.findViewById(R.id.orderStatus)
 
         override fun onClick(v: View?) {
@@ -52,9 +51,8 @@ class GameHistoryAdapter(private val context: Context, private var dataList: Lis
             "반납 요청"
         }
 
-        holder.historyIdTextView.append(historyId.toString())
         holder.orderStatusTextView.append(orderStatusString)
-        holder.nameTextView.text = gameName
+        holder.nameTextView.text = "${gameName}\n"
         holder.quanTextView.text = orderTypeString
     }
 

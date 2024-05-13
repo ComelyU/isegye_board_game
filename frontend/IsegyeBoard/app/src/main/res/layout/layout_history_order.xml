@@ -5,23 +5,15 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:layout_margin="10dp"
-    android:padding="10dp">
-
-    <TextView
-        android:id="@+id/historyId"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textSize="20sp"
-        />
+    android:paddingHorizontal="10dp">
 
     <TextView
         android:id="@+id/historyItemName"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/historyId"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="주문 메뉴 명"
         android:textSize="20sp"
         />
 
@@ -31,6 +23,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/historyItemName"
+        android:text="수량"
         android:textSize="20sp"
         />
 
@@ -38,9 +31,17 @@
         android:id="@+id/orderStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/historyItemName"
         app:layout_constraintEnd_toEndOf="parent"
         android:textSize="20sp"
+        />
+
+    <View
+        android:id="@+id/orderItemDotLine"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/dot_line"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

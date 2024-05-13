@@ -82,10 +82,22 @@
         <action
             android:id="@+id/action_startFragment_to_main_page_frg"
             app:destination="@id/main_page_frg" />
+        <action
+            android:id="@+id/action_startFragment_to_logoutFragment"
+            app:destination="@id/logoutFragment" />
     </fragment>
     <fragment
         android:id="@+id/photo"
         android:name="com.example.isegyeboard.game_detail.Photo"
         android:label="fragment_photo"
         tools:layout="@layout/fragment_photo" />
+    <fragment
+        android:id="@+id/logoutFragment"
+        android:name="com.example.isegyeboard.room_login.LogoutFragment"
+        android:label="fragment_logout"
+        tools:layout="@layout/fragment_logout" >
+        <action
+            android:id="@+id/action_logoutFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
 </navigation>

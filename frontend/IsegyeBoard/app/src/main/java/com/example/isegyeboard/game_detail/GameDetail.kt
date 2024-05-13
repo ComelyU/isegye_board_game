@@ -2,12 +2,14 @@ package com.example.isegyeboard.game_detail
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -17,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.BasicResponse
 import com.example.isegyeboard.databinding.FragmentGamedetailBinding
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -74,6 +75,7 @@ class GameDetail : Fragment() {
         val maxPlaytime = arguments?.getString("maxPlaytime")
         val difficulty = arguments?.getString("difficulty")!!.toInt()
         val theme = arguments?.getString("theme")
+        val stock = arguments?.getString("stock")
 
         // UI 요소에 정보 표시
         binding.detailTitle.text = title
@@ -100,33 +102,59 @@ class GameDetail : Fragment() {
         }
         val customerId = sharedPreferences.getString("customerId", "1")
         val themeOn = sharedPreferences.getBoolean("themeOn", true)
+        val volume = sharedPreferences.getInt("volume", 100)
         val savedGameId = sharedPreferences.getString("gameId", "")
 
-        // DB상의 테마 온오프여부
-//        println(themeOn)
         binding.themeSwitch.isChecked = themeOn
+//        println(themeOn)
 
         // 테마 온오프 스위치
         binding.themeSwitch.setOnCheckedChangeListener { _, _ ->
-            themeToggle(customerId!!)
+            sendThemeToggle(customerId!!)
         }
 
-        // 시작/반납 버튼 토글
-        toggleButtons(gameId.toString(), savedGameId, view)
+        val seekBar = binding.volumeSeekBar
+        seekBar.progress = volume
+        Log.d("Volume", "savedVolume : $volume")
 
-        // 시작버튼
-        binding.startButton.setOnClickListener{
-            lifecycleScope.launch {
-                if (savedGameId != null) {
-                    //모달
-                    loadingImage.visibility = View.VISIBLE
-                    orderGame(savedGameId, customerId!!, view, 1)
-                    gameId?.let{orderGame(it, customerId, view, 0)}
-                } else {
-                    loadingImage.visibility = View.VISIBLE
-                    gameId?.let { orderGame(it, customerId!!, view, 0) }
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            var changedVolume = 100
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                // 사용자에 의해 변경된 경우에만 SharedPreferences에 저장합니다.
+                if (fromUser) {
+                    sharedPreferences.edit().putInt("volume", progress).apply()
                 }
             }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // 사용자가 SeekBar를 터치할 때 호출됩니다.
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // 사용자가 SeekBar 터치를 멈출 때 호출됩니다.
+                val currentProgress = seekBar!!.progress
+                sendVolume(customerId!!, currentProgress)
+            }
+        })
+
+
+        // 시작/반납 버튼 토글
+        orderButtonToggle(gameId.toString(), savedGameId, view)
+
+        // 시작버튼
+        if (stock != "0") {
+            binding.startButton.setOnClickListener{
+                lifecycleScope.launch {
+                    if (savedGameId != null) {
+                        showReturnOrderDialog(savedGameId, gameId.toString(), customerId!!, view)
+                    } else {
+                        loadingImage.visibility = View.VISIBLE
+                        gameId?.let { orderGame(it, customerId!!, view, 0) }
+                    }
+                }
+            }
+        } else {
+            binding.startButton.setBackgroundResource(R.drawable.grey_rad)
         }
 
         //종료버튼
@@ -163,7 +191,7 @@ class GameDetail : Fragment() {
                     } else if (responseBody != null && orderType == 1) {
                         sharedPreferences.edit().remove("gameId").apply()
                         showOrderDialog("반납")
-                        toggleButtons(gameId, null, view)
+                        orderButtonToggle(gameId, null, view)
                     } else {
                         // 실패 처리
                         showFailedDialog()
@@ -188,7 +216,7 @@ class GameDetail : Fragment() {
 //        editor.putString("isDeli", "true")
         editor.apply()
         showOrderDialog("주문")
-        toggleButtons(gameId, gameId, view)
+        orderButtonToggle(gameId, gameId, view)
     }
 
     private fun showOrderDialog(message: String) {
@@ -197,6 +225,24 @@ class GameDetail : Fragment() {
             setTitle("요청완료")
             setMessage("${message}요청되었습니다.\n잠시만 기다려주세요")
             setPositiveButton("확인") {dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun showReturnOrderDialog(savedGameId:String, gameId: String, customerId: String, v: View) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("알림")
+            setMessage("이미 대여 중인 보드게임이 있습니다.\n 기존 보드게임을 반납하고 새 게임을 대여하시겠습니까?")
+            setPositiveButton("확인") {dialog, _ ->
+                orderGame(savedGameId, customerId, v, 1)
+                gameId.let{orderGame(it, customerId, v, 0)}
+                dialog.dismiss()
+            }
+            setNegativeButton("취소") {dialog, _ ->
                 dialog.dismiss()
             }
         }
@@ -218,7 +264,7 @@ class GameDetail : Fragment() {
         alertDialog.show()
     }
 
-    private fun toggleButtons(gameId: String, savedGameId: String?, view: View) {
+    private fun orderButtonToggle(gameId: String, savedGameId: String?, view: View) {
         val returnButton = view.findViewById<TextView>(R.id.returnButton)
         val startButton = view.findViewById<TextView>(R.id.startButton)
 
@@ -231,23 +277,45 @@ class GameDetail : Fragment() {
         }
     }
 
-    private fun themeToggle(customerId: String){
+    private fun sendThemeToggle(customerId: String){
+
         val service = BaseApi.getInstance().create((GameOrderApi::class.java))
 
-        val requestBody = mapOf(
-            "customerId" to customerId
-        )
-
-        service.sendThemeToggle(requestBody).enqueue(object : Callback<BasicResponse> {
-            override fun onResponse(call : Call<BasicResponse>, response: Response<BasicResponse>) {
+        service.sendThemeToggle(customerId).enqueue(object : Callback<Int> {
+            override fun onResponse(call : Call<Int>, response: Response<Int>) {
                 if (response.isSuccessful) {
-                    Log.d("ThemeToggle", "Success : $response")
+                    Log.d("ThemeToggle", "Success : ${response.body()}")
+                    val editor = sharedPreferences.edit()
+
+                    if (response.body() == 1) {
+                        editor.putBoolean("themeOn", true).apply()
+                    } else {
+                        editor.putBoolean("themeOn", false).apply()
+                    }
                 } else {
-                    Log.d("ThemeToggle", "$response")
+                    Log.d("ThemeToggle", "Fail: $response")
                 }
             }
-            override fun onFailure(call: Call<BasicResponse>, t:Throwable) {
+            override fun onFailure(call: Call<Int>, t:Throwable) {
                 Log.d("ThemeToggle", "$t")
+            }
+        })
+    }
+
+    private fun sendVolume(customerId: String, volume: Int){
+
+        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
+
+        service.sendVolume(customerId, volume.toString()).enqueue(object : Callback<Void> {
+            override fun onResponse(call : Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("Volume", "Success : $volume")
+                } else {
+                    Log.d("Volume", "Fail")
+                }
+            }
+            override fun onFailure(call: Call<Void>, t:Throwable) {
+                Log.d("Volume", "$t")
             }
         })
     }

@@ -16,7 +16,6 @@ class MenuHistoryAdapter(private val context: Context, private var dataList: Lis
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val nameTextView: TextView = itemView.findViewById(R.id.historyItemName)
         val quanTextView: TextView = itemView.findViewById(R.id.historyItemQuan)
-        val historyIdTextView: TextView = itemView.findViewById(R.id.historyId)
         val orderStatusTextView: TextView = itemView.findViewById(R.id.orderStatus)
 
         override fun onClick(v: View?) {
@@ -45,7 +44,6 @@ class MenuHistoryAdapter(private val context: Context, private var dataList: Lis
             "배송 완료"
         }
 
-        holder.historyIdTextView.append(historyId.toString())
         holder.orderStatusTextView.append(orderStatusString)
         // 주문 메뉴의 상세 정보를 가져와서 표시
 

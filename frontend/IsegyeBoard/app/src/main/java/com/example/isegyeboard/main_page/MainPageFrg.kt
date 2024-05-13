@@ -105,7 +105,6 @@ class MainPageFrg : Fragment() {
             Context.MODE_PRIVATE
         )
         val pref = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-        sharedPreferences.edit().remove("isOccupied").apply()
 
         val customerId = pref.getString("customerId", null)
         Log.d("Logout", "try logout : ${customerId}")
