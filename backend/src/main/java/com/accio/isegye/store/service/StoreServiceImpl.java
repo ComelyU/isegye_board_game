@@ -15,6 +15,7 @@ import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService{
@@ -152,10 +154,20 @@ public class StoreServiceImpl implements StoreService{
     @Override
     @Transactional(readOnly = true)
     public List<RoomResponse> getRoomList(int storeId) {
-        return roomRepository.findAllByDeletedAtIsNullAndStoreId(storeId)
+        //방에서 아직 끝나지 않은 Customer를 찾는다
+        List<RoomResponse> roomList = roomRepository.findAllByDeletedAtIsNullAndStoreId(storeId)
             .stream()
             .map(this::getRoomResponse)
             .toList();
+
+        roomList.stream()
+            .filter(roomResponse ->
+                customerRepository.existsByEndTimeIsNullAndRoomId(roomResponse.getId())
+            )
+            .findAny()
+            .ifPresent(roomResponse -> roomResponse.setIsUsed(0));
+
+        return roomList;
     }
 
     @Override
@@ -231,25 +243,5 @@ public class StoreServiceImpl implements StoreService{
 
         roomRepository.save(delete);
     }
-
-    @Override
-    @Transactional
-    public List<RoomResponse> getAvailableRoomList(int storeId) {
-        //방에서 아직 끝나지 않은 Customer를 찾는다
-        List<RoomResponse> roomList = roomRepository.findAllByDeletedAtIsNullAndStoreId(storeId)
-            .stream()
-            .map(this::getRoomResponse)
-            .toList();
-
-        roomList.stream()
-            .filter(roomResponse ->
-                customerRepository.existsByEndTimeIsNotNullAndRoomId(roomResponse.getId())
-            )
-            .findAny()
-            .ifPresent(roomResponse -> roomResponse.setIsUsed(0));
-
-        return roomList;
-    }
-
 
 }

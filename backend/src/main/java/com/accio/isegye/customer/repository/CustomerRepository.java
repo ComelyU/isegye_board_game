@@ -22,4 +22,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Customer findCustomerByOrderGameId(long orderGameId);
 
     boolean existsByEndTimeIsNotNullAndRoomId(int roomId);
+
+    boolean existsByEndTimeIsNullAndRoomId(int id);
 }

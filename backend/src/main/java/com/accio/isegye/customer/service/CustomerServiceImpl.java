@@ -6,6 +6,7 @@ import com.accio.isegye.customer.entity.Customer;
 import com.accio.isegye.customer.repository.CustomerRepository;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
+import com.accio.isegye.game.entity.Game;
 import com.accio.isegye.store.dto.RoomResponse;
 import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
@@ -86,5 +87,22 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public Integer findRoom(int customerId) {
         return roomRepository.findByCustomerId(customerId).getId();
+    }
+
+    @Override
+    public String getTheme(int customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ERROR, "No Customer matching: " + customerId));
+
+        if (customer.getOrderGameList().isEmpty()
+            || customer.getOrderGameList().get(customer.getOrderGameList().size()-1).getOrderStatus()==1){
+            //주문한 적이 없거나 마지막 주문이 회수 상태이면
+            return "Default";
+        }
+
+        Game game = customer.getOrderGameList().get(customer.getOrderGameList().size()-1).getStock()
+            .getGame();
+
+        return game.getTheme().getThemeType();
     }
 }

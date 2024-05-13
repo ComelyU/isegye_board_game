@@ -112,7 +112,8 @@ public class StoreController {
     )
     @GetMapping("/{id}/room-lists")
     public ResponseEntity<List<RoomResponse>> getRoomList(@PathVariable int id){
-        return new ResponseEntity<>(service.getRoomList(id), HttpStatus.OK);
+        List<RoomResponse> roomList = service.getRoomList(id);
+        return new ResponseEntity<>(roomList, HttpStatus.OK);
     }
 
     @Operation(
@@ -170,15 +171,5 @@ public class StoreController {
         service.deleteRoom(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    
-    @Operation(
-        summary = "특정 매장의 사용 가능한 방을 찾는다",
-        description = "{id} 값에 해당되는 매장에서 현재 사용 가능한 방을 찾는다"
-    )
-    @GetMapping("/{id}/room-lists/available")
-    public ResponseEntity<List<RoomResponse>> getAvailableRoomList(@PathVariable int id){
-        return new ResponseEntity<>(service.getAvailableRoomList(id), HttpStatus.OK);
-    }
-
 
 }

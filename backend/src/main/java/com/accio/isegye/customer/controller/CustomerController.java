@@ -4,9 +4,12 @@ import com.accio.isegye.config.MqttConfig.MqttGateway;
 import com.accio.isegye.customer.dto.CreateCustomerRequest;
 import com.accio.isegye.customer.dto.CustomerResponse;
 import com.accio.isegye.customer.service.CustomerService;
+import com.accio.isegye.game.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final MqttGateway mqttGateway;
+
     @Operation(
         summary = "고객 시작",
         description = "고객 테이블 생성"
@@ -54,8 +58,17 @@ public class CustomerController {
     )
     @PatchMapping("/{customerId}/theme")
     public ResponseEntity<Integer> toggleTheme(@PathVariable int customerId){
-        int theme = customerService.toggleTheme(customerId);
-        return new ResponseEntity<>(theme, HttpStatus.OK);
+        int themeUsed = customerService.toggleTheme(customerId);
+        int roomId = customerService.findRoom(customerId);
+        if(themeUsed == 0){ // turn off
+            //디폴트 혹은 소리 제거
+            mqttGateway.sendToMqtt("Default", "display/" + roomId);
+        }else{
+            //테마를 가져온다
+            String themeType = customerService.getTheme(customerId);
+            mqttGateway.sendToMqtt(themeType, "display/" + roomId);
+        }
+        return new ResponseEntity<>(themeUsed, HttpStatus.OK);
     }
 
     /*
@@ -66,7 +79,7 @@ public class CustomerController {
         description = "고객의 방의 음량을 조절한다"
     )
     @PostMapping("/{customerId}/sound")
-    public ResponseEntity<?> changeVolume(@PathVariable int customerId, @RequestParam String volume){
+    public ResponseEntity<?> changeVolume(@PathVariable int customerId, @RequestParam @NotBlank String volume){
         int roomId = customerService.findRoom(customerId);
         mqttGateway.sendToMqtt(volume, "display/" + roomId);
         return new ResponseEntity<>(HttpStatus.OK);

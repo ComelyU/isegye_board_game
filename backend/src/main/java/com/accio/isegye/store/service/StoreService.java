@@ -57,8 +57,4 @@ public interface StoreService {
     //방 삭제
     void deleteRoom(int id);
 
-    //사용 가능한 방 확인
-    //Customer 종료 시간 기준? 가장 마지막이 Null이면 현재 사용중
-    List<RoomResponse> getAvailableRoomList(int storeId);
-
 }
