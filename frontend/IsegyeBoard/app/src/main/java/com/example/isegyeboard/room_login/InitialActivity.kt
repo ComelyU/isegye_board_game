@@ -26,11 +26,12 @@ class InitialActivity : AppCompatActivity() {
         if (isLogined()) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-        } else {
-            setContentView(R.layout.activity_initial)
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
         }
+//        else {
+//            setContentView(R.layout.activity_initial)
+////            val intent = Intent(this, MainActivity::class.java)
+////            startActivity(intent)
+//        }
 
         PushMessage().getFirebaseToken()
 

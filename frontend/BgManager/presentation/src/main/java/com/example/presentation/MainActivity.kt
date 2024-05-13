@@ -1,5 +1,7 @@
 package com.example.presentation
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +36,11 @@ class MainActivity :
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (!isLogined()) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
@@ -61,6 +68,11 @@ class MainActivity :
                 // 다른 상태 처리
             }
         })
+    }
+
+    private fun isLogined() : Boolean {
+        val sharedPreferences = getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
+        return sharedPreferences.contains("roomId")
     }
 
     override fun onTurtleClicked(turtleId: Int) {
