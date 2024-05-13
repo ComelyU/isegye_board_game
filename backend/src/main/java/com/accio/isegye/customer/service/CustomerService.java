@@ -12,4 +12,6 @@ public interface CustomerService {
     Integer toggleTheme(int customerId);
 
     Integer findRoom(int customerId);
+
+    String getTheme(int customerId);
 }
