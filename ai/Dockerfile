@@ -19,19 +19,16 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 
 # 의존성 파일을 먼저 복사
-COPY ./requirements.txt app/requirements.txt
+COPY requirements.txt .
 
 # 의존성 설치
-RUN pip install --no-cache-dir --upgrade -r app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # 나머지 파일 복사
-COPY . app/
-
-# app 디렉토리 내에 __init__.py 파일 생성
-RUN touch app/__init__.py
+COPY . .
 
 # 호스트와 연결할 포트 번호
 EXPOSE 8000
 
 # FastAPI 서버 실행
-CMD ["fastapi", "run", "app/main.py", "--port", "8000"]
+CMD ["fastapi", "run", "main.py", "--port", "8000"]
