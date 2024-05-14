@@ -24,6 +24,9 @@ COPY ./requirements.txt /code/requirements.txt
 # 의존성 설치
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+# 디텍토리 생성
+RUN mkdir app
+
 # 나머지 파일 복사
 COPY ./app /code/app
 
