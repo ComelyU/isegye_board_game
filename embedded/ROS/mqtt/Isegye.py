@@ -8,10 +8,6 @@ from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
 import threading, time, os, json
 
-# home : 0.0 0.0
-# counter : 0.37 -0.02
-# room : 0.47, -0.02
-
 # .env
 load_dotenv(dotenv_path = '/home/jetson/.env')
 BROKER_ADDRESS = os.environ.get("BROKER_ADDRESS")
@@ -57,7 +53,7 @@ class IsegyeNode(Node):
 
     # when clicked button
     def button_callback(self, msg):
-        self.get_logger().info(f'receive button_order from Qt with {msg.data}')
+        self.get_logger().info(f'receive button_order from Qt with [{msg.data}]')
         self.publisher_thread()
     
     # send goal to navigation
@@ -140,9 +136,9 @@ class IsegyeNode(Node):
 
     # connect callback
     def on_connect(self, client, userdata, flags, rc):
-        client_name = client._client_id
+        client_name = str(client._client_id, 'utf-8')
         result_codes = {
-            0: f"Success - The connection, {client_name} request has been successfully processed.",
+            0: f"Success - The connection, [{client_name}] request has been successfully processed.",
             1: "Protocol Error - Incorrect protocol version or invalid protocol data was received.",
             2: "Client ID rejected - The client identifier was rejected by the server.",
             3: "Server unavailable - The server is currently unavailable.",
@@ -154,6 +150,7 @@ class IsegyeNode(Node):
         if rc == 0:
             self.get_logger().info(f"Connected to MQTT broker successfully with result code {rc}.")
             client.subscribe(TURTLE_TOPIC)
+            self.get_logger().info(f"subscribe topic: [{TURTLE_TOPIC}]")
         
         else:
             self.get_logger().info(f"Failed to connect to MQTT broker with result code {rc}")
@@ -219,10 +216,10 @@ class IsegyeNode(Node):
             }
 
             msg = json.dumps(json_data)
-            self.get_logger().info("[pub] [topic]: " + SERVER_TOPIC + ", [msg]: " + msg)
 
             try:
-                pub_client.publish(SERVER_TOPIC, msg)
+                pub_client.publish(SERVER_TOPIC, msg, qos=1)
+                self.get_logger().info("[pub] [topic]: " + SERVER_TOPIC + ", [msg]: " + msg)
             
             except Exception as e:
                 self.get_logger().info(f"Error in MQTT publishing...: {e}")
@@ -240,7 +237,8 @@ def main(args = None):
         rclpy.spin(isegye_node)
 
     except KeyboardInterrupt:
-        print("input Ctrl + C... now destroy Node...")
+        print("Input Ctrl + C... now destroy Node...")
+        print("Please press 'Ctrl + C' again...")
         isegye_node.destroy_node()
         rclpy.shutdown()
 
