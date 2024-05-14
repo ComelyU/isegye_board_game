@@ -1,8 +1,8 @@
 FROM docker
 COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
 
-# 파이썬 3.10.6-slim 버전을 기본 이미지로 사용합니다.
-FROM python:3.10.6-slim
+# 파이썬 3.10.6 버전을 기본 이미지로 사용합니다.
+FROM python:3.10.6
 
 # 작업 디렉토리 설정
 WORKDIR /app
