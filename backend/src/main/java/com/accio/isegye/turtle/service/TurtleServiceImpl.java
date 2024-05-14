@@ -149,7 +149,7 @@ public class TurtleServiceImpl implements TurtleService{
             .build();
 
         //StartOrderDto를 turtleId에 해당하는 로봇에게 보낸다
-        mqttGateway.sendToMqtt(dto.toString(), "turtlebot/"+turtleId);
+        mqttGateway.sendToMqtt(dto.toString(), "turtlebot"+turtleId);
 
         //로봇은 이제 대기상태가 아니다
         turtle.updateIsWorking(1);
@@ -175,7 +175,7 @@ public class TurtleServiceImpl implements TurtleService{
             .build();
 
         //StartOrderDto를 turtleId에 해당하는 로봇에게 보낸다
-        mqttGateway.sendToMqtt(dto.toString(), "turtlebot/"+turtleId);
+        mqttGateway.sendToMqtt(dto.toString(), "turtlebot"+turtleId);
 
         //끝
     }
