@@ -88,14 +88,12 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(path="/{customerId}/swapface", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> swapFace(@PathVariable Integer customerId, @RequestPart MultipartFile sourceImg){
-//        customerService
-//            return ResponseEntity.ok()
-//                .contentType(MediaType.valueOf("image/jpg"))
-//                .body();
-//
-        return null;
+    @PostMapping(path = "/{customerId}/swapface",
+        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> swapFace(@PathVariable Integer customerId, @RequestPart @NotNull MultipartFile sourceImg){
+
+        String imageUrl = customerService.swapFace(customerId, sourceImg);
+        return new ResponseEntity<>(imageUrl, HttpStatus.OK);
     }
 
 }

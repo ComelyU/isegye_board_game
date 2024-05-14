@@ -28,7 +28,7 @@ public class MessageController {
     public ResponseEntity<?> sendMqtt(@RequestBody String mqttMessage) {
 //        JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
 //        mqttGateway.sendToMqtt(convertObject.get("content").toString(), "ros_test");
-        mqttGateway.sendToMqtt(mqttMessage, "display/1");
+        mqttGateway.sendToMqtt(mqttMessage, "turtlebot1");
         return ResponseEntity.ok("Message sent to MQTT!");
     }
 

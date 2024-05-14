@@ -2,6 +2,7 @@ package com.accio.isegye.customer.service;
 
 import com.accio.isegye.customer.dto.CreateCustomerRequest;
 import com.accio.isegye.customer.dto.CustomerResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface CustomerService {
 
@@ -14,4 +15,6 @@ public interface CustomerService {
     Integer findRoom(int customerId);
 
     String getTheme(int customerId);
+
+    String swapFace(int customerId, MultipartFile sourceFile);
 }
