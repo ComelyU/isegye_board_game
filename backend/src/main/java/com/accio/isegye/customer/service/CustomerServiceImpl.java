@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService{
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    private String uri = "http://localhost:8000/ai/swap";
+    private String uri = "https://k10a706.p.ssafy.io/ai/swap";
 
     private CustomerResponse getCustomerResponse(Customer customer){
         return modelMapper.map(customer, CustomerResponse.class);
