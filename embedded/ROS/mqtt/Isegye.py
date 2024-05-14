@@ -6,6 +6,7 @@ from std_msgs.msg import String
 from nav2_msgs.action import NavigateToPose
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
+import paho.mqtt.publish as mqtt_publish
 import threading, time, os, json
 
 # .env
@@ -202,32 +203,42 @@ class IsegyeNode(Node):
         except Exception as e:
             self.get_logger().error(f"Error in MQTT subscriber thread: {e}")
 
-    # publish thread
+    # # publish thread
+    # def publisher_thread(self):
+    #     try:
+    #         pub_client = mqtt.Client("pub_client")
+    #         pub_client.username_pw_set(username=USER_NAME, password=PASSWORD)
+    #         pub_client.connect(BROKER_ADDRESS, PORT, 60)
+            
+    #         json_data = {
+    #             "turtleId" : self.turtleId, 
+    #             "turtleOrderLogId" : self.turtleOrderLogId, 
+    #             "turtleReceiveLogId" : self.turtleReceiveLogId 
+    #         }
+
+    #         msg = json.dumps(json_data)
+
+    #         try:
+    #             pub_client.publish(SERVER_TOPIC, msg, qos=0)
+    #             self.get_logger().info("[pub] [topic]: " + SERVER_TOPIC + ", [msg]: " + msg)
+            
+    #         except Exception as e:
+    #             self.get_logger().info(f"Error in MQTT publishing...: {e}")
+
+    #        # pub_client.disconnect()
+
+    #     except Exception as e:
+    #         self.get_logger().error(f"Error in MQTT publisher thread: {e}")
     def publisher_thread(self):
-        try:
-            pub_client = mqtt.Client("pub_client")
-            pub_client.username_pw_set(username=USER_NAME, password=PASSWORD)
-            pub_client.connect(BROKER_ADDRESS, PORT, 60)
-            
-            json_data = {
-                "turtleId" : self.turtleId, 
-                "turtleOrderLogId" : self.turtleOrderLogId, 
-                "turtleReceiveLogId" : self.turtleReceiveLogId 
-            }
-
-            msg = json.dumps(json_data)
-
-            try:
-                pub_client.publish(SERVER_TOPIC, msg, qos=1)
-                self.get_logger().info("[pub] [topic]: " + SERVER_TOPIC + ", [msg]: " + msg)
-            
-            except Exception as e:
-                self.get_logger().info(f"Error in MQTT publishing...: {e}")
-
-            pub_client.disconnect()
-
-        except Exception as e:
-            self.get_logger().error(f"Error in MQTT publisher thread: {e}")
+        self.get_logger().info("start publishing...")
+        json_data = {
+                 "turtleId" : self.turtleId, 
+                 "turtleOrderLogId" : self.turtleOrderLogId, 
+                 "turtleReceiveLogId" : self.turtleReceiveLogId 
+             }
+        msg = json.dumps(json_data)
+        mqtt_publish.single(SERVER_TOPIC, msg, qos=0, retain=False, hostname=BROKER_ADDRESS, port=PORT, auth={'username':USER_NAME, 'password':PASSWORD})
+        self.get_logger().info("[pub] [topic]: " + SERVER_TOPIC + ", [msg]: " + msg)
 
 def main(args = None):
     rclpy.init(args = args)
