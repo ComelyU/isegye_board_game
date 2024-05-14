@@ -1,19 +1,22 @@
 FROM docker
 COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
 
-# 기본 이미지로 파이썬 3.10.6-slim 버전을 사용합니다.
+# 파이썬 3.10.6-slim 버전을 기본 이미지로 사용합니다.
 FROM python:3.10.6-slim
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 필요한 시스템 패키지 설치
+# 시스템 레벨 의존성 설치
 RUN apt-get update && apt-get install -y \
     build-essential \
     libssl-dev \
     libffi-dev \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# pip를 최신 버전으로 업그레이드
+RUN pip install --upgrade pip
 
 # 의존성 파일을 먼저 복사하여 캐시 효율성을 높입니다.
 COPY requirements.txt .
