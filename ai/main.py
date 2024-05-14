@@ -12,6 +12,10 @@ class CreateImageRequest(BaseModel):
 
 app = FastAPI()
 
+@app.get("/health")
+def check_health():
+    return {"status": "ok"}
+
 @app.post("/ai/swap")
 async def create_swap_image(files: CreateImageRequest):
     if not files.sourceFile:
