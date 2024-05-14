@@ -7,6 +7,14 @@ FROM python:3.10.6-slim
 # 작업 디렉토리 설정
 WORKDIR /app
 
+# 필요한 시스템 패키지 설치
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # 의존성 파일을 먼저 복사하여 캐시 효율성을 높입니다.
 COPY requirements.txt .
 
