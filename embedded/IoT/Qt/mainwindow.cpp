@@ -22,11 +22,13 @@ MainWindow::MainWindow(QWidget* parent) :
 	changeVideo(appDir + "/../src/default.mp4");
 
 	//setWebView();
+	
 	mqttConnect();
 	connect(this, &MainWindow::requestVideoChange, this, &MainWindow::changeVideo);
 	connect(this, &MainWindow::requestWebView, this, &MainWindow::setWebView);
 
 
+	resize(1024,720);
 	//showFullScreen();
 
 }
@@ -44,7 +46,7 @@ void MainWindow::setWebView() {
 		delete centralWidget();
 	}
 	webView = new QWebEngineView(this); // 새로운 객체 생성
-	webView->setUrl(QUrl("http://192.168.212.219:8000/index.html"));
+	webView->setUrl(QUrl("http://192.168.25.219:8000/index.html"));
 	setCentralWidget(webView);
 }
 
@@ -83,6 +85,7 @@ void MainWindow::messageArrived(mqtt::const_message_ptr msg)
 		return;
 	}
 	else if (requestData == "webview") {
+		nowStatus=requestData;
 		emit requestWebView();
 		std::cout << "Change webview!" << std::endl;
 		return;
@@ -134,7 +137,7 @@ void MainWindow::mqttConnect()
 		mqttClient.set_callback(*mqttCallback);
 		std::cout << "Set Callback" << std::endl;
 
-		//mqtt::message_ptr msg = mqtt::make_message(TOPIC, "asdf");
+		//mqtt::message_ptr msg = mqtt::make_message(TOPIC, "webview");
 		//mqttClient.publish(msg)->wait();
 		//publish test
 	}

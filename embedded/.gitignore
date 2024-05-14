@@ -32,7 +32,8 @@ qrc_*.cpp
 Thumbs.db
 *.res
 *.rc
-build*/
+build/
+build*
 *.user
 # qtcreator generated files
 *.pro.user*

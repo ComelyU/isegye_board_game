@@ -19,7 +19,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-const std::string TOPIC = "ros_test";
+const std::string TOPIC = "display/1";
 const std::string SERVER_ADDRESS = "k10a706.p.ssafy.io:1883";
 const std::string CLIENT_ID = "IoT_Display";
 
