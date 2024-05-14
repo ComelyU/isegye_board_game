@@ -5,7 +5,7 @@ COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/doc
 FROM python:3.10.6
 
 # 작업 디렉토리 설정
-WORKDIR /code
+WORKDIR /app
 
 # 시스템 레벨 의존성 설치
 RUN apt-get update && apt-get install -y \
@@ -19,19 +19,16 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 
 # 의존성 파일을 먼저 복사
-COPY ./requirements.txt /code/requirements.txt
+COPY ./requirements.txt app/requirements.txt
 
 # 의존성 설치
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-
-# 디텍토리 생성
-RUN mkdir app
+RUN pip install --no-cache-dir --upgrade -r app/requirements.txt
 
 # 나머지 파일 복사
-COPY ./app /code/app
+COPY . app/
 
 # app 디렉토리 내에 __init__.py 파일 생성
-RUN touch /code/app/__init__.py
+RUN touch app/__init__.py
 
 # 호스트와 연결할 포트 번호
 EXPOSE 8000
