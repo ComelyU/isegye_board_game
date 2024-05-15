@@ -4,6 +4,7 @@ import com.example.domain.model.DeliverClass
 import com.example.domain.model.DeliverResponseClass
 import com.example.domain.model.GameClass
 import com.example.domain.model.OrderClass
+import com.example.domain.model.RemoteResponseClass
 import com.example.domain.model.TurtleClass
 
 interface Repository {
@@ -14,4 +15,6 @@ interface Repository {
     suspend fun gameRepo(): Result<List<GameClass>>
 
     suspend fun deliverRepo(deliverClass: DeliverClass): Result<DeliverResponseClass>
+
+    suspend fun cancelRepo(gameOrderId: Int): Result<RemoteResponseClass>
 }

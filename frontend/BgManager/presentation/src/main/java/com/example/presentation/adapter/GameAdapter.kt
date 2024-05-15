@@ -1,6 +1,7 @@
 package com.example.presentation.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -19,8 +20,10 @@ class GameAdapter(private val gameOnClickListener: GameOnClickListener)
             binding.gameCartButton.setOnClickListener{
                 clickListener.onGameClicked(item.gameOrderId, item.orderType, item.roomNumber)
             }
+            binding.gameCancelButton.setOnClickListener{
+                clickListener.onGameCancelClicked(item.gameOrderId)
+            }
             binding.executePendingBindings()
-//            println("게임 어댑터 뷰홀더 들어옴 ${binding.gameItem}")
         }
     }
 
@@ -32,9 +35,22 @@ class GameAdapter(private val gameOnClickListener: GameOnClickListener)
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
 //        val item = itemList[position]
+
         val item = getItem(position)
 //        println("게임 바인드 뷰홀더 들어옴 $item")
         holder.bind(item)
+
+        if (item.orderStatus == 3 || item.orderStatus == 4) {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+            return
+        } else {
+            holder.itemView.visibility = View.VISIBLE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
     }
 
     private class GameDiffCallback : DiffUtil.ItemCallback<GameUiState>() {
@@ -49,5 +65,6 @@ class GameAdapter(private val gameOnClickListener: GameOnClickListener)
 
     interface GameOnClickListener {
         fun onGameClicked(gameOrderId: Int, orderType: Int, roomNumber: Int)
+        fun onGameCancelClicked(gameOrderId: Int)
     }
 }

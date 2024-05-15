@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/loading" />
+        android:src="@drawable/loading"
+        android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
@@ -49,54 +50,63 @@
 
         <TextView
             android:id="@+id/selectTheme"
-            android:layout_width="130dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:text="장르:"
+            android:text="장  르"
             android:textSize="25sp"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selectSpace1" />
 
-        <RadioGroup
-            android:id="@+id/themeRadioGroup"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="25sp"
             app:layout_constraintStart_toEndOf="@id/selectTheme"
+            app:layout_constraintTop_toTopOf="@id/selectTheme"/>
+
+        <RadioGroup
+            android:id="@+id/themeRadioGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/selectTheme"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selectSpace1"
             android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/theme1"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:text="탐험" />
 
             <RadioButton
                 android:id="@+id/theme2"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:text="중세" />
 
             <RadioButton
                 android:id="@+id/theme3"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:text="우주" />
 
             <RadioButton
                 android:id="@+id/theme4"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:text="서부" />
 
             <RadioButton
                 android:id="@+id/theme5"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:text="두뇌" />
@@ -111,14 +121,21 @@
 
         <TextView
             android:id="@+id/selectDifficulty"
-            android:layout_width="130dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:text="난이도:"
+            android:text="난이도"
             android:gravity="center"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selectSpace2" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="25sp"
+            app:layout_constraintStart_toEndOf="@id/selectDifficulty"
+            app:layout_constraintTop_toTopOf="@id/selectDifficulty"/>
 
         <RadioGroup
             android:id="@+id/difficultyRadioGroup"
@@ -130,34 +147,38 @@
 
             <RadioButton
                 android:id="@+id/difficulty1"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:text="1" />
 
             <RadioButton
                 android:id="@+id/difficulty2"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:text="중세" />
+                android:layout_marginHorizontal="10dp"
+                android:text="2" />
 
             <RadioButton
                 android:id="@+id/difficulty3"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:text="우주" />
+                android:layout_marginHorizontal="10dp"
+                android:text="3" />
 
             <RadioButton
                 android:id="@+id/difficulty4"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:text="서부" />
+                android:layout_marginHorizontal="10dp"
+                android:text="4" />
 
             <RadioButton
                 android:id="@+id/difficulty5"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:text="두뇌" />
+                android:layout_marginHorizontal="10dp"
+                android:text="5" />
         </RadioGroup>
 
         <Space
@@ -169,14 +190,22 @@
 
         <TextView
             android:id="@+id/selectPlayer"
-            android:layout_width="130dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:text="인원:"
+            android:text="태  그"
             android:gravity="center"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selectSpace3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="25sp"
+            app:layout_constraintStart_toEndOf="@id/selectPlayer"
+            app:layout_constraintTop_toTopOf="@id/selectPlayer"/>
 
         <RadioGroup
             android:id="@+id/playerRadioGroup"
@@ -188,31 +217,39 @@
 
             <RadioButton
                 android:id="@+id/player1"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="2명" />
+                android:text="연기" />
 
             <RadioButton
                 android:id="@+id/player2"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="3~4명" />
+                android:text="캐쥬얼" />
 
             <RadioButton
                 android:id="@+id/player3"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="5~6명" />
+                android:text="덱빌딩" />
 
             <RadioButton
                 android:id="@+id/player4"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="8명 이상" />
+                android:text="카드" />
+
+            <RadioButton
+                android:id="@+id/player5"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="추리" />
+
 
         </RadioGroup>
 
@@ -225,14 +262,22 @@
 
         <TextView
             android:id="@+id/selectPlaytime"
-            android:layout_width="130dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:text="플레이 시간:"
+            android:text="시  간"
             android:gravity="center"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selectSpace4" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="25sp"
+            app:layout_constraintStart_toEndOf="@id/selectPlaytime"
+            app:layout_constraintTop_toTopOf="@id/selectPlaytime"/>
 
         <RadioGroup
             android:id="@+id/timeRadioGroup"
@@ -244,17 +289,17 @@
 
             <RadioButton
                 android:id="@+id/time1"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="30분 이하" />
+                android:text="~30분" />
 
             <RadioButton
                 android:id="@+id/time2"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="30분~1시간" />
+                android:text="1시간" />
 
             <RadioButton
                 android:id="@+id/time3"
@@ -267,6 +312,7 @@
                 android:id="@+id/time4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
                 android:text="2시간 이상" />
 
         </RadioGroup>
@@ -276,7 +322,7 @@
             android:layout_width="230dp"
             android:layout_height="76dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="56dp"
+            android:layout_marginBottom="160dp"
             android:background="@drawable/begie_rad"
             android:fontFamily="@font/dnfbitbitv2"
             android:gravity="center"
@@ -285,7 +331,6 @@
             android:textSize="40sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.545"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -293,7 +338,7 @@
             android:layout_width="230dp"
             android:layout_height="76dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="56dp"
+            android:layout_marginBottom="160dp"
             android:background="@drawable/begie_rad"
             android:fontFamily="@font/dnfbitbitv2"
             android:gravity="center"
@@ -302,10 +347,26 @@
             android:textSize="40sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.545"
             app:layout_constraintStart_toStartOf="parent"
             android:visibility="gone"
             />
+
+        <TextView
+            android:id="@+id/recoStartButton"
+            android:layout_width="230dp"
+            android:layout_height="76dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/begie_rad"
+            android:fontFamily="@font/dnfbitbitv2"
+            android:gravity="center"
+            android:text="시작하기"
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchButton"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/recBack"
@@ -408,20 +469,23 @@
             app:layout_constraintTop_toBottomOf="@id/recPlayer" />
 
         <TextView
-            android:id="@+id/startButton"
-            android:layout_width="230dp"
-            android:layout_height="76dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/begie_rad"
-            android:fontFamily="@font/dnfbitbitv2"
-            android:gravity="center"
-            android:text="시작하기"
-            android:textColor="@color/black"
-            android:textSize="40sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/recDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:text="aaaaaaaaaaaaaaaaa"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/recPlaytime" />
+
+        <ImageView
+            android:id="@+id/coverImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/boardgameroom"
+            android:scaleType="centerCrop"
+            />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

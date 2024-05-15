@@ -33,6 +33,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -42,6 +43,7 @@ class MainActivity :
         }
 
         binding.viewModel = viewModel
+//        binding.adapter = OrderAdapter()
         binding.lifecycleOwner = this
 
         orderAdapter = OrderAdapter(this)
@@ -82,11 +84,15 @@ class MainActivity :
 
     override fun onGameClicked(gameOrderId: Int, orderType: Int, roomNumber: Int) {
         // 여기서 selectTurtle 함수를 호출합니다.
-        viewModel.selectGame(gameOrderId, orderType, roomNumber)
+        viewModel.selectGame(gameOrderId, orderType)
     }
 
     override fun onOrderClicked(orderId: Int, roomNumber: Int) {
         // 여기서 selectTurtle 함수를 호출합니다.
-        viewModel.selectMenuId(orderId, roomNumber)
+        viewModel.selectMenuId(orderId)
+    }
+
+    override fun onGameCancelClicked(gameOrderId: Int) {
+        viewModel.cancelGameOrder(gameOrderId)
     }
 }

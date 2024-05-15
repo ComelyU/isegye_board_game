@@ -7,6 +7,7 @@ import com.example.remote.model.response.OrderResponseModel
 import com.example.remote.model.response.TurtleBotResponseModel
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -35,4 +36,9 @@ interface ApiService {
         @Path("turtleId") turtleId : Int,
         @Body requestBody: DeliverRequestModel
     ) : Response<DeliverResponseModel>
+
+    @DELETE("game/order/{orderGameId}")
+    suspend fun cancelOrder(
+        @Path("orderGameId") orderGameId : Int,
+    ) : Response<Void>
 }

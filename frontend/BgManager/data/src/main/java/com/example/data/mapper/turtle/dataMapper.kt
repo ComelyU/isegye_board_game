@@ -5,12 +5,14 @@ import com.example.data.model.DeliverResponseData
 import com.example.data.model.GameData
 import com.example.data.model.OrderData
 import com.example.data.model.OrderDetailData
+import com.example.data.model.RemoteResponseData
 import com.example.data.model.TurtleData
 import com.example.domain.model.DeliverClass
 import com.example.domain.model.DeliverResponseClass
 import com.example.domain.model.GameClass
 import com.example.domain.model.OrderClass
 import com.example.domain.model.OrderDetailClass
+import com.example.domain.model.RemoteResponseClass
 import com.example.domain.model.TurtleClass
 
 internal fun TurtleData.toDomain() = TurtleClass(
@@ -58,4 +60,8 @@ internal fun GameData.toDomain() = GameClass(
     orderType = orderType,
     orderStatus = orderStatus,
     roomNumber = roomNumber,
+)
+
+internal fun RemoteResponseData.toDomain() = RemoteResponseClass(
+    message = message
 )
