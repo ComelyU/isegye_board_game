@@ -138,6 +138,7 @@ class GameDetail : Fragment() {
         if (stock != "0") {
             binding.startButton.setOnClickListener{
                 lifecycleScope.launch {
+                    binding.loadingImage.visibility = View.VISIBLE
                     if (savedGameId != "") {
 //                        val check = checkOrder(savedOrderId!!)
 //                        showReturnOrderDialog(savedGameId, gameId.toString(), customerId!!, view)
@@ -267,6 +268,8 @@ class GameDetail : Fragment() {
                                     if (result == 1) {
                                         removeGameId(gameId, view)
                                         showOrderDialog("주문이 취소되었습니다.")
+                                    } else {
+                                        showOrderDialog("반납 에러")
                                     }
                                 }
                                 dialog.dismiss()
@@ -281,11 +284,13 @@ class GameDetail : Fragment() {
                     1 -> {// 배달중 취소 및 반납 불가
                         ShowDialog.showFailure(requireContext(), "현재 배달 중인 게임이 있습니다.\n배달 완료 후 다시 요청해 주세요.")
                     }
-                    2 -> {// 배달 완료 -> 반납 후 주문 요청
+                    2 -> {// 배달 완료 -> 반납
                         returnOrder(gameId, customerId) { result ->
                             if (result == 1) {
                                 removeGameId(gameId, view)
                                 showOrderDialog("반납요청되었습니다.")
+                            } else {
+                                showOrderDialog("배달 후 반납 에러")
                             }
                         }
                     }
@@ -416,6 +421,8 @@ class GameDetail : Fragment() {
         } else {
             ShowDialog.showFailure(requireContext(), "잘못된 요청 입니다.")
         }
+
+        binding.loadingImage.visibility = View.GONE
     }
 
     private fun gameOrder(gameId: String, customerId: String, callback: (Long?) -> Unit) {

@@ -6,16 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".photo.PhotoCheckFragment">
 
-    <ImageView
-        android:id="@+id/photocheckView"
+    <FrameLayout
+        android:id="@+id/photoCheckFrame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="22dp"
-        android:src="@drawable/loading"
+        android:background="@drawable/black_border"
         app:layout_constraintBottom_toTopOf="@id/reCaptureButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/photoCheckGuideLine" />
+        app:layout_constraintEnd_toStartOf="@id/photoCheckGuideLine">
+
+        <ImageView
+            android:id="@+id/photoCheckView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+    </FrameLayout>
+
+
 
     <!-- 사진을 촬영하는 버튼 -->
     <TextView
@@ -66,14 +76,14 @@
 
     <TextView
         android:id="@+id/photoCheckDescription"
-        android:layout_width="300dp"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/photoCheckGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/photoCheckTitle"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="16dp"
         android:textColor="@color/white"
-        android:text="합성에 시간이 걸릴 수 있으니 QR코드를 스캔한 후 잠시 기다려 주세요."
+        android:text="QR코드를 스캔한 후 사진을 가져가 주세요.\n페이지에서 벗어나면 모든 사진이 삭제되니\n주의해주세요!"
         android:fontFamily="@font/jua"
         android:textSize="20sp"
         />
@@ -83,9 +93,8 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/photoGuideLine"
+        app:layout_constraintTop_toBottomOf="@id/photoCheckDescription"
+        app:layout_constraintStart_toEndOf="@id/photoCheckGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         />
 

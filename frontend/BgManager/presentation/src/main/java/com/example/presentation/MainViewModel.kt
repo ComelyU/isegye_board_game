@@ -47,6 +47,12 @@ class MainViewModel @Inject constructor(
     val selectedReturn: LiveData<Int> = _selectedReturn
     val selectedRoom: LiveData<Int> = _selectedRoom
 
+    var selectedTurtleString = "터틀봇 : ${selectedTurtle.value.toString()}"
+    var selectedMenuString = "음료 : ${selectedMenu.value.toString()}"
+    var selectedGameString = "게임 : ${selectedGame.value.toString()}"
+    var selectedReturnString = "반납 : ${selectedReturn.value.toString()}"
+    var selectedRoomString = "터틀봇 : ${selectedTurtle.value.toString()}"
+
     fun pushTurtle() {
         if (selectedTurtle.value == null) {
             Log.d("orderRequest", "주문 요청 내용: ${selectedTurtle.value}, ${selectedMenu.value}, ${selectedGame.value}, ${selectedReturn.value}")

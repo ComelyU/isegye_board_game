@@ -1,7 +1,6 @@
 package com.example.presentation
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -55,10 +54,6 @@ class MainActivity :
 
         viewModel.loadData()
 
-//        viewModel.uiStateFlow.observe(this, Observer { uiState ->
-//            adapter.submitList(uiState.orders)
-//        })
-
         viewModel.uiStateFlow.observe(this, Observer { uiState ->
             when (uiState) {
                 is UiState -> {
@@ -79,16 +74,22 @@ class MainActivity :
     override fun onTurtleClicked(turtleId: Int) {
         // 여기서 selectTurtle 함수를 호출합니다.
         viewModel.selectTurtle(turtleId)
+        showAlert("${turtleId}번 로봇이 선택되었습니다.")
     }
 
     override fun onGameClicked(gameOrderId: Int, orderType: Int, roomNumber: Int) {
         // 여기서 selectTurtle 함수를 호출합니다.
         viewModel.selectGame(gameOrderId, orderType)
+        showAlert("${gameOrderId}번 주문이 담겼습니다.")
+    }
+
+    override fun onGameCancelClicked(gameOrderId: Int) {
+        viewModel.cancelGameOrder(gameOrderId)
     }
 
     override fun onOrderClicked(orderId: Int, roomNumber: Int) {
         // 여기서 selectTurtle 함수를 호출합니다.
-        viewModel.selectMenuId(orderId, roomNumber)
+        viewModel.selectMenuId(orderId)
         showAlert("${orderId}번 주문이 담겼습니다.")
     }
 

@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.databinding.FragmentRecommendBinding
 import com.example.isegyeboard.game_list.model.GameResponse
 import retrofit2.Call
