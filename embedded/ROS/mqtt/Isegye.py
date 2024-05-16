@@ -117,7 +117,7 @@ class IsegyeNode(Node):
 
         feedback = msg.feedback
         # self.get_logger().info(f'Received feedback: {feedback}')
-        self.get_logger().infi(f'Remaining distance: {feedback.remaining_distance}')
+        # self.get_logger().info(f'Remaining distance: {feedback.remaining_distance}')
     
     # cancel all_goal from nav_action_server
     def cancel_goal(self):
@@ -232,7 +232,7 @@ class IsegyeNode(Node):
         msg = "webview"
         
         try:
-            mqtt_publish.single("display/1", msg, qos=0, retain=True, hostname=BROKER_ADDRESS, port=PORT, auth={'username':USER_NAME, 'password':PASSWORD})
+            mqtt_publish.single("display/1", msg, qos=0, retain=False, hostname=BROKER_ADDRESS, port=PORT, auth={'username':USER_NAME, 'password':PASSWORD})
             self.get_logger().info("[pub] [topic]: display/1, [msg]: " + msg)
 
         except Exception as e:
