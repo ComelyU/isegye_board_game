@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
@@ -132,8 +134,12 @@ public class CustomerServiceImpl implements CustomerService{
         String imgUrl = "";
         String themeImgUrl = "gameTheme/" + themeType + "/" + themeType + ".jpg";
 
+        log.info("themeImgUrl : {}", themeImgUrl);
+
         try {
             String themeFile = s3Service.downloadToBase64(themeImgUrl);
+
+            log.info("themeFile : {}", themeFile);
 
             RestTemplate restTemplate = new RestTemplate();
             CreateImageRequest imageRequest = CreateImageRequest.builder()
@@ -143,12 +149,16 @@ public class CustomerServiceImpl implements CustomerService{
 
             String resultImg = restTemplate.postForObject(uri, imageRequest, String.class);
 
+            log.info("resultImg : {}", resultImg);
+
             MultipartFile resultFile = convertBase64ToImage(resultImg, "resultImg");
 
             imgUrl = uploadFileToS3(resultFile, "image/", "ai");
         }catch (IOException e){
             throw new CustomException(ErrorCode.IO_ERROR, "S3 service IO Error");
         }
+
+        log.info("imgUrl : {}", imgUrl);
 
         return imgUrl;
     }
