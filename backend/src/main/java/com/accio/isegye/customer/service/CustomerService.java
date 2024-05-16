@@ -2,6 +2,8 @@ package com.accio.isegye.customer.service;
 
 import com.accio.isegye.customer.dto.CreateCustomerRequest;
 import com.accio.isegye.customer.dto.CustomerResponse;
+import com.accio.isegye.game.dto.GameResponse;
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CustomerService {
@@ -17,4 +19,6 @@ public interface CustomerService {
     String getTheme(int customerId);
 
     String swapFace(int customerId, MultipartFile sourceFile);
+
+    List<GameResponse> getGameRecommendation(int gameId);
 }
