@@ -40,26 +40,22 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
             val gameData = dataList[adapterPosition]
             val gameDetail = gameData.game
 
-            if (gameData.isAvailable > 0) {
-                val bundle = Bundle().apply {
-                    putString("gameId", gameDetail.id.toString())
-                    putString("title", gameDetail.gameName)
-                    putString("description", gameDetail.gameDetail)
-                    putString("thumbnailUrl", gameDetail.gameImgUrl)
-                    putString("stock", gameData.isAvailable.toString())
-                    putString("minPlayer", gameDetail.minPlayer.toString())
-                    putString("maxPlayer", gameDetail.maxPlayer.toString())
-                    putString("minPlaytime", gameDetail.minPlaytime.toString())
-                    putString("maxPlaytime", gameDetail.maxPlaytime.toString())
-                    putString("difficulty", ceil(gameDetail.gameDifficulty).toInt().toString())
-                    putString("theme", gameDetail.gameTagCategory.joinToString(", ") { category ->
-                        category.codeItemName
-                    })
-                }
-                v?.findNavController()?.navigate(R.id.action_gamelist_to_gamedetail, bundle)
-            } else {
-                Log.e("List", "e")
+            val bundle = Bundle().apply {
+                putString("gameId", gameData.id.toString())
+                putString("title", gameDetail.gameName)
+                putString("description", gameDetail.gameDetail)
+                putString("thumbnailUrl", gameDetail.gameImgUrl)
+                putString("stock", gameData.isAvailable.toString())
+                putString("minPlayer", gameDetail.minPlayer.toString())
+                putString("maxPlayer", gameDetail.maxPlayer.toString())
+                putString("minPlaytime", gameDetail.minPlaytime.toString())
+                putString("maxPlaytime", gameDetail.maxPlaytime.toString())
+                putString("difficulty", ceil(gameDetail.gameDifficulty).toInt().toString())
+                putString("theme", gameDetail.gameTagCategory.joinToString(", ") { category ->
+                    category.codeItemName
+                })
             }
+            v?.findNavController()?.navigate(R.id.action_gamelist_to_gamedetail, bundle)
         }
     }
 

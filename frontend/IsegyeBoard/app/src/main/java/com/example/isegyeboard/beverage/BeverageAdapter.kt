@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.isegyeboard.R
@@ -35,6 +36,7 @@ class BeverageAdapter(private val context: Context, private var dataList: List<B
             val menu = dataList[adapterPosition]
             if (menu.isAvailable != 0) {
                 val cartItem = CartClass(menu.id, menu.menuName, menu.menuPrice)
+
                 addToCart(cartItem)
                 val activity = v?.context as? AppCompatActivity
                 activity?.recreate()

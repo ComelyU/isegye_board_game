@@ -2,7 +2,7 @@ package com.example.isegyeboard.recommend
 
 data class RecommendData(
     val selectedTheme: String,
-    val selectedPlayer: String,
-    val selecteddifficulty: String,
+    val selectedTag: String,
+    val selectedDifficulty: String,
     val selectedTime: String
 )

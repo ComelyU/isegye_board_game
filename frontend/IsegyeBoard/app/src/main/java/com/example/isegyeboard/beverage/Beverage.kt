@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.beverage.cart.CartAdapter
 import com.example.isegyeboard.beverage.cart.CartClass
 import com.example.isegyeboard.beverage.cart.CartManage
@@ -64,12 +64,16 @@ class Beverage : Fragment(), CartUpdateListener {
         val menuOrder = view.findViewById<TextView>(R.id.orderButton)
         menuOrder.setOnClickListener{
             val cartItems = CartManage.getInstance().getItems()
-            sendOrder(customerId!!, cartItems)
+            if (cartItems.isEmpty()) {
+                showEmptyDialog()
+            } else {
+                showOrderConfirmDialog(customerId!!, cartItems)
+            }
         }
 
         val delCart = view.findViewById<TextView>(R.id.cartDeleteButton)
         delCart.setOnClickListener{
-            clearCartButton(view)
+            showClearDialog(view)
         }
 
         return view
@@ -97,6 +101,7 @@ class Beverage : Fragment(), CartUpdateListener {
     }
 
     private fun sendOrder(customerId: String, cartItems: List<CartClass>) {
+
         val client = BaseApi.getInstance().create(BeverageApi::class.java)
 
         val createOrderMenuRequestList = cartItems.map { CreateOrderMenuRequest(it.id, it.quantity) }
@@ -110,17 +115,17 @@ class Beverage : Fragment(), CartUpdateListener {
 //                        Log.d("menuOrder", "Menu order success")
                     } else {
                         Log.d("menuOrder", "Menu order failed")
-                        FailureDialog.showFailure(requireContext(), "menu order fail")
+                        ShowDialog.showFailure(requireContext(), "menu order fail")
                     }
                 } else {
                     Log.d("menuOrder", "request failed")
-                    FailureDialog.showFailure(requireContext(), "menu order fail")
+                    ShowDialog.showFailure(requireContext(), "menu order fail")
                 }
             }
 
             override fun onFailure(call: Call<OrderMenuResponse>, t: Throwable) {
                 Log.e("Theme", "$t")
-                FailureDialog.showFailure(requireContext(), "menu order fail")
+                ShowDialog.showFailure(requireContext(), "menu order fail")
             }
         })
     }
@@ -132,9 +137,39 @@ class Beverage : Fragment(), CartUpdateListener {
             setMessage("주문이 완료되었습니다.\n잠시만 기다려주세요")
             setPositiveButton("확인") {dialog, _ ->
                 dialog.dismiss()
-                CartManage.getInstance().clearCart()
-                updateCartItems()
-                requireView().findNavController().navigate(R.id.action_beverage_to_main_page_frg)
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+        CartManage.getInstance().clearCart()
+        updateCartItems()
+        requireView().findNavController().navigate(R.id.action_beverage_to_main_page_frg)
+    }
+
+    private fun showOrderConfirmDialog(customerId: String, cartItems: List<CartClass>) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("주문확인")
+            setMessage("장바구니에 담긴 품목을 주문하시겠습니까?")
+            setPositiveButton("확인") { _, _ ->
+                sendOrder(customerId, cartItems)
+            }
+            setNegativeButton("취소") {dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun showEmptyDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("주문실패")
+            setMessage("장바구니가 비어있습니다.")
+            setPositiveButton("확인") {dialog, _ ->
+                dialog.dismiss()
             }
         }
         val alertDialog = alertDialogBuilder.create()
@@ -146,13 +181,26 @@ class Beverage : Fragment(), CartUpdateListener {
         updateTotalPrice(cartAdapter.currentList)
     }
 
-    private fun clearCartButton(v: View) {
-        CartManage.getInstance().clearCart()
-        updateCartItems()
+    private fun showClearDialog(v: View) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.apply {
+            setTitle("장바구니 비우기")
+            setMessage("장바구니를 비우시겠습니까?")
+            setPositiveButton("확인") {dialog, _ ->
+                dialog.dismiss()
+                CartManage.getInstance().clearCart()
+                updateCartItems()
 
-        val activity = v.context as? AppCompatActivity
-        activity?.recreate()
+                val activity = v.context as? AppCompatActivity
+                activity?.recreate()
 
-        (context as? CartUpdateListener)?.onCartUpdated()
+                (context as? CartUpdateListener)?.onCartUpdated()
+            }
+            setNegativeButton("취소") {dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }

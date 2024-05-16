@@ -18,7 +18,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.room.RoomApi
 import retrofit2.Call
 import retrofit2.Callback
@@ -56,9 +56,9 @@ class MainPageFrg : Fragment() {
             it.findNavController().navigate(R.id.action_main_page_frg_to_gamelist)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.toRecommendButton).setOnClickListener {
-            it.findNavController().navigate(R.id.action_main_page_frg_to_recommend)
-        }
+//        view.findViewById<ConstraintLayout>(R.id.toRecommendButton).setOnClickListener {
+//            it.findNavController().navigate(R.id.action_main_page_frg_to_recommend)
+//        }
 
         view.findViewById<ConstraintLayout>(R.id.toBeverage).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_beverage)
@@ -105,7 +105,6 @@ class MainPageFrg : Fragment() {
             Context.MODE_PRIVATE
         )
         val pref = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-        sharedPreferences.edit().remove("isOccupied").apply()
 
         val customerId = pref.getString("customerId", null)
         Log.d("Logout", "try logout : ${customerId}")
@@ -115,25 +114,28 @@ class MainPageFrg : Fragment() {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null) {
-
-                        sharedPreferences.edit().remove("isOccupied").apply()
-                        sharedPreferences.edit().remove("customerId").apply()
+                        val editor = sharedPreferences.edit()
+                        editor.remove("isOccupied")
+                        editor.remove("customerId")
+                        editor.remove("gameId")
+                        editor.remove("idDeli")
+                        editor.apply()
                         //페이지 이동
                         Log.d("logout", "logout success")
                         showFeeDialog(responseBody)
                     } else {
                         Log.d("logout", "logout failed $responseBody")
-                        FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        ShowDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("logout", "request failed $response")
-                    FailureDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
+                    ShowDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<Int>, t: Throwable) {
                 Log.e("logout", "$t")
-                FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
+                ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
     }

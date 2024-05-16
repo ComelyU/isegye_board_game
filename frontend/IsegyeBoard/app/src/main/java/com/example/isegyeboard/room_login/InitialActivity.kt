@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.firebase.PushMessage
 import com.example.isegyeboard.main_page.MainActivity
 import com.google.android.material.textfield.TextInputEditText
@@ -26,11 +26,12 @@ class InitialActivity : AppCompatActivity() {
         if (isLogined()) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-        } else {
-            setContentView(R.layout.activity_initial)
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
         }
+//        else {
+//            setContentView(R.layout.activity_initial)
+////            val intent = Intent(this, MainActivity::class.java)
+////            startActivity(intent)
+//        }
 
         PushMessage().getFirebaseToken()
 
@@ -74,17 +75,17 @@ class InitialActivity : AppCompatActivity() {
                         saveStoreInfo(storeId, roomId)
                     } else {
                         Log.d("Login", "login failed $responseBody")
-                        FailureDialog.showFailure(this@InitialActivity, "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        ShowDialog.showFailure(this@InitialActivity, "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Login", "request failed $response")
-                    FailureDialog.showFailure(this@InitialActivity, "네트워크 오류로 실패했습니다.")
+                    ShowDialog.showFailure(this@InitialActivity, "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<Int>, t: Throwable) {
                 Log.e("Login", "$t")
-                FailureDialog.showFailure(this@InitialActivity, "요청에 실패했습니다.")
+                ShowDialog.showFailure(this@InitialActivity, "요청에 실패했습니다.")
             }
         })
     }

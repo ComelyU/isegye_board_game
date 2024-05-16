@@ -3,11 +3,11 @@ package com.example.isegyeboard.baseapi
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
 
-object FailureDialog {
+object ShowDialog {
     fun showFailure(context: Context, message: String) {
         val builder = AlertDialog.Builder(context)
 
-        builder.setTitle("인증 실패")
+        builder.setTitle("요청 실패")
         builder.setMessage(message)
 
         builder.setPositiveButton("확인") {dialog, _ ->

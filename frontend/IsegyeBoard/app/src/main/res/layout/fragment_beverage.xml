@@ -6,100 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".beverage.Beverage">
 
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:id="@+id/menuContainer"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_margin="10dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@id/beverageGuideLine">-->
-
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="60dp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            android:id="@+id/buttonCoffee"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintEnd_toStartOf="@id/buttonDrink"-->
-<!--            android:background="@color/white"-->
-<!--            >-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/textCoffee"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                android:fontFamily="@font/jua"-->
-<!--                android:text="Coffee"-->
-<!--                android:textSize="45sp"-->
-<!--                android:textAlignment="center"-->
-<!--                >-->
-<!--            </TextView>-->
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:id="@+id/buttonDrink"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintEnd_toStartOf="@id/buttonSnack"-->
-<!--            app:layout_constraintStart_toEndOf="@id/buttonCoffee"-->
-<!--            android:background="#5E412F"-->
-<!--            >-->
-<!--            <TextView-->
-<!--                android:id="@+id/textDrink"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                android:fontFamily="@font/jua"-->
-<!--                android:text="Drink"-->
-<!--                android:textSize="45sp"-->
-<!--                android:textAlignment="center"-->
-<!--                android:textColor="@color/white"-->
-<!--                >-->
-<!--            </TextView>-->
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:id="@+id/buttonSnack"-->
-<!--            app:layout_constraintStart_toEndOf="@id/buttonDrink"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            android:background="#5E412F"-->
-
-<!--            >-->
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                android:id="@+id/textSnack"-->
-<!--                android:fontFamily="@font/jua"-->
-<!--                android:text="Snack"-->
-<!--                android:textSize="45sp"-->
-<!--                android:textAlignment="center"-->
-<!--                android:textColor="@color/white"-->
-<!--                >-->
-<!--            </TextView>-->
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/menuListRV"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/buttonCoffee"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            android:background="@color/white"-->
-<!--            android:layout_margin="0dp"-->
-<!--            tools:listitem="@layout/layout_menu_item"-->
-<!--            android:padding="12dp"/>-->
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/BeverageContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -107,6 +13,7 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp"
         app:defaultNavHost="true"
+        android:elevation="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/beverageGuideLine"
         app:navGraph="@navigation/beverage_nav" />
@@ -119,6 +26,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.7"
         />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cartLogo"
         android:layout_width="0dp"
@@ -129,6 +37,7 @@
         app:layout_constraintStart_toEndOf="@+id/beverageGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:elevation="8dp"
         >
 
         <ImageView
@@ -153,7 +62,8 @@
         app:layout_constraintBottom_toTopOf="@id/cartPrice"
         android:background="#FFFFFF"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="4dp"/>
+        android:layout_marginVertical="4dp"
+        android:elevation="8dp"/>
 
     <TextView
         android:id="@+id/cartDeleteButton"
@@ -169,7 +79,8 @@
         android:layout_gravity="center_vertical"
         android:textColor="@color/white"
         android:background="#5E412F"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        android:elevation="8dp"/>
 
     <TextView
         android:id="@+id/cartPrice"
@@ -201,6 +112,7 @@
         android:layout_gravity="center_vertical"
         android:textColor="@color/black"
         android:background="#FCEBB6"
-        android:textSize="30dp" />
+        android:textSize="30dp"
+        android:elevation="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
