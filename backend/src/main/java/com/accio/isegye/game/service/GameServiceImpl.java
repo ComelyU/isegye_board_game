@@ -252,7 +252,7 @@ public class GameServiceImpl implements GameService{
     @Override
     public StockListResponse getStockListByStore(Integer storeId) {
         return new StockListResponse(
-            stockRepository.findAllByStoreId(storeId)
+            stockRepository.findAllByStoreIdAndDeletedAtIsNull(storeId)
                 .stream()
                 .map(StockResponse::new)
                 .toList()

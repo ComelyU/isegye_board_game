@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
 
-    List<Stock> findAllByStoreId(int storeId);
+    List<Stock> findAllByStoreIdAndDeletedAtIsNull(Integer storeId);
 }
