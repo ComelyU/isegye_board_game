@@ -9,23 +9,37 @@ import com.accio.isegye.customer.entity.Customer;
 import com.accio.isegye.customer.repository.CustomerRepository;
 import com.accio.isegye.exception.CustomException;
 import com.accio.isegye.exception.ErrorCode;
+import com.accio.isegye.game.dto.GameResponse;
 import com.accio.isegye.game.entity.Game;
+import com.accio.isegye.game.repository.GameRepository;
 import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
@@ -38,11 +52,12 @@ public class CustomerServiceImpl implements CustomerService{
     private final ModelMapper modelMapper;
     private final AmazonS3Client amazonS3Client;
     private final S3Service s3Service;
+    private final GameRepository gameRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    private String uri = "https://k10a706.p.ssafy.io/ai/swap";
+    private String uri = "https://k10a706.p.ssafy.io/ai";
 
     private CustomerResponse getCustomerResponse(Customer customer){
         return modelMapper.map(customer, CustomerResponse.class);
@@ -147,7 +162,7 @@ public class CustomerServiceImpl implements CustomerService{
                 .themeFile(themeFile)
                 .build();
 
-            String resultImg = restTemplate.postForObject(uri, imageRequest, String.class);
+            String resultImg = restTemplate.postForObject(uri+"/swap", imageRequest, String.class);
 
             log.info("resultImg : {}", resultImg);
 
@@ -187,5 +202,36 @@ public class CustomerServiceImpl implements CustomerService{
         byte[] decodedBytes = Base64.decodeBase64(base64String);
 
         return new Base64MultipartFile(decodedBytes, fileName, fileName, "image/jpg");
+    }
+
+    @Override
+    public List<GameResponse> getGameRecommendation(int gameId) {
+        if(gameRepository.existsByIdAndDeletedAtIsNull(gameId)){
+            log.info("game found");
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            String url = UriComponentsBuilder
+                .fromHttpUrl(uri + "/recommendation")
+                .queryParam("game_id", gameId)
+                .encode()
+                .toUriString();
+
+            ResponseEntity<List<Integer>> exchange = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<List<Integer>>(){}
+            );
+            log.info("getBody: {}", exchange.getBody());
+
+            return gameRepository.findByIdIn(exchange.getBody())
+                .stream()
+                .map(GameResponse::new)
+                .toList();
+
+        }
+
+        return new ArrayList<>();
     }
 }
