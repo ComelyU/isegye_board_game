@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/historyItemName"
-        android:layout_width="250dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,6 +26,20 @@
         android:text="수량"
         android:textSize="20sp"
         />
+
+    <TextView
+        android:id="@+id/cancelButton"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="취소"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/orderStatus"
+        android:background="@drawable/begie_rad"
+        android:textSize="18sp"
+        android:padding="2dp"
+        android:layout_marginEnd="10dp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/orderStatus"

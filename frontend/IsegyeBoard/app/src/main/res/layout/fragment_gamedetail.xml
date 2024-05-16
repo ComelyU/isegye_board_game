@@ -210,7 +210,6 @@
             android:layout_width="230dp"
             android:layout_height="76dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/begie_rad"
             android:fontFamily="@font/dnfbitbitv2"
             android:gravity="center"
@@ -226,7 +225,6 @@
             android:layout_width="230dp"
             android:layout_height="76dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/begie_rad"
             android:fontFamily="@font/dnfbitbitv2"
             android:gravity="center"
@@ -239,8 +237,8 @@
 
         <TextView
             android:id="@+id/photoButton"
-            android:layout_width="190dp"
-            android:layout_height="76dp"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="8dp"
             android:background="@drawable/begie_rad"
@@ -248,9 +246,9 @@
             android:gravity="center"
             android:text="기념사진"
             android:textColor="@color/black"
-            android:textSize="40sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/returnButton"
+            app:layout_constraintEnd_toEndOf="parent"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

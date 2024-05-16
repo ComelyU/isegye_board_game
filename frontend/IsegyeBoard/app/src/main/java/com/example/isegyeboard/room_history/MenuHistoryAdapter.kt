@@ -36,12 +36,25 @@ class MenuHistoryAdapter(private val context: Context, private var dataList: Lis
 
         val historyId = orderMenuResponse.id
         val orderStatus = orderMenuResponse.orderStatus
-        val orderStatusString = if (orderStatus == 0) {
-            "주문 접수"
-        } else if (orderStatus == 1) {
-            "배송 중"
-        } else {
-            "배송 완료"
+        val orderStatusString = when (orderStatus) {
+            0 -> {
+                "주문 접수"
+            }
+            1 -> {
+                "메뉴 준비 중"
+            }
+            2 -> {
+                "배송 중"
+            }
+            3 -> {
+                "배송 완료"
+            }
+            4 -> {
+                "취소됨"
+            }
+            else -> {
+                "배송 오류"
+            }
         }
 
         holder.orderStatusTextView.append(orderStatusString)

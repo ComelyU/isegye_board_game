@@ -15,8 +15,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
-import com.example.isegyeboard.game_detail.GameDetail
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.game_detail.GameOrderApi
 import com.example.isegyeboard.main_page.Tutorial
 import retrofit2.Call
@@ -119,17 +118,17 @@ class StartFragment : Fragment() {
                         Log.d("Start", "Start success")
                     } else {
                         Log.d("Start", "Start failed $responseBody")
-                        FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        ShowDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Start", "request failed $response")
-                    FailureDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
+                    ShowDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<RoomStartResponse>, t: Throwable) {
                 Log.e("Start", "$t")
-                FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
+                ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
     }
@@ -139,12 +138,12 @@ class StartFragment : Fragment() {
         val editor = sharedPreferences.edit()
         editor.putString("isOccupied", "1")
         editor.putBoolean("theme", true)
-        editor.putInt("volume", 100)
+        editor.putInt("volume", 60)
         editor.putString("customerId", customerId.toString())
         editor.apply()
         Log.d("Start", "저장 성공 customerId : ${customerId}")
 
-        sendVolume(customerId.toString(), 100)
+        sendVolume(customerId.toString(), 60)
         findNavController().navigate(R.id.action_startFragment_to_main_page_frg)
     }
 

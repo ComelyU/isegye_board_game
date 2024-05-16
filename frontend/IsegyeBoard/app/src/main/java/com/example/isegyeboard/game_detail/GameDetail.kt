@@ -2,13 +2,11 @@ package com.example.isegyeboard.game_detail
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -16,9 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.databinding.FragmentGamedetailBinding
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -30,7 +28,8 @@ class GameDetail : Fragment() {
 
     private lateinit var binding: FragmentGamedetailBinding
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var loadingImage: ImageView
+    private var stock : String = "0"
+    private var savedOrderId : String = "0"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,17 +46,12 @@ class GameDetail : Fragment() {
         sharedPreferences = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
 
         binding.photoButton.setOnClickListener {
-            // 테스트용 임시 네비
             it.findNavController().navigate(R.id.action_gamedetail_to_photo)
-            // 테스트후 삭제
         }
 
-        loadingImage = view.findViewById<ImageView>(R.id.loadingImage)
-        loadingImage.visibility = View.GONE
-
-        Glide.with(this)
-            .load(R.drawable.loading)
-            .into(DrawableImageViewTarget(loadingImage))
+//        Glide.with(this)
+//            .load(R.drawable.loading)
+//            .into(DrawableImageViewTarget(loadingImage))
 
         // 목록으로 돌아가기
         binding.detailBack.setOnClickListener{
@@ -75,7 +69,7 @@ class GameDetail : Fragment() {
         val maxPlaytime = arguments?.getString("maxPlaytime")
         val difficulty = arguments?.getString("difficulty")!!.toInt()
         val theme = arguments?.getString("theme")
-        val stock = arguments?.getString("stock")
+        stock = arguments?.getString("stock")!!
 
         // UI 요소에 정보 표시
         binding.detailTitle.text = title
@@ -104,6 +98,7 @@ class GameDetail : Fragment() {
         val themeOn = sharedPreferences.getBoolean("themeOn", true)
         val volume = sharedPreferences.getInt("volume", 100)
         val savedGameId = sharedPreferences.getString("gameId", "")
+        savedOrderId = sharedPreferences.getString("isDeli", "")!!
 
         binding.themeSwitch.isChecked = themeOn
 //        println(themeOn)
@@ -118,7 +113,6 @@ class GameDetail : Fragment() {
         Log.d("Volume", "savedVolume : $volume")
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            var changedVolume = 100
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 // 사용자에 의해 변경된 경우에만 SharedPreferences에 저장합니다.
                 if (fromUser) {
@@ -137,7 +131,6 @@ class GameDetail : Fragment() {
             }
         })
 
-
         // 시작/반납 버튼 토글
         orderButtonToggle(gameId.toString(), savedGameId, view)
 
@@ -145,118 +138,39 @@ class GameDetail : Fragment() {
         if (stock != "0") {
             binding.startButton.setOnClickListener{
                 lifecycleScope.launch {
-                    if (savedGameId != null) {
-                        showReturnOrderDialog(savedGameId, gameId.toString(), customerId!!, view)
+                    if (savedGameId != "") {
+//                        val check = checkOrder(savedOrderId!!)
+//                        showReturnOrderDialog(savedGameId, gameId.toString(), customerId!!, view)
+                        orderCollection(gameId.toString(), savedGameId, savedOrderId, customerId!!, view, 2)
                     } else {
-                        loadingImage.visibility = View.VISIBLE
-                        gameId?.let { orderGame(it, customerId!!, view, 0) }
+//                        gameId?.let { orderGame(it, customerId!!, view, 0) }
+                        orderCollection(gameId.toString(), null, null, customerId!!, view, 0)
                     }
                 }
             }
         } else {
             binding.startButton.setBackgroundResource(R.drawable.grey_rad)
+            binding.startButton.setOnClickListener{
+                lifecycleScope.launch {
+                    ShowDialog.showFailure(requireContext(), "해당 보드게임의 재고가 없습니다.")
+                }
+            }
         }
 
         //종료버튼
         binding.returnButton.setOnClickListener{
             lifecycleScope.launch {
-                loadingImage.visibility = View.VISIBLE
-                gameId?.let{orderGame(it, customerId!!, view, 1)}
+                orderCollection(gameId.toString(), savedGameId, savedOrderId, customerId!!, view, 1)
             }
         }
-    }
-
-
-
-    private fun orderGame(gameId: String, customerId: String, view: View, orderType: Int) {
-        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
-
-        val requestBody = mapOf(
-            "orderType" to orderType,
-        )
-
-        val call: Call<GameOrderResponse> = service.orderGame(gameId, customerId, requestBody)
-        Log.d("GameOrder", "$gameId, $customerId, $requestBody")
-
-        call.enqueue(object : Callback<GameOrderResponse> {
-            override  fun onResponse(call: Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
-                loadingImage.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-
-                    // 성공 여부에 따른 로직 처리
-                    if (responseBody != null && orderType == 0) {
-                        Log.d("Order", "Success")
-                        saveGameId(gameId, view)
-                    } else if (responseBody != null && orderType == 1) {
-                        sharedPreferences.edit().remove("gameId").apply()
-                        showOrderDialog("반납")
-                        orderButtonToggle(gameId, null, view)
-                    } else {
-                        // 실패 처리
-                        showFailedDialog()
-                        Log.d("Order", "Failed but response success")
-                    }
-                } else {
-                    showFailedDialog()
-                    Log.d("Order", "Response fail: ${response.errorBody()}")
-                }
-            }
-            override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
-                showFailedDialog()
-                Log.d("Order", "Fail to send : $t")
-            }
-        })
-    }
-
-    private fun saveGameId(gameId: String, view: View) {
-        val sharedPreferences = requireActivity().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("gameId", gameId)
-//        editor.putString("isDeli", "true")
-        editor.apply()
-        showOrderDialog("주문")
-        orderButtonToggle(gameId, gameId, view)
     }
 
     private fun showOrderDialog(message: String) {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.apply {
-            setTitle("요청완료")
-            setMessage("${message}요청되었습니다.\n잠시만 기다려주세요")
+            setTitle("주문완료")
+            setMessage(message)
             setPositiveButton("확인") {dialog, _ ->
-                dialog.dismiss()
-            }
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    private fun showReturnOrderDialog(savedGameId:String, gameId: String, customerId: String, v: View) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.apply {
-            setTitle("알림")
-            setMessage("이미 대여 중인 보드게임이 있습니다.\n 기존 보드게임을 반납하고 새 게임을 대여하시겠습니까?")
-            setPositiveButton("확인") {dialog, _ ->
-                orderGame(savedGameId, customerId, v, 1)
-                gameId.let{orderGame(it, customerId, v, 0)}
-                dialog.dismiss()
-            }
-            setNegativeButton("취소") {dialog, _ ->
-                dialog.dismiss()
-            }
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    private fun showFailedDialog() {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.apply {
-            setTitle("요청실패")
-            setMessage("네트워크 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.")
-            setPositiveButton("확인") {dialog, _ ->
-                loadingImage.visibility = View.GONE
                 dialog.dismiss()
             }
         }
@@ -319,4 +233,356 @@ class GameDetail : Fragment() {
             }
         })
     }
+
+
+
+    private fun orderCollection(
+        gameId: String, savedGameId: String?, orderId: String?, customerId: String, view: View, orderType: Int
+    ) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+
+        // 일반 주문 요청
+        if (orderType == 0) {
+            gameOrder(gameId, customerId) { result ->
+                if (result != 0.toLong()) {
+                    saveGameId(gameId, result.toString(), view)
+//                    println(gameId)
+                } else {
+                    showOrderDialog("에러")
+                }
+                showOrderDialog("주문이 완료되었습니다.")
+            }
+
+        // 일반 반납 요청
+        } else if (orderType == 1) {
+            println("orderId $savedOrderId")
+            checkOrder(savedOrderId) { orderState ->
+                when (orderState) {
+                    0 -> { // 취소 후 주문
+                        alertDialogBuilder.apply {
+                            setTitle("알림")
+                            setMessage("이미 진행중인 주문이 있습니다.\n기존 주문을 취소하시겠습니까?")
+                            setPositiveButton("확인") {dialog, _ ->
+                                cancelOrder(savedOrderId) {result ->
+                                    if (result == 1) {
+                                        removeGameId(gameId, view)
+                                        showOrderDialog("주문이 취소되었습니다.")
+                                    }
+                                }
+                                dialog.dismiss()
+                            }
+                            setNegativeButton("취소") {dialog, _ ->
+                                dialog.dismiss()
+                            }
+                        }
+                        val alertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
+                    }
+                    1 -> {// 배달중 취소 및 반납 불가
+                        ShowDialog.showFailure(requireContext(), "현재 배달 중인 게임이 있습니다.\n배달 완료 후 다시 요청해 주세요.")
+                    }
+                    2 -> {// 배달 완료 -> 반납 후 주문 요청
+                        returnOrder(gameId, customerId) { result ->
+                            if (result == 1) {
+                                removeGameId(gameId, view)
+                                showOrderDialog("반납요청되었습니다.")
+                            }
+                        }
+                    }
+                }
+            }
+
+        // 반납 + 주문 요청
+        } else if (orderType == 2 && savedGameId != null) {
+            checkOrder(orderId!!) { orderState ->
+                when (orderState) {
+                    0 -> {
+                        alertDialogBuilder.apply {
+                            setTitle("알림")
+                            setMessage("이미 진행중인 주문이 있습니다.\n" +
+                                    "기존 주문을 취소하고 새 게임을 대여하시겠습니까?")
+                            setPositiveButton("확인") {dialog, _ ->
+                                cancelOrder(orderId) {result ->
+                                    if (result == 1) {
+                                        removeGameId(savedGameId, view)
+                                    } else {
+                                        showOrderDialog("취소 에러")
+                                    }
+                                }
+                                gameOrder(gameId, customerId) { result ->
+                                    if (result != 0.toLong()) {
+                                        saveGameId(gameId, result.toString(), view)
+                                    } else {
+                                        showOrderDialog("주문 에러")
+                                    }
+                                }
+                                dialog.dismiss()
+                                showOrderDialog("취소 및 주문이 완료되었습니다.")
+                            }
+                            setNegativeButton("취소") {dialog, _ ->
+                                dialog.dismiss()
+                            }
+                        }
+                        val alertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
+
+                        // 배달중 취소 및 반납 불가
+                    }
+                    1 -> {
+                        ShowDialog.showFailure(requireContext(), "현재 배달 중인 게임이 있습니다.\n배달 완료 후 다시 요청해 주세요.")
+
+                        // 배달 완료 -> 반납 후 주문 요청
+                    }
+                    2 -> {
+                        alertDialogBuilder.apply {
+                            setTitle("알림")
+                            setMessage("이미 대여중인 보드게임이 있습니다.\n기존 보드게임을 반납하고 새 게임을 대여하시겠습니까?")
+                            setPositiveButton("확인") {dialog, _ ->
+                                returnOrder(savedGameId, customerId) { result ->
+                                    if (result == 1) {
+                                        removeGameId(savedGameId, view)
+                                    } else {
+                                        showOrderDialog("반납 에러")
+                                    }
+                                }
+                                gameOrder(gameId, customerId) { result ->
+                                    if (result != 0.toLong()) {
+                                        saveGameId(gameId, result.toString(), view)
+                                    } else {
+                                        showOrderDialog("주문 에러")
+                                    }
+                                }
+                                dialog.dismiss()
+                                showOrderDialog("반납 및 주문이 완료되었습니다.")
+                            }
+                            setNegativeButton("취소") {dialog, _ ->
+                                dialog.dismiss()
+                            }
+                        }
+                        val alertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
+
+                        // 취소된 주문
+                    }
+                    3 -> {
+                        removeGameId(savedGameId, view)
+                        gameOrder(gameId, customerId) { result ->
+                            if (result != 0.toLong()) {
+                                saveGameId(gameId, result.toString(), view)
+                            } else {
+                                showOrderDialog("주문 에러")
+                            }
+                        }
+                        showOrderDialog("주문이 완료되었습니다.")
+
+                        // 통신 오류
+                    }
+                    256 -> {
+                        ShowDialog.showFailure(requireContext(), "통신에 오류가 발생했습니다.")
+
+                        // 배송오류 발생 -> 취소후 주문
+                    }
+                    else -> {
+                        alertDialogBuilder.apply {
+                            setTitle("알림")
+                            setMessage("배송 중 오류가 확인돼었습니다.\n기존 주문을 취소하고 새 게임을 대여합니다.")
+                            setPositiveButton("확인") {dialog, _ ->
+                                cancelOrder(orderId) {result ->
+                                    if (result == 1) {
+                                        removeGameId(savedGameId, view)
+                                    } else {
+                                        showOrderDialog("취소 에러")
+                                    }
+                                }
+                                gameOrder(gameId, customerId) { result ->
+                                    if (result != 0.toLong()) {
+                                        saveGameId(gameId, result.toString(), view)
+                                    } else {
+                                        showOrderDialog("주문 에러")
+                                    }
+                                }
+                                dialog.dismiss()
+                                showOrderDialog("취소 및 주문이 완료되었습니다.")
+                            }
+                            setNegativeButton("취소") {dialog, _ ->
+                                dialog.dismiss()
+                            }
+                        }
+                        val alertDialog = alertDialogBuilder.create()
+                        alertDialog.show()
+                    }
+                }
+            }
+        } else {
+            ShowDialog.showFailure(requireContext(), "잘못된 요청 입니다.")
+        }
+    }
+
+    private fun gameOrder(gameId: String, customerId: String, callback: (Long?) -> Unit) {
+        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
+
+        val requestBody = mapOf(
+            "orderType" to 0,
+        )
+
+        val call: Call<GameOrderResponse> = service.orderGame(gameId, customerId, requestBody)
+        Log.d("GameOrder", "$gameId, $customerId, $requestBody")
+
+        call.enqueue(object : Callback<GameOrderResponse> {
+            override fun onResponse(call: Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val newOrderId = responseBody.id
+                        callback(newOrderId)
+                        Log.d("Order", "Success, $newOrderId")
+                    } else {
+                        callback(null)
+                        Log.d("Order", "Failed but response success")
+                    }
+                } else {
+                    callback(null)
+                    Log.d("Order", "Response fail: ${response.errorBody()}")
+                }
+            }
+            override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
+                callback(null)
+                Log.d("Order", "Fail to send : $t")
+            }
+        })
+    }
+
+    private fun returnOrder(gameId: String, customerId: String, callback: (Int?) -> Unit) {
+        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
+
+        val requestBody = mapOf(
+            "orderType" to 1,
+        )
+
+        val call: Call<GameOrderResponse> = service.orderGame(gameId, customerId, requestBody)
+        Log.d("GameOrder", "$gameId, $customerId, $requestBody")
+
+        call.enqueue(object : Callback<GameOrderResponse> {
+            override fun onResponse(call: Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        callback(1)
+                        stock = "1"
+                        Log.d("Order", "Return Success")
+                    } else {
+                        callback(null)
+                        Log.d("Order", "Failed but response success")
+                    }
+                } else {
+                    callback(null)
+                    Log.d("Order", "Response fail: ${response.errorBody()}")
+                }
+            }
+            override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
+                callback(null)
+                Log.d("Order", "Fail to send : $t")
+            }
+        })
+    }
+
+    private fun checkOrder(orderId: String, callback: (Int?) -> Unit) {
+        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
+
+        service.checkOrder(orderId).enqueue(object : Callback<GameOrderResponse> {
+            override fun onResponse(call : Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("checkGameOrder", "Check Success : ${response.body()?.orderStatus}")
+                    callback(response.body()?.orderStatus)
+                } else {
+                    Log.d("GameOrder", "Check Fail")
+                    callback(null)
+                }
+            }
+            override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
+                Log.d("GameOrder", "$t")
+                callback(null)
+            }
+        })
+    }
+
+    private fun cancelOrder(orderId: String, callback: (Int?) -> Unit){
+        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
+        Log.d("CancelOrder", "order id : $orderId")
+        service.cancelOrder(orderId).enqueue(object : Callback<Void> {
+            override fun onResponse(call : Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("CancelOrder", "Cancel Success : $response")
+                    callback(1)
+                    stock = "1"
+                } else {
+                    Log.d("CancelOrder", "Cancel Fail")
+                    callback(400)
+                }
+            }
+            override fun onFailure(call: Call<Void>, t:Throwable) {
+                Log.d("CancelOrder", "$t")
+                callback(401)
+            }
+        })
+    }
+
+    private fun saveGameId(gameId: String, orderId:String, view: View) {
+        val editor = sharedPreferences.edit()
+        editor.putString("gameId", gameId)
+        editor.putString("isDeli", orderId)
+        editor.apply()
+        savedOrderId = orderId
+//        println("saveId : $savedOrderId, orderId: $orderId")
+        orderButtonToggle(gameId, gameId, view)
+    }
+
+    private fun removeGameId(gameId: String, view: View) {
+        val editor = sharedPreferences.edit()
+        editor.remove("gameId")
+        editor.remove("isDeli")
+        editor.apply()
+        orderButtonToggle(gameId, null, view)
+    }
+
+
+//    private fun orderGame(gameId: String, customerId: String, view: View, orderType: Int) {
+//        val service = BaseApi.getInstance().create((GameOrderApi::class.java))
+//
+//        val requestBody = mapOf(
+//            "orderType" to orderType,
+//        )
+//
+//        val call: Call<GameOrderResponse> = service.orderGame(gameId, customerId, requestBody)
+//        Log.d("GameOrder", "$gameId, $customerId, $requestBody")
+//
+//        call.enqueue(object : Callback<GameOrderResponse> {
+//            override  fun onResponse(call: Call<GameOrderResponse>, response: Response<GameOrderResponse>) {
+//                if (response.isSuccessful) {
+//                    val responseBody = response.body()
+//
+//                    // 성공 여부에 따른 로직 처리
+//                    if (responseBody != null && orderType == 0) {
+//                        Log.d("Order", "Success")
+//                        saveGameId(gameId, responseBody.id.toString(), view)
+//                    } else if (responseBody != null && orderType == 1) {
+//                        sharedPreferences.edit().remove("gameId").apply()
+//                        showOrderDialog("반납")
+//                        orderButtonToggle(gameId, null, view)
+//                    } else {
+//                        // 실패 처리
+//                        ShowDialog.showFailure(requireContext(), "주문에 오류가 발생했습니다.")
+//                        Log.d("Order", "Failed but response success")
+//                    }
+//                } else {
+//                    ShowDialog.showFailure(requireContext(), "서버에 오류가 발생했습니다.")
+//                    Log.d("Order", "Response fail: ${response.errorBody()}")
+//                }
+//            }
+//            override fun onFailure(call: Call<GameOrderResponse>, t:Throwable) {
+//                ShowDialog.showFailure(requireContext(), "주문요청에 실패했습니다.")
+//                Log.d("Order", "Fail to send : $t")
+//            }
+//        })
+//    }
 }

@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.beverage.cart.CartAdapter
 import com.example.isegyeboard.beverage.cart.CartClass
 import com.example.isegyeboard.beverage.cart.CartManage
@@ -115,17 +115,17 @@ class Beverage : Fragment(), CartUpdateListener {
 //                        Log.d("menuOrder", "Menu order success")
                     } else {
                         Log.d("menuOrder", "Menu order failed")
-                        FailureDialog.showFailure(requireContext(), "menu order fail")
+                        ShowDialog.showFailure(requireContext(), "menu order fail")
                     }
                 } else {
                     Log.d("menuOrder", "request failed")
-                    FailureDialog.showFailure(requireContext(), "menu order fail")
+                    ShowDialog.showFailure(requireContext(), "menu order fail")
                 }
             }
 
             override fun onFailure(call: Call<OrderMenuResponse>, t: Throwable) {
                 Log.e("Theme", "$t")
-                FailureDialog.showFailure(requireContext(), "menu order fail")
+                ShowDialog.showFailure(requireContext(), "menu order fail")
             }
         })
     }
@@ -137,13 +137,14 @@ class Beverage : Fragment(), CartUpdateListener {
             setMessage("주문이 완료되었습니다.\n잠시만 기다려주세요")
             setPositiveButton("확인") {dialog, _ ->
                 dialog.dismiss()
-                CartManage.getInstance().clearCart()
-                updateCartItems()
-                requireView().findNavController().navigate(R.id.action_beverage_to_main_page_frg)
             }
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+
+        CartManage.getInstance().clearCart()
+        updateCartItems()
+        requireView().findNavController().navigate(R.id.action_beverage_to_main_page_frg)
     }
 
     private fun showOrderConfirmDialog(customerId: String, cartItems: List<CartClass>) {

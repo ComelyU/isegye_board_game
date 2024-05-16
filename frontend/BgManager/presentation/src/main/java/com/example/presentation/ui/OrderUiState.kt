@@ -13,8 +13,10 @@ data class OrderUiState(
     val orderStatusString: String
         get() = when (orderStatus) {
             0 -> "준비 중"
-            1 -> "배송 중"
-            2 -> "배송 완료"
+            1 -> "메뉴 준비 중"
+            2 -> "배송 중"
+            3 -> "배송 완료"
+            4 -> "주문 취소"
             else -> "배송 오류"
         }
 

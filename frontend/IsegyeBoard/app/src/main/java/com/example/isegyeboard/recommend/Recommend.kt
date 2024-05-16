@@ -10,12 +10,10 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import com.example.isegyeboard.baseapi.BasicResponse
-import com.example.isegyeboard.baseapi.FailureDialog
-import com.example.isegyeboard.room_login.LoginApi
+import com.example.isegyeboard.baseapi.ShowDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,17 +88,17 @@ class Recommend : Fragment() {
                         Log.d("Login", "login success")
                     } else {
                         Log.d("Login", "login failed $responseBody")
-                        FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        ShowDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Login", "request failed $response")
-                    FailureDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
+                    ShowDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
                 Log.e("Login", "$t")
-                FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
+                ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
 

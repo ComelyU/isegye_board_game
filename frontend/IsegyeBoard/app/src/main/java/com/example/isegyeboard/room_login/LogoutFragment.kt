@@ -9,9 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.baseapi.FailureDialog
+import com.example.isegyeboard.baseapi.ShowDialog
 import com.example.isegyeboard.databinding.FragmentLogoutBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -62,17 +61,17 @@ class LogoutFragment : Fragment() {
                         logoutFunction(storeId, roomId)
                     } else {
                         Log.d("Login", "login failed $responseBody")
-                        FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        ShowDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
                     }
                 } else {
                     Log.d("Login", "request failed $response")
-                    FailureDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
+                    ShowDialog.showFailure(requireContext(), "네트워크 오류로 실패했습니다.")
                 }
             }
 
             override fun onFailure(call: Call<Int>, t: Throwable) {
                 Log.e("Login", "$t")
-                FailureDialog.showFailure(requireContext(), "요청에 실패했습니다.")
+                ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
 
@@ -93,7 +92,7 @@ class LogoutFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         } else {
-            FailureDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+            ShowDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
         }
     }
 }

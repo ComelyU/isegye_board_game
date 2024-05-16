@@ -3,6 +3,7 @@ package com.example.isegyeboard.game_detail
 import com.example.isegyeboard.baseapi.BasicResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -30,5 +31,15 @@ interface GameOrderApi {
     fun sendVolume(
         @Path("customerId") customerId: String,
         @Query("volume") volume: String
+    ): Call<Void>
+
+    @GET("game/order/{orderGameId}")
+    fun checkOrder(
+        @Path("orderGameId") orderGameId: String,
+    ): Call<GameOrderResponse>
+
+    @DELETE("game/order/{orderGameId}")
+    fun cancelOrder(
+        @Path("orderGameId") orderGameId: String,
     ): Call<Void>
 }

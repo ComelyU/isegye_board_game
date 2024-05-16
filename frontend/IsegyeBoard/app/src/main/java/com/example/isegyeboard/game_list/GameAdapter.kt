@@ -41,7 +41,7 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
             val gameDetail = gameData.game
 
             val bundle = Bundle().apply {
-                putString("gameId", gameDetail.id.toString())
+                putString("gameId", gameData.id.toString())
                 putString("title", gameDetail.gameName)
                 putString("description", gameDetail.gameDetail)
                 putString("thumbnailUrl", gameDetail.gameImgUrl)
