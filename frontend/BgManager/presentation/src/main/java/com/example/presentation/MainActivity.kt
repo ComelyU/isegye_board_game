@@ -64,6 +64,12 @@ class MainActivity :
                 // 다른 상태 처리
             }
         })
+
+        viewModel.showAlertDialogEvent.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                showAlert(message)
+            }
+        })
     }
 
     private fun isLogined() : Boolean {
