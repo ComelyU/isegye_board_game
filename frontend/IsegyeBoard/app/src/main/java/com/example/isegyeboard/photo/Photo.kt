@@ -1,4 +1,4 @@
-package com.example.isegyeboard.game_detail
+package com.example.isegyeboard.photo
 
 import android.Manifest
 import android.content.Context
@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -21,9 +21,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
-import com.example.isegyeboard.room_login.LoginApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,11 +62,22 @@ class Photo : Fragment() {
             )
         }
 
-        val captureButton = view.findViewById<Button>(R.id.captureButton)
-        captureButton.setOnClickListener { takePhoto() }
+        val previewText = view.findViewById<TextView>(R.id.previewText)
+        val sendPhotoButton = view.findViewById<TextView>(R.id.sendPhotoButton)
 
-        val sendPhotoButton = view.findViewById<Button>(R.id.sendPhotoButton)
+        val captureButton = view.findViewById<TextView>(R.id.captureButton)
+        captureButton.setOnClickListener {
+            takePhoto()
+            previewText.visibility = View.GONE
+            sendPhotoButton.visibility = View.VISIBLE
+        }
+
         sendPhotoButton.setOnClickListener{ sendPhoto() }
+
+        val backButton = view.findViewById<ImageView>(R.id.photoBack)
+        backButton.setOnClickListener{
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
     private fun startCamera() {
@@ -102,6 +113,8 @@ class Photo : Fragment() {
     }
 
     private fun takePhoto() {
+//        deletePhotoFile()
+
         photoFile = File(
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.US)
@@ -132,14 +145,19 @@ class Photo : Fragment() {
     }
 
     private fun sendPhoto() {
-        val client = BaseApi.getInstance().create(sendPhotoApi::class.java)
+        val client = BaseApi.getInstance().create(SendPhotoApi::class.java)
         val sharedPreferences = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
 
-        val roomLogId = sharedPreferences.getString("roomLogId", null)
+        val customerId = sharedPreferences.getString("customerId", null)
 
         // 사진 파일을 생성하여 MultipartBody.Part 객체로 변환
         val requestFile = RequestBody.create(MediaType.parse("image/jpeg"), photoFile)
         val photoPart = MultipartBody.Part.createFormData("photo", photoFile.name, requestFile)
+
+        // 지워야됨
+        view?.findNavController()?.navigate(R.id.action_photo_to_photoCheckFragment)
+        //
+
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -147,6 +165,8 @@ class Photo : Fragment() {
                 if (response.success) {
                     // 성공적으로 업로드된 경우
                     Log.d(TAG, "Photo uploaded successfully")
+//                    deletePhotoFile()
+                    view?.findNavController()?.navigate(R.id.action_photo_to_photoCheckFragment)
                 } else {
                     // 업로드 실패한 경우
                     Log.e(TAG, "Failed to upload photo: ${response.message}")
@@ -182,5 +202,18 @@ class Photo : Fragment() {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+    }
+
+    private fun deletePhotoFile() {
+        if (photoFile.exists()) {
+            val deleted = photoFile.delete()
+            if (deleted) {
+                Log.d(TAG, "Photo file deleted successfully")
+            } else {
+                Log.e(TAG, "Failed to delete photo file")
+            }
+        } else {
+            Log.d(TAG, "Photo file does not exist")
+        }
     }
 }

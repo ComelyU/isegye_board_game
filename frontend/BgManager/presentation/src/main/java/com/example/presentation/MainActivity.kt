@@ -1,6 +1,7 @@
 package com.example.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -82,7 +83,7 @@ class MainActivity :
 
     override fun onGameClicked(gameOrderId: Int, orderType: Int, roomNumber: Int) {
         // 여기서 selectTurtle 함수를 호출합니다.
-        viewModel.selectGame(gameOrderId, orderType, roomNumber)
+        viewModel.selectGame(gameOrderId, orderType)
     }
 
     override fun onOrderClicked(orderId: Int, roomNumber: Int) {

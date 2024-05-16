@@ -6,6 +6,7 @@ import com.example.data.model.DeliverResponseData
 import com.example.data.model.GameData
 import com.example.data.model.OrderData
 import com.example.data.model.OrderDetailData
+import com.example.data.model.RemoteResponseData
 import com.example.data.model.TurtleData
 import com.example.remote.model.request.DeliverRequestModel
 import com.example.remote.retrofit.ApiService
@@ -89,6 +90,18 @@ internal class RemoteDataSourceImpl @Inject constructor(
 
         DeliverResponseData(
             status = response.body()!!.status
+        )
+    }
+
+    override suspend fun cancelOrder(gameOrderId: Int): Result<RemoteResponseData> = runCatching {
+        val response = apiService.cancelOrder(
+            orderGameId = gameOrderId
+        )
+
+        if (!response.isSuccessful) throw Exception()
+
+        RemoteResponseData(
+            message = "Success"
         )
     }
 }

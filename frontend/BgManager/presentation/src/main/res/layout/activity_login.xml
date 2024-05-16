@@ -3,16 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.example.presentation.LoginViewModel" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".LoginActivity">
+        tools:context=".LoginActivity"
+        android:background="#AAAAAA"
+        >
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/storeNumLayout"
@@ -63,10 +60,7 @@
             app:layout_constraintTop_toBottomOf="@id/roomNumLayout"
             android:layout_marginTop="30dp"
             android:text="확인"
-            android:onClick="@{()->viewModel.login()}"
-            >
-
-        </Button>
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

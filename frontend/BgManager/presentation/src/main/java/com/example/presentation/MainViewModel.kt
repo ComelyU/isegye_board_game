@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.DeliverClass
+import com.example.domain.usecase.CancelUseCase
 import com.example.domain.usecase.DeliverUseCase
 import com.example.domain.usecase.GameUseCase
 import com.example.domain.usecase.OrderUseCase
@@ -24,7 +25,8 @@ class MainViewModel @Inject constructor(
     private val turtleUseCase: TurtleUseCase,
     private val orderUseCase: OrderUseCase,
     private val gameUseCase: GameUseCase,
-    private val deliverUseCase: DeliverUseCase
+    private val deliverUseCase: DeliverUseCase,
+    private val cancelUseCase : CancelUseCase
 ) :BaseViewModel<Unit>() {
     private val _uiStateLiveData = MutableLiveData<UiState>()
     val uiStateFlow: LiveData<UiState>
@@ -82,19 +84,28 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun selectMenuId(menuId: Int, roomNumber: Int) {
+    fun selectMenuId(menuId: Int) {
 //        if (_selectedRoom.value == )
         _selectedMenu.value = menuId
         Log.d("orderRequest", "메뉴 갱신 : ${selectedMenu.value}")
     }
 
-    fun selectGame(gameId: Int, orderType: Int, roomNumber: Int) {
+    fun selectGame(gameId: Int, orderType: Int) {
         if (orderType == 0) {
             _selectedGame.value = gameId
             Log.d("orderRequest", "게임 갱신 : ${selectedGame.value}")
         } else {
             _selectedReturn.value = gameId
             Log.d("orderRequest", "반납 갱신 : ${selectedReturn.value}")
+        }
+    }
+
+    fun cancelGameOrder(gameOrderId: Int) {
+        viewModelScope.launch {
+            val response = cancelUseCase.invoke(gameOrderId)
+            if (response.isSuccess) {
+                println(response.getOrThrow())
+            }
         }
     }
 

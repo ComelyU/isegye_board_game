@@ -1,4 +1,4 @@
-package com.example.isegyeboard.game_detail
+package com.example.isegyeboard.photo
 
 import com.example.isegyeboard.baseapi.BasicResponse
 import okhttp3.MultipartBody
@@ -6,7 +6,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-interface sendPhotoApi {
+interface SendPhotoApi {
     @Multipart
     @POST("send_photo")
     suspend fun sendPhoto(
