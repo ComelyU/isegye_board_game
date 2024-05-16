@@ -56,9 +56,9 @@ class MainPageFrg : Fragment() {
             it.findNavController().navigate(R.id.action_main_page_frg_to_gamelist)
         }
 
-//        view.findViewById<ConstraintLayout>(R.id.toRecommendButton).setOnClickListener {
-//            it.findNavController().navigate(R.id.action_main_page_frg_to_recommend)
-//        }
+        view.findViewById<ConstraintLayout>(R.id.toRecommendButton).setOnClickListener {
+            it.findNavController().navigate(R.id.action_main_page_frg_to_recommend)
+        }
 
         view.findViewById<ConstraintLayout>(R.id.toBeverage).setOnClickListener {
             it.findNavController().navigate(R.id.action_main_page_frg_to_beverage)

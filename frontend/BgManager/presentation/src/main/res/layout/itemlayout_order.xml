@@ -49,6 +49,16 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
 
+        <TextView
+            android:id="@+id/orderItemBuffer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/orderRoomNumber"
+            android:layout_marginStart="10dp"
+            app:layout_constraintTop_toBottomOf="@id/orderDetailsRV"
+            android:text="\n"
+            />
+
         <Button
             android:id="@+id/cartButton"
             android:layout_width="80dp"
@@ -74,10 +84,10 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="3dp"
             android:background="@drawable/black_line"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginVertical="10dp"
+            app:layout_constraintTop_toBottomOf="@id/orderItemBuffer"
+            android:layout_marginVertical="2dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

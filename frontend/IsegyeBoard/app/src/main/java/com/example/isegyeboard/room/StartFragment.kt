@@ -138,12 +138,12 @@ class StartFragment : Fragment() {
         val editor = sharedPreferences.edit()
         editor.putString("isOccupied", "1")
         editor.putBoolean("theme", true)
-        editor.putInt("volume", 60)
+        editor.putInt("volume", 50)
         editor.putString("customerId", customerId.toString())
         editor.apply()
         Log.d("Start", "저장 성공 customerId : ${customerId}")
 
-        sendVolume(customerId.toString(), 60)
+        sendVolume(customerId.toString(), 50)
         findNavController().navigate(R.id.action_startFragment_to_main_page_frg)
     }
 

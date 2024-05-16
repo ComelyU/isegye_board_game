@@ -21,15 +21,22 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.example.isegyeboard.R
 import com.example.isegyeboard.baseapi.BaseApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -41,6 +48,7 @@ class Photo : Fragment() {
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null
     private lateinit var photoFile: File
+    private lateinit var loadingImagePhoto : ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,17 +70,31 @@ class Photo : Fragment() {
             )
         }
 
+        loadingImagePhoto = view.findViewById(R.id.loadingImagePhoto)
+        Glide.with(this)
+            .load(R.drawable.loading)
+            .into(DrawableImageViewTarget(loadingImagePhoto))
+
         val previewText = view.findViewById<TextView>(R.id.previewText)
         val sendPhotoButton = view.findViewById<TextView>(R.id.sendPhotoButton)
 
         val captureButton = view.findViewById<TextView>(R.id.captureButton)
+        val ipadButton = view.findViewById<ImageView>(R.id.ipadButton)
         captureButton.setOnClickListener {
             takePhoto()
             previewText.visibility = View.GONE
             sendPhotoButton.visibility = View.VISIBLE
         }
+        ipadButton.setOnClickListener {
+            takePhoto()
+            previewText.visibility = View.GONE
+            sendPhotoButton.visibility = View.VISIBLE
+        }
 
-        sendPhotoButton.setOnClickListener{ sendPhoto() }
+        sendPhotoButton.setOnClickListener{
+            loadingImagePhoto.visibility = View.VISIBLE
+            sendPhoto()
+        }
 
         val backButton = view.findViewById<ImageView>(R.id.photoBack)
         backButton.setOnClickListener{
@@ -147,33 +169,30 @@ class Photo : Fragment() {
     private fun sendPhoto() {
         val client = BaseApi.getInstance().create(SendPhotoApi::class.java)
         val sharedPreferences = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-
-        val customerId = sharedPreferences.getString("customerId", null)
+        val customerId = sharedPreferences.getString("customerId", "")
 
         // 사진 파일을 생성하여 MultipartBody.Part 객체로 변환
-        val requestFile = RequestBody.create(MediaType.parse("image/jpeg"), photoFile)
-        val photoPart = MultipartBody.Part.createFormData("photo", photoFile.name, requestFile)
+        val requestBody  = photoFile.asRequestBody("image/*".toMediaTypeOrNull())
 
-        // 지워야됨
-        view?.findNavController()?.navigate(R.id.action_photo_to_photoCheckFragment)
-        //
-
+//        println(photoFile)
+//        println(photoFile.name)
+        val photoPart = MultipartBody.Part.createFormData("sourceImg", photoFile.name, requestBody )
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = client.sendPhoto(photoPart)
-                if (response.success) {
-                    // 성공적으로 업로드된 경우
-                    Log.d(TAG, "Photo uploaded successfully")
-//                    deletePhotoFile()
-                    view?.findNavController()?.navigate(R.id.action_photo_to_photoCheckFragment)
-                } else {
-                    // 업로드 실패한 경우
-                    Log.e(TAG, "Failed to upload photo: ${response.message}")
+                println("여기까진 옴")
+                val response = client.sendPhoto(customerId!!, photoPart)
+                val responseString = response.string() // ResponseBody에서 문자열을 추출
+
+                Log.d(TAG, "Photo uploaded successfully")
+
+                withContext(Dispatchers.Main) { // 메인 스레드에서 실행
+                    val bundle = bundleOf("imageUrl" to responseString)
+                    view?.findNavController()?.navigate(R.id.action_photo_to_photoCheckFragment, bundle)
                 }
             } catch (e: Exception) {
                 // 네트워크 오류 등으로 업로드에 실패한 경우
-                Log.e(TAG, "Error uploading photo: ${e.message}")
+                Log.e(TAG, "Fail to connect server: ${e.message}")
             }
         }
     }

@@ -81,6 +81,12 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle.v133)
     implementation(libs.androidx.camera.view.v133)
 
+    // okhttp3
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+    // qr code
+    implementation("com.google.zxing:core:3.4.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

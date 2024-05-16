@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@{gameItem.gameOrderIdString}"
+            android:text="@{gameItem.roomNumberString}"
             />
 
         <TextView
@@ -45,7 +45,7 @@
             app:layout_constraintStart_toEndOf="@id/gameName"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@{gameItem.roomNumberString}"
+            android:text="@{gameItem.gameOrderIdString}"
             android:layout_marginStart="10dp"
             />
 

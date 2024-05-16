@@ -27,6 +27,46 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+<!--        <TextView-->
+<!--            android:id="@+id/turtleIdShow"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toEndOf="@id/textView"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="@{viewModel.selectedTurtleString}"-->
+<!--            />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/orderIdShow"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toEndOf="@id/turtleIdShow"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="@{viewModel.selectedMenuString}"-->
+<!--            />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/gameOrderIdShow"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toEndOf="@id/orderIdShow"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="@{viewModel.selectedGameString}"-->
+<!--            />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/gameReturnIdShow"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toEndOf="@id/gameOrderIdShow"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="@{viewModel.selectedReturnString}"-->
+<!--            />-->
+
         <Button
             android:id="@+id/refreshTurtleButton"
             android:layout_width="150dp"
