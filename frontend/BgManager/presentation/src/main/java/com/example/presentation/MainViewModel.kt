@@ -53,9 +53,18 @@ class MainViewModel @Inject constructor(
     var selectedReturnString = "반납 : ${selectedReturn.value.toString()}"
     var selectedRoomString = "터틀봇 : ${selectedTurtle.value.toString()}"
 
+
+    private val _showAlertDialogEvent = MutableLiveData<Event<String>>()
+    val showAlertDialogEvent: LiveData<Event<String>>
+        get() = _showAlertDialogEvent
+
+    private fun showAlertDialog(message: String) {
+        _showAlertDialogEvent.value = Event(message)
+    }
     fun pushTurtle() {
         if (selectedTurtle.value == null) {
             Log.d("orderRequest", "주문 요청 내용: ${selectedTurtle.value}, ${selectedMenu.value}, ${selectedGame.value}, ${selectedReturn.value}")
+            showAlertDialog("터틀봇을 선택해주세요.")
             return //터틀봇 선택 모달
         }
 
@@ -68,17 +77,13 @@ class MainViewModel @Inject constructor(
                     orderGameId = selectedGame.value,
                     returnGameId = selectedReturn.value
                 )
-//                DeliverClass(
-//                    turtleId = 1,
-//                    orderMenuId = null,
-//                    orderGameId = null,
-//                    returnGameId = null
-//                )
             )
             if (deliverResponse.isSuccess) {
                 val deliverData = deliverResponse.getOrThrow()
-                // 모달 띄우기
+                showAlertDialog("주문이 완료되었습니다.")
                 Log.d("Deliver", "${deliverData.status}")
+            } else {
+                showAlertDialog("주문 요청을 실패했습니다.")
             }
         }
     }
@@ -174,4 +179,19 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+}
+
+open class Event<out T>(private val content: T) {
+    var hasBeenHandled = false
+        private set // Allow external read but not write
+
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+    fun peekContent(): T = content
 }
