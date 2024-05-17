@@ -1,5 +1,6 @@
 package com.example.isegyeboard.beverage.menus
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -43,8 +44,10 @@ class SnackFragment : Fragment() {
         beverageAdapter = BeverageAdapter(requireContext(), emptyList(), cartAdapter) // 초기에 빈 리스트로 어댑터 생성
         binding.snackRV.adapter = beverageAdapter
         binding.snackRV.layoutManager = GridLayoutManager(requireContext(), 4)
+        val sharedPreferences = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
+        val storeId = sharedPreferences.getString("storeId", "1")
 
-        viewModel.getCurrentMenuList()
+        viewModel.getCurrentMenuList(storeId!!)
 
         lifecycleScope.launch {
             viewModel.snackMenuList.observe(viewLifecycleOwner) { menuList ->

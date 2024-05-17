@@ -20,7 +20,9 @@ object BaseApi {
         .Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+        .addConverterFactory(GsonConverterFactory.create(
+//            GsonBuilder().setLenient().create()
+        ))
         .build()
 
     fun getInstance() : Retrofit {

@@ -24,15 +24,15 @@
         android:id="@+id/recLeftLayout"
         app:layout_constraintEnd_toStartOf="@id/recGuideLine"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
-        android:paddingHorizontal="30dp">
+        android:paddingHorizontal="4dp">
 
         <TextView
             android:id="@+id/searchTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="20dp"
             android:text="게임추천"
             android:textColor="@color/black"
             android:fontFamily="@font/dnfbitbitv2"
@@ -78,38 +78,59 @@
 
             <RadioButton
                 android:id="@+id/theme1"
-                android:layout_width="75dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="탐험" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="ocean"
+                android:text="바다" />
 
             <RadioButton
                 android:id="@+id/theme2"
-                android:layout_width="75dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:tag="middle"
                 android:text="중세" />
 
             <RadioButton
                 android:id="@+id/theme3"
-                android:layout_width="75dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:tag="space"
                 android:text="우주" />
 
             <RadioButton
                 android:id="@+id/theme4"
-                android:layout_width="75dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:tag="west"
                 android:text="서부" />
 
             <RadioButton
                 android:id="@+id/theme5"
-                android:layout_width="75dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="두뇌" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="puzzle"
+                android:text="퍼즐" />
+
+            <RadioButton
+                android:id="@+id/theme6"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:tag="horror"
+                android:text="공포" />
+
+            <RadioButton
+                android:id="@+id/theme7"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:tag="jungle"
+                android:text="정글" />
         </RadioGroup>
 
         <Space
@@ -147,38 +168,43 @@
 
             <RadioButton
                 android:id="@+id/difficulty1"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="1" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="1"
+                android:text="★" />
 
             <RadioButton
                 android:id="@+id/difficulty2"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="2" />
+                android:tag="2"
+                android:text="★★" />
 
             <RadioButton
                 android:id="@+id/difficulty3"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="3" />
+                android:tag="3"
+                android:text="★★★" />
 
             <RadioButton
                 android:id="@+id/difficulty4"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="4" />
+                android:tag="4"
+                android:text="★★★★" />
 
             <RadioButton
                 android:id="@+id/difficulty5"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="5" />
+                android:tag="5"
+                android:text="★★★★★" />
         </RadioGroup>
 
         <Space
@@ -208,7 +234,7 @@
             app:layout_constraintTop_toTopOf="@id/selectPlayer"/>
 
         <RadioGroup
-            android:id="@+id/playerRadioGroup"
+            android:id="@+id/tagRadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/selectPlayer"
@@ -217,38 +243,51 @@
 
             <RadioButton
                 android:id="@+id/player1"
-                android:layout_width="75dp"
+                android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="연기" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="Abstract Strategy"
+                android:text="전략" />
 
             <RadioButton
                 android:id="@+id/player2"
-                android:layout_width="75dp"
+                android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="캐쥬얼" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="Deduction"
+                android:text="추리" />
 
             <RadioButton
                 android:id="@+id/player3"
-                android:layout_width="75dp"
+                android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="덱빌딩" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="Party Game"
+                android:text="파티" />
 
             <RadioButton
                 android:id="@+id/player4"
-                android:layout_width="75dp"
+                android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:tag="Card Game"
                 android:text="카드" />
 
             <RadioButton
                 android:id="@+id/player5"
-                android:layout_width="75dp"
+                android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="추리" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="Real-time"
+                android:text="실시간" />
+
+            <RadioButton
+                android:id="@+id/player6"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:tag="Bluffing"
+                android:text="속임수" />
 
 
         </RadioGroup>
@@ -289,30 +328,34 @@
 
             <RadioButton
                 android:id="@+id/time1"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:text="~30분" />
+                android:layout_marginHorizontal="5dp"
+                android:tag="30"
+                android:text="30분 이하" />
 
             <RadioButton
                 android:id="@+id/time2"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="1시간" />
+                android:tag="60"
+                android:text="1시간 이하" />
 
             <RadioButton
                 android:id="@+id/time3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="1~2시간" />
+                android:tag="120"
+                android:text="1 ~ 2시간" />
 
             <RadioButton
                 android:id="@+id/time4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                android:tag="600"
                 android:text="2시간 이상" />
 
         </RadioGroup>

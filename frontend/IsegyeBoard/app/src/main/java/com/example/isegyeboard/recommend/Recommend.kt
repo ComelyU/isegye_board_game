@@ -38,9 +38,9 @@ class Recommend : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var selectedTheme = ""
-        var selectedPlayer = ""
+        var selectedTag = ""
         var selectedTime = ""
-        var selecteddifficulty = ""
+        var selectedDifficulty = ""
 
         Glide.with(this)
             .load(R.drawable.loading)
@@ -48,26 +48,26 @@ class Recommend : Fragment() {
 
         binding.themeRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
             val themeRadioButton = view.findViewById<RadioButton>(checkedId)
-            selectedTheme = themeRadioButton.text.toString()
-        }
-        binding.difficultyRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
-            val difficultyRadioButton = view.findViewById<RadioButton>(checkedId)
-            selectedPlayer = difficultyRadioButton.text.toString()
-        }
-        binding.playerRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
-            val playerRadioButton = view.findViewById<RadioButton>(checkedId)
-            selectedTime = playerRadioButton.text.toString()
+            selectedTheme = themeRadioButton.tag.toString()
         }
         binding.timeRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
             val timeRadioButton = view.findViewById<RadioButton>(checkedId)
-            selecteddifficulty = timeRadioButton.text.toString()
+            selectedTime = timeRadioButton.tag.toString()
+        }
+        binding.tagRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
+            val playerRadioButton = view.findViewById<RadioButton>(checkedId)
+            selectedTag = playerRadioButton.tag.toString()
+        }
+        binding.difficultyRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
+            val difficultyRadioButton = view.findViewById<RadioButton>(checkedId)
+            selectedDifficulty = difficultyRadioButton.tag.toString()
         }
 
-        val data = RecommendData(selectedTheme, selectedPlayer, selecteddifficulty, selectedTime)
+
 
         binding.searchButton.setOnClickListener{
             binding.loadingImageRec.visibility = View.VISIBLE
-            sendRecommendData(data)
+            sendRecommendData(selectedTheme, selectedDifficulty, selectedTag, selectedTime)
         }
         binding.recBack.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
@@ -106,34 +106,26 @@ class Recommend : Fragment() {
         }
     }
 
-    private fun sendRecommendData(data: RecommendData) {
+    private fun sendRecommendData(selectedTheme: String, selectedDifficulty:String, selectedTag: String, selectedTime:String) {
         val client = BaseApi.getInstance().create(RecommendApi::class.java)
 
-        val requestBody = mapOf(
-            "theme" to data.selectedTheme,
-            "player" to data.selectedTag,
-            "difficulty" to data.selectedDifficulty,
-            "time" to data.selectedTime
-        )
-
-        client.recommendTest("1").enqueue(object : Callback<GameResponse> {
-//        client.sendRecommendData(requestBody).enqueue(object : Callback<GameClass> {
-            override fun onResponse(call : Call<GameResponse>, response: Response<GameResponse>) {
+        client.sendRecommendData(theme = selectedTheme, difficulty = selectedDifficulty, tag = selectedTag, time = selectedTime).enqueue(object : Callback<GameList> {
+            override fun onResponse(call : Call<GameList>, response: Response<GameList>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null) {
-                        Log.d("Recommend", "get recommend item success")
-                        binding.loadingImageRec.visibility = View.GONE
+                        Log.d("Recommend", "get recommend item success $responseBody")
+
                         binding.coverImage.visibility = View.GONE
 
                         binding.reSearchButton.visibility = View.VISIBLE
                         binding.recoStartButton.visibility = View.VISIBLE
 
-                        gameResponseLiveData.postValue(responseBody)
+//                        gameResponseLiveData.postValue(responseBody)
 
                     } else {
-                        Log.d("Recommend", "Recommend failed $responseBody")
-                        ShowDialog.showFailure(requireContext(), "매장 번호 또는 테이블 번호가 유효하지 않습니다.")
+                        Log.d("Recommend", "Recommend empty $response, ${response.body()}")
+                        ShowDialog.showFailure(requireContext(), "추천목록이 비어있습니다.")
                     }
                 } else {
                     Log.d("Recommend", "Recommend failed $response")
@@ -141,11 +133,12 @@ class Recommend : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<GameResponse>, t: Throwable) {
+            override fun onFailure(call: Call<GameList>, t: Throwable) {
                 Log.e("Recommend", "$t")
                 ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
         })
+        binding.loadingImageRec.visibility = View.GONE
     }
 
     private fun moveToDetail(gameResponse: GameResponse) {

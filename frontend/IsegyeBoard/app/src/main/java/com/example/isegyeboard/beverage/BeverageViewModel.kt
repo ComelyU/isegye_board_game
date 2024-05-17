@@ -13,10 +13,10 @@ class CoffeeViewModel : ViewModel()  {
     private val _menuList = MutableLiveData<List<BeverageClass>>()
     val coffeeMenuList: LiveData<List<BeverageClass>> = _menuList
 
-    fun getCurrentMenuList() {
+    fun getCurrentMenuList(storeId: String) {
         viewModelScope.launch {
             try {
-                val result = beverageNetwork.getMenuList()
+                val result = beverageNetwork.getMenuList(storeId)
                 val coffeeMenu = result.filter { it.menuType == "C" }
                 _menuList.value = coffeeMenu
             } catch (e: Exception) {
@@ -33,10 +33,10 @@ class DrinkViewModel : ViewModel()  {
     private val _menuList = MutableLiveData<List<BeverageClass>>()
     val drinkMenuList: LiveData<List<BeverageClass>> = _menuList
 
-    fun getCurrentMenuList() {
+    fun getCurrentMenuList(storeId: String) {
         viewModelScope.launch {
             try {
-                val result = beverageNetwork.getMenuList()
+                val result = beverageNetwork.getMenuList(storeId)
                 val DrinkMenu = result.filter { it.menuType == "D" }
                 _menuList.value = DrinkMenu
             } catch (e: Exception) {
@@ -53,10 +53,10 @@ class SnackViewModel : ViewModel() {
     private val _menuList = MutableLiveData<List<BeverageClass>>()
     val snackMenuList: LiveData<List<BeverageClass>> = _menuList
 
-    fun getCurrentMenuList() {
+    fun getCurrentMenuList(storeId: String) {
         viewModelScope.launch {
             try {
-                val result = beverageNetwork.getMenuList()
+                val result = beverageNetwork.getMenuList(storeId)
                 val snackMenu = result.filter { it.menuType == "F" }
                 _menuList.value = snackMenu
             } catch (e: Exception) {

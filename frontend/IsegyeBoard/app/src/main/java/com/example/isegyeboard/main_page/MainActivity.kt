@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
 
         val logoButton = findViewById<ConstraintLayout>(R.id.logoButton)
         logoButton.setOnClickListener{

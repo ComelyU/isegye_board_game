@@ -5,6 +5,6 @@ import com.example.isegyeboard.baseapi.BaseApi
 class BeverageNetWork{
     private val client = BaseApi.getInstance().create(BeverageApi::class.java)
 
-    suspend fun getMenuList() = client.getMenuList("1")
+    suspend fun getMenuList(storeId:String) = client.getMenuList(storeId = storeId)
 
 }

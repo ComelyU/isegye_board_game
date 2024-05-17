@@ -71,17 +71,17 @@ class GameHistoryAdapter(private val context: Context, private var dataList: Lis
         val orderStatus = orderGameResponse.orderStatus
         val gameName = orderGameResponse.gameName
 
-        if (orderGameResponse.orderStatus == 3) {
-            holder.itemView.visibility = View.GONE
-            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
-            return
-        } else {
-            holder.itemView.visibility = View.VISIBLE
-            holder.itemView.layoutParams = RecyclerView.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
+//        if (orderGameResponse.orderStatus == 3) {
+//            holder.itemView.visibility = View.GONE
+//            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+//            return
+//        } else {
+//            holder.itemView.visibility = View.VISIBLE
+//            holder.itemView.layoutParams = RecyclerView.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//            )
+//        }
 
         if (orderStatus == 0) {
             holder.cancelButton.visibility = View.VISIBLE
