@@ -108,20 +108,19 @@ class Recommend : Fragment() {
 
     private fun sendRecommendData(selectedTheme: String, selectedDifficulty:String, selectedTag: String, selectedTime:String) {
         val client = BaseApi.getInstance().create(RecommendApi::class.java)
-
-        client.sendRecommendData(theme = selectedTheme, difficulty = selectedDifficulty, tag = selectedTag, time = selectedTime).enqueue(object : Callback<GameList> {
-            override fun onResponse(call : Call<GameList>, response: Response<GameList>) {
+        client.sendRecommendData(theme = selectedTheme, difficulty = selectedDifficulty, tag = selectedTag, time = selectedTime).enqueue(object : Callback<RecommendGameResponse> {
+            override fun onResponse(call : Call<RecommendGameResponse>, response: Response<RecommendGameResponse>) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
+                    val responseBody = response.body()?.gameList?.first()
                     if (responseBody != null) {
-                        Log.d("Recommend", "get recommend item success $responseBody")
+                        Log.d("Recommend", "get recommend item success $response $responseBody")
 
                         binding.coverImage.visibility = View.GONE
 
                         binding.reSearchButton.visibility = View.VISIBLE
                         binding.recoStartButton.visibility = View.VISIBLE
 
-//                        gameResponseLiveData.postValue(responseBody)
+                        gameResponseLiveData.postValue(responseBody)
 
                     } else {
                         Log.d("Recommend", "Recommend empty $response, ${response.body()}")
@@ -133,7 +132,7 @@ class Recommend : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<GameList>, t: Throwable) {
+            override fun onFailure(call: Call<RecommendGameResponse>, t: Throwable) {
                 Log.e("Recommend", "$t")
                 ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }
