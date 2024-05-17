@@ -6,11 +6,8 @@ from std_msgs.msg import String
 from nav2_msgs.action import NavigateToPose
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
+import paho.mqtt.publish as mqtt_publish
 import threading, time, os, json
-
-# home : 0.0 0.0
-# counter : 0.37 -0.02
-# room : 0.47, -0.02
 
 # .env
 load_dotenv(dotenv_path = '/home/jetson/.env')
@@ -44,6 +41,7 @@ class IsegyeNode(Node):
         # Qt
         self.button_sub = self.create_subscription(String, "/button_order", self.button_callback, 10)
         self.display_pub = self.create_publisher(String, "display", 10)
+        self.first_next = False
         
         # turtlebot state
         self.turtlebot_state = "wait" # wait, wake
@@ -57,8 +55,13 @@ class IsegyeNode(Node):
 
     # when clicked button
     def button_callback(self, msg):
-        self.get_logger().info(f'receive button_order from Qt with {msg.data}')
+        self.get_logger().info(f'receive button_order from Qt with [{msg.data}]')
+        time.sleep(1)
         self.publisher_thread()
+
+        if not self.first_next:
+            self.IoT_publisher_thread()
+            self.first_next = True
     
     # send goal to navigation
     def send_goal(self, x ,y):
@@ -113,7 +116,8 @@ class IsegyeNode(Node):
             return
 
         feedback = msg.feedback
-        #self.get_logger().info(f'Received feedback: {feedback}')
+        # self.get_logger().info(f'Received feedback: {feedback}')
+        # self.get_logger().info(f'Remaining distance: {feedback.remaining_distance}')
     
     # cancel all_goal from nav_action_server
     def cancel_goal(self):
@@ -140,9 +144,9 @@ class IsegyeNode(Node):
 
     # connect callback
     def on_connect(self, client, userdata, flags, rc):
-        client_name = client._client_id
+        client_name = str(client._client_id, 'utf-8')
         result_codes = {
-            0: f"Success - The connection, {client_name} request has been successfully processed.",
+            0: f"Success - The connection, [{client_name}] request has been successfully processed.",
             1: "Protocol Error - Incorrect protocol version or invalid protocol data was received.",
             2: "Client ID rejected - The client identifier was rejected by the server.",
             3: "Server unavailable - The server is currently unavailable.",
@@ -154,14 +158,13 @@ class IsegyeNode(Node):
         if rc == 0:
             self.get_logger().info(f"Connected to MQTT broker successfully with result code {rc}.")
             client.subscribe(TURTLE_TOPIC)
+            self.get_logger().info(f"subscribe topic: [{TURTLE_TOPIC}]")
         
         else:
             self.get_logger().info(f"Failed to connect to MQTT broker with result code {rc}")
 
         self.get_logger().info(f"code {rc}: {result_codes[rc]}")
-        # print("Connected with result code " + str(rc))
         
-
     # subscriber callback
     def on_message(self, client, userdata, message):
         try:
@@ -183,14 +186,14 @@ class IsegyeNode(Node):
                 self.turtlebot_state = "wake"
                 self.get_logger().info("publish turtlebot_state: wake")
             
-            if self.coordinateX == HOME_X and self.coordinateY == HOME_Y:
+            if self.coordinateX == float(HOME_X) and self.coordinateY == float(HOME_Y):
                 self.is_home_order = True
 
             # send goal
             self.send_goal(self.coordinateX, self.coordinateY)
         
         except Exception as e:
-            self.get_logger().info(f"Error while processing MQTT message: {e}")
+            self.get_logger().error(f"Error while processing MQTT message: {e}")
 
     # subscriber thread
     def subscriber_thread(self):
@@ -205,32 +208,35 @@ class IsegyeNode(Node):
         except Exception as e:
             self.get_logger().error(f"Error in MQTT subscriber thread: {e}")
 
-    # publish thread
     def publisher_thread(self):
+        self.get_logger().info("start publishing...")
+
+        json_data = {
+                 "turtleId" : self.turtleId, 
+                 "turtleOrderLogId" : self.turtleOrderLogId, 
+                 "turtleReceiveLogId" : self.turtleReceiveLogId 
+             }
+        
+        msg = json.dumps(json_data)
+        
         try:
-            pub_client = mqtt.Client("pub_client")
-            pub_client.username_pw_set(username=USER_NAME, password=PASSWORD)
-            pub_client.connect(BROKER_ADDRESS, PORT, 60)
-            
-            json_data = {
-                "turtleId" : self.turtleId, 
-                "turtleOrderLogId" : self.turtleOrderLogId, 
-                "turtleReceiveLogId" : self.turtleReceiveLogId 
-            }
-
-            msg = json.dumps(json_data)
+            mqtt_publish.single(SERVER_TOPIC, msg, qos=0, retain=False, hostname=BROKER_ADDRESS, port=PORT, auth={'username':USER_NAME, 'password':PASSWORD})
             self.get_logger().info("[pub] [topic]: " + SERVER_TOPIC + ", [msg]: " + msg)
-
-            try:
-                pub_client.publish(SERVER_TOPIC, msg)
-            
-            except Exception as e:
-                self.get_logger().info(f"Error in MQTT publishing...: {e}")
-
-            pub_client.disconnect()
 
         except Exception as e:
             self.get_logger().error(f"Error in MQTT publisher thread: {e}")
+    
+    def IoT_publisher_thread(self):
+        self.get_logger().info("start IoT_publishing...")
+        
+        msg = "webview"
+        
+        try:
+            mqtt_publish.single("display/1", msg, qos=0, retain=False, hostname=BROKER_ADDRESS, port=PORT, auth={'username':USER_NAME, 'password':PASSWORD})
+            self.get_logger().info("[pub] [topic]: display/1, [msg]: " + msg)
+
+        except Exception as e:
+            self.get_logger().error(f"Error in MQTT IoT_publisher thread: {e}")
 
 def main(args = None):
     rclpy.init(args = args)
@@ -240,7 +246,8 @@ def main(args = None):
         rclpy.spin(isegye_node)
 
     except KeyboardInterrupt:
-        print("input Ctrl + C... now destroy Node...")
+        print("Input Ctrl + C... now destroy Node...")
+        print("Please press 'Ctrl + C' again...")
         isegye_node.destroy_node()
         rclpy.shutdown()
 
