@@ -40,6 +40,12 @@ class MainPageFrg : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_main_page_frg, container, false)
 
+        val sharedPreferences = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
+        val isOccupied = sharedPreferences.getString("isOccupied", null)
+        if (isOccupied == null) {
+            findNavController().navigate(R.id.action_main_page_frg_to_startFragment)
+        }
+
         val videoView: VideoView = view.findViewById(R.id.homeVideo)
         val mediaController = MediaController(requireContext())
         mediaController.setAnchorView(videoView)

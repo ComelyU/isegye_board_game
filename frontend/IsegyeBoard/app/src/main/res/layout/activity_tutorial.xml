@@ -10,21 +10,31 @@
         android:id="@+id/tutorialImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/tuto1"
+        android:src="@drawable/tuto_better1"
         />
 
     <ImageView
         android:id="@+id/tutorialImage2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/tuto2"
+        android:src="@drawable/tuto_better2"
+        android:visibility="gone"
         />
 
     <ImageView
         android:id="@+id/tutorialImage3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/tuto3"
+        android:src="@drawable/tuto_better3"
+        android:visibility="gone"
+        />
+
+    <ImageView
+        android:id="@+id/tutorialImage4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/tuto_better4"
+        android:visibility="gone"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

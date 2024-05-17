@@ -20,6 +20,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.math.ceil
+import kotlin.random.Random
 
 class Recommend : Fragment() {
 
@@ -69,6 +70,10 @@ class Recommend : Fragment() {
             binding.loadingImageRec.visibility = View.VISIBLE
             sendRecommendData(selectedTheme, selectedDifficulty, selectedTag, selectedTime)
         }
+        binding.reSearchButton.setOnClickListener{
+            binding.loadingImageRec.visibility = View.VISIBLE
+            sendRecommendData(selectedTheme, selectedDifficulty, selectedTag, selectedTime)
+        }
         binding.recBack.setOnClickListener{
             requireActivity().supportFragmentManager.popBackStack()
         }
@@ -107,21 +112,42 @@ class Recommend : Fragment() {
     }
 
     private fun sendRecommendData(selectedTheme: String, selectedDifficulty:String, selectedTag: String, selectedTime:String) {
-        val client = BaseApi.getInstance().create(RecommendApi::class.java)
+        if (selectedTheme == "") {
+            ShowDialog.showFailure(requireContext(), "장르를 선택해주세요")
+            binding.loadingImageRec.visibility = View.GONE
+            return
+        } else if (selectedDifficulty == "") {
+            ShowDialog.showFailure(requireContext(), "난이도를 선택해주세요")
+            binding.loadingImageRec.visibility = View.GONE
+            return
+        } else if (selectedTag == "" ) {
+            ShowDialog.showFailure(requireContext(), "태그를 선택해주세요")
+            binding.loadingImageRec.visibility = View.GONE
+            return
+        } else if (selectedTime == "" ) {
+            ShowDialog.showFailure(requireContext(), "플레이 시간을 선택해주세요")
+            binding.loadingImageRec.visibility = View.GONE
+            return
+        }
 
-        client.sendRecommendData(theme = selectedTheme, difficulty = selectedDifficulty, tag = selectedTag, time = selectedTime).enqueue(object : Callback<GameList> {
-            override fun onResponse(call : Call<GameList>, response: Response<GameList>) {
+
+
+        val client = BaseApi.getInstance().create(RecommendApi::class.java)
+        client.sendRecommendData(theme = selectedTheme, difficulty = selectedDifficulty, tag = selectedTag, time = selectedTime).enqueue(object : Callback<RecommendGameResponse> {
+            override fun onResponse(call : Call<RecommendGameResponse>, response: Response<RecommendGameResponse>) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
+                    val responseBody = response.body()?.gameList
                     if (responseBody != null) {
-                        Log.d("Recommend", "get recommend item success $responseBody")
+                        val randomIndex = Random.nextInt(responseBody.size)
+                        val game = responseBody[randomIndex]
+                        Log.d("Recommend", "get recommend item success $response $responseBody")
 
                         binding.coverImage.visibility = View.GONE
 
                         binding.reSearchButton.visibility = View.VISIBLE
                         binding.recoStartButton.visibility = View.VISIBLE
 
-//                        gameResponseLiveData.postValue(responseBody)
+                        gameResponseLiveData.postValue(game)
 
                     } else {
                         Log.d("Recommend", "Recommend empty $response, ${response.body()}")
@@ -133,7 +159,7 @@ class Recommend : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<GameList>, t: Throwable) {
+            override fun onFailure(call: Call<RecommendGameResponse>, t: Throwable) {
                 Log.e("Recommend", "$t")
                 ShowDialog.showFailure(requireContext(), "요청에 실패했습니다.")
             }

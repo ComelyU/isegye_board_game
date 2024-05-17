@@ -6,5 +6,4 @@ class BeverageNetWork{
     private val client = BaseApi.getInstance().create(BeverageApi::class.java)
 
     suspend fun getMenuList(storeId:String) = client.getMenuList(storeId = storeId)
-
 }
