@@ -27,45 +27,67 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/turtleIdShow"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintStart_toEndOf="@id/textView"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:text="@{viewModel.selectedTurtleString}"-->
-<!--            />-->
+        <TextView
+            android:id="@+id/turtleIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/textView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="25sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="25dp"
+            android:text="@{viewModel.selectedTurtleString}"
+            />
 
-<!--        <TextView-->
-<!--            android:id="@+id/orderIdShow"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintStart_toEndOf="@id/turtleIdShow"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:text="@{viewModel.selectedMenuString}"-->
-<!--            />-->
+        <TextView
+            android:id="@+id/orderIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/textView"
+            app:layout_constraintTop_toBottomOf="@id/turtleIdShow"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="10dp"
+            android:text="@{viewModel.selectedMenuString}"
+            />
 
-<!--        <TextView-->
-<!--            android:id="@+id/gameOrderIdShow"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintStart_toEndOf="@id/orderIdShow"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:text="@{viewModel.selectedGameString}"-->
-<!--            />-->
+        <TextView
+            android:id="@+id/gameOrderIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/orderIdShow"
+            app:layout_constraintTop_toBottomOf="@id/turtleIdShow"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="10dp"
+            android:text="@{viewModel.selectedGameString}"
+            />
 
-<!--        <TextView-->
-<!--            android:id="@+id/gameReturnIdShow"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintStart_toEndOf="@id/gameOrderIdShow"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:text="@{viewModel.selectedReturnString}"-->
-<!--            />-->
+        <TextView
+            android:id="@+id/gameReturnIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/gameOrderIdShow"
+            app:layout_constraintTop_toBottomOf="@id/turtleIdShow"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="10dp"
+            android:text="@{viewModel.selectedReturnString}"
+            />
+
+        <TextView
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="지점변경"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <Button
             android:id="@+id/refreshTurtleButton"

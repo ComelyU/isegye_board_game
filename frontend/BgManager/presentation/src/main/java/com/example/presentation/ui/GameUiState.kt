@@ -22,7 +22,7 @@ data class GameUiState (
         }
 
     val gameOrderIdString: String
-        get() = gameOrderId.toString()
+        get() = "No.$gameOrderId"
 
     val orderTypeString: String
         get() = when (orderType) {

@@ -8,7 +8,7 @@ data class OrderUiState(
     val orderDetail: List<OrderDetailState>
 ) {
     val orderIdString: String
-        get() = orderId.toString()
+        get() = "No.$orderId"
 
     val orderStatusString: String
         get() = when (orderStatus) {

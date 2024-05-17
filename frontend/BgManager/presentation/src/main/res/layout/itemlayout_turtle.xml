@@ -18,25 +18,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp">
 
-        <TextView
-            android:id="@+id/turtleId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@{turtleItem.turtleIdString}"
-            android:layout_marginHorizontal="10dp"
-            />
-
         <Button
             android:id="@+id/turtleSelectBButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select"
+            android:text="@{turtleItem.turtleIdString}"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/turtleId"
+            app:layout_constraintStart_toStartOf="parent"
             app:turtleSelected="@{viewModel.selectedTurtle}"
             app:turtleId="@{turtleItem.turtleId}"
             android:layout_marginHorizontal="10dp"

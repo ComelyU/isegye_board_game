@@ -16,5 +16,8 @@ interface Repository {
 
     suspend fun deliverRepo(deliverClass: DeliverClass): Result<DeliverResponseClass>
 
-    suspend fun cancelRepo(gameOrderId: Int): Result<RemoteResponseClass>
+    suspend fun cancelGameRepo(gameOrderId: Int): Result<RemoteResponseClass>
+
+    suspend fun startMenuRepo(menuOrderId: Int): Result<RemoteResponseClass>
+    suspend fun cancelMenuRepo(menuOrderId: Int): Result<RemoteResponseClass>
 }
