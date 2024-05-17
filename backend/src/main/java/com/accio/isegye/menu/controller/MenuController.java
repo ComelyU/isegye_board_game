@@ -113,7 +113,7 @@ public class MenuController {
         summary = "메뉴 취소",
         description = "menuId에 해당하는 주문을 취소한다"
     )
-    @DeleteMapping("order/{orderMenuId}/ready")
+    @DeleteMapping("order/{orderMenuId}/delete")
     public ResponseEntity<Void> deleteOrderMenu(@PathVariable long orderMenuId){
         menuService.deleteOrderMenu(orderMenuId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
