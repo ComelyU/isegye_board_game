@@ -4,6 +4,7 @@ import com.accio.isegye.config.MqttConfig.MqttGateway;
 import com.accio.isegye.customer.dto.CreateCustomerRequest;
 import com.accio.isegye.customer.dto.CustomerResponse;
 import com.accio.isegye.customer.service.CustomerService;
+import com.accio.isegye.game.dto.GameListResponse;
 import com.accio.isegye.game.dto.GameResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -104,11 +105,11 @@ public class CustomerController {
     @GetMapping(path = "/recommend")
     public ResponseEntity<?> getGameRecommendation(@RequestParam Integer gameId){
         List<GameResponse> gameList = customerService.getGameRecommendation(gameId);
-        return new ResponseEntity<>(gameList, HttpStatus.OK);
+        return new ResponseEntity<>(new GameListResponse(gameList), HttpStatus.OK);
     }
 
     @GetMapping(path  = "/filter")
-    public ResponseEntity<List<GameResponse>> getGameRecommendationFilter(
+    public ResponseEntity<GameListResponse> getGameRecommendationFilter(
         @NotBlank @RequestParam String theme,
         @NotBlank @RequestParam String difficulty,
         @NotBlank @RequestParam String tag,
@@ -116,7 +117,7 @@ public class CustomerController {
 
         List<GameResponse> gameList = customerService.getGameRecommendation(theme, difficulty, tag, time);
 
-        return new ResponseEntity<>(gameList, HttpStatus.OK);
+        return new ResponseEntity<>(new GameListResponse(gameList), HttpStatus.OK);
     }
 
 }
