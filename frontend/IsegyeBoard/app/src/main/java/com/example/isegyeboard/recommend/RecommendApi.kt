@@ -6,10 +6,16 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RecommendApi {
-    @POST("recommend")
-    fun sendRecommendData(@Body requestBody: Map<String, String?>): Call<GameResponse>
+    @POST("customer/filter")
+    fun sendRecommendData(
+        @Query("theme") theme: String,
+        @Query("difficulty") difficulty: String,
+        @Query("tag") tag: String,
+        @Query("time") time: String
+    ): Call<GameList>
 
     @GET("game/{gameId}")
     fun recommendTest(
