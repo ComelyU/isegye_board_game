@@ -125,7 +125,7 @@ public class CustomerServiceImpl implements CustomerService{
         if (customer.getOrderGameList().isEmpty()
             || customer.getOrderGameList().get(customer.getOrderGameList().size()-1).getOrderStatus()==1){
             //주문한 적이 없거나 마지막 주문이 회수 상태이면
-            return "Default";
+            return "sample";
         }
 
         Game game = customer.getOrderGameList().get(customer.getOrderGameList().size()-1).getStock()
@@ -139,8 +139,8 @@ public class CustomerServiceImpl implements CustomerService{
     public String swapFace(int customerId, MultipartFile sourceFile){
         validateFileExists(sourceFile);
 
-//        String themeType = getTheme(customerId);
-        String themeType = "testType";
+        String themeType = getTheme(customerId); // 없는 경우 default
+//        String themeType = "testType";
 
         String imgUrl = "";
         String themeImgUrl = "gameTheme/" + themeType + "/" + themeType + ".jpg";
