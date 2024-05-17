@@ -250,7 +250,7 @@ public class CustomerServiceImpl implements CustomerService{
         if(gameList.isEmpty()){
             log.info("필터에 해당되는 게임을 찾지 못했습니다.\n 태그와 일치하는 게임리스트를 반환합니다.");
 
-            return gameRepository.findByCategory(tag)
+            return gameRepository.findByTheme(theme)
                 .stream()
                 .map(GameResponse::new)
                 .toList();
