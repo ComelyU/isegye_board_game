@@ -25,4 +25,6 @@ public interface MenuService {
     List<OrderMenuResponse> getStoreOrderMenu(int storeId);
 
     void updateOrderMenu(long orderMenuId, int orderStatus);
+
+    void deleteOrderMenu(long orderMenuId);
 }

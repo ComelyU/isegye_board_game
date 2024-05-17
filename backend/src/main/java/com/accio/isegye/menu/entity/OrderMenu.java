@@ -78,4 +78,8 @@ public class OrderMenu {
             ", statusLogList=" + statusLogList +
             '}';
     }
+
+    public void softDelete() {
+        this.orderStatus = 4; // 주문 취소 상태로 변경하는 것으로 Soft Delete 처리
+    }
 }

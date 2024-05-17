@@ -204,6 +204,23 @@ public class MenuServiceImpl implements MenuService{
         logRepository.save(statusLog);
     }
 
+    @Override
+    @Transactional
+    public void deleteOrderMenu(long orderMenuId) {
+        OrderMenu orderMenu = findOrderMenuById(orderMenuId);
+        orderMenu.softDelete();
+
+        //2. 새로운 메뉴 주문 상태 변경 로그 생성
+        OrderMenuStatusLog statusLog = updateStatusLog(orderMenu, 4);
+
+        //3. order menu 테이블의 order status 컬럼을 갱신
+        orderMenu.setOrderStatus(4);
+
+        //4. 갱신 적용
+        orderMenuRepository.save(orderMenu);
+        logRepository.save(statusLog);
+    }
+
     private OrderMenuStatusLog updateStatusLog(OrderMenu orderMenu, int orderStatus){
         return OrderMenuStatusLog.builder()
             .orderMenu(orderMenu)

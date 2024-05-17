@@ -140,8 +140,9 @@ public class StoreController {
         description = "방 id, 변경할 fcm token 값은 필수"
     )
     @PatchMapping("/rooms/{id}/token")
-    public ResponseEntity<String> updateRoomToken(@PathVariable int id, @RequestBody @NotBlank String token){
-        return new ResponseEntity<>(service.updateFcmToken(id, token), HttpStatus.OK);
+    public ResponseEntity<String> updateRoomToken(@PathVariable int id, @RequestBody @NotBlank UpdateRoomRequest roomRequest){
+    return new ResponseEntity<>(
+        service.updateFcmToken(id, roomRequest.getFcmToken()), HttpStatus.OK);
     }
 
     @Operation(
@@ -158,8 +159,8 @@ public class StoreController {
         description = "방 id, 변경할 iot id 값은 필수"
     )
     @PatchMapping("/rooms/{id}/iot")
-    public ResponseEntity<String> updateRoomIotId(@PathVariable int id, @RequestBody @NotBlank String iotId){
-        return new ResponseEntity<>(service.updateIotId(id, iotId), HttpStatus.OK);
+    public ResponseEntity<String> updateRoomIotId(@PathVariable int id, @RequestBody @NotBlank UpdateRoomRequest roomRequest){
+        return new ResponseEntity<>(service.updateIotId(id, roomRequest.getIotId()), HttpStatus.OK);
     }
 
     @Operation(
