@@ -49,7 +49,8 @@ export default {
   methods: {
     async fetchStoreLists() {
       try {
-        const response = await axios.get(process.env.VUE_APP_API_URL + `stores`);
+        // const response = await axios.get(process.env.VUE_APP_API_URL + `stores`);
+        const response = await axios.get("https://k10a706.p.ssafy.io/api/stores");        
         this.branches = response.data; // 서버에서 받은 데이터로 storelist 업데이트
         console.log(this.branches)
       } catch (error) {

@@ -6,8 +6,8 @@
     <p></p>
     <p>롸-벗이 직접 배달해주는 30년 전통 원조 보드게임카페</p>
     <p></p>
-    <img src="@/assets/qrimage.png" alt="설치링크" class="qrimage">
-
+    <img src="@/assets/qr_cu.png" alt="qr코드 고객용" class="qrimage">
+    <img src="@/assets/qr_ma.png" alt="qr코드 점주용" class="qrimage">
     </article>
   </div>
   
@@ -53,7 +53,7 @@ a {
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  max-width: 500px;
 }
 
 .buffer {
@@ -65,7 +65,7 @@ a {
 }
 
 .qrimage {
-  height: 310px;
+  width: 450px;
   margin-top: 20px;
 }
 </style>

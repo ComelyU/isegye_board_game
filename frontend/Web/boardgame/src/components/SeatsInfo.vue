@@ -10,8 +10,10 @@
         <h3 class="text-center m-1">{{ storename }} 빈자리 현황</h3>
         <div class="row">
           <div v-for="i in storelist" :key="i.id" class="col-lg-4 col-md-6 col-12">
-            <div :class="{'box': true, 'active': i.coordinateX === '123'}">
-              {{ i.roomNumber }} 번 룸 - {{ i.coordinateX }}
+            <div :class="{'box': true, 'active': i.isUsed === 0}">
+              {{ i.roomNumber }} 번 룸 -
+              <span v-if="i.isUsed === 1">사용가능</span>
+              <span v-else>사용중</span>
             </div>
           </div>
         </div>
@@ -45,11 +47,12 @@ export default {
   methods: {
     async fetchRoomLists() {
       try {
-        const response = await axios.get(process.env.VUE_APP_API_URL + `stores/${this.storeid}/room-lists`);
+        const response = await axios.get("https://k10a706.p.ssafy.io/api/" + `stores/${this.storeid}/room-lists`);
         this.storelist = response.data; // 서버에서 받은 데이터로 storelist 업데이트
-        console.log(process.env.VUE_APP_API_URL + `stores/${this.storeid}/room-lists`)
-        console.log(this.storeid)
-        console.log(this.storelist)
+        
+        // console.log(process.env.VUE_APP_API_URL + `stores/${this.storeid}/room-lists`)
+        // console.log(this.storeid)
+        // console.log(this.storelist)
       } catch (error) {
         console.error("Room lists fetching error: ", error);
         // 에러 핸들링 코드 작성
