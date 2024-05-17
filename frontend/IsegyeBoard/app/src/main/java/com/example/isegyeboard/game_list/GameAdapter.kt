@@ -112,7 +112,12 @@ class GameAdapter(private val context: Context, private var dataList: List<GameC
         val tagText = tagCategory.joinToString(", ") { category ->
             category.codeItemName
         }
-        holder.themeTextView.text = "장르 : $tagText, "
+        holder.themeTextView.text = if (tagText.length > 20) {
+            "장르 : " +tagText.substring(0, 20) + "..."
+        } else {
+            "장르 : $tagText, "
+        }
+
 
         Glide.with(context)
             .load(gameItemDetail.gameImgUrl)
