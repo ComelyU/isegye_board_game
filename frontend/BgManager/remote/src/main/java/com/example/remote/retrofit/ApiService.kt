@@ -9,6 +9,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -38,7 +39,17 @@ interface ApiService {
     ) : Response<DeliverResponseModel>
 
     @DELETE("game/order/{orderGameId}")
-    suspend fun cancelOrder(
+    suspend fun cancelGameOrder(
         @Path("orderGameId") orderGameId : Int,
+    ) : Response<Void>
+
+    @PATCH("menu/order/{menuOrderId}/ready")
+    suspend fun startMenuOrder(
+        @Path("menuOrderId") menuOrderId : Int,
+    ) : Response<Void>
+
+    @DELETE("menu/order/{menuOrderId}/delete")
+    suspend fun cancelMenuOrder(
+        @Path("menuOrderId") menuOrderId : Int,
     ) : Response<Void>
 }

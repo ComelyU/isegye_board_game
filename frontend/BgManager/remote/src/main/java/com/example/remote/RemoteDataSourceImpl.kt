@@ -93,9 +93,32 @@ internal class RemoteDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun cancelOrder(gameOrderId: Int): Result<RemoteResponseData> = runCatching {
-        val response = apiService.cancelOrder(
+    override suspend fun cancelGameOrder(gameOrderId: Int): Result<RemoteResponseData> = runCatching {
+        val response = apiService.cancelGameOrder(
             orderGameId = gameOrderId
+        )
+
+        if (!response.isSuccessful) throw Exception()
+
+        RemoteResponseData(
+            message = "Success"
+        )
+    }
+
+    override suspend fun startMenuOrder(menuOrderId: Int): Result<RemoteResponseData> = runCatching {
+        val response = apiService.startMenuOrder(
+            menuOrderId = menuOrderId
+        )
+
+        if (!response.isSuccessful) throw Exception()
+
+        RemoteResponseData(
+            message = "Success"
+        )
+    }
+    override suspend fun cancelMenuOrder(menuOrderId: Int): Result<RemoteResponseData> = runCatching {
+        val response = apiService.cancelMenuOrder(
+            menuOrderId = menuOrderId
         )
 
         if (!response.isSuccessful) throw Exception()

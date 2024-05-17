@@ -19,6 +19,12 @@ class OrderAdapter(private val orderOnClickListener: OrderOnClickListener)
             binding.cartButton.setOnClickListener {
                 clickListener.onOrderClicked(item.orderId, item.roomNumber)
             }
+            binding.cancelButton.setOnClickListener{
+                clickListener.onMenuCancelClicked(item.orderId)
+            }
+            binding.startButton.setOnClickListener{
+                clickListener.onMenuStartClicked(item.orderId)
+            }
             binding.executePendingBindings()
 //            println("어댑터 뷰홀더 들어옴 ${binding.orderItem}")
 
@@ -52,5 +58,9 @@ class OrderAdapter(private val orderOnClickListener: OrderOnClickListener)
 
     interface OrderOnClickListener {
         fun onOrderClicked(orderId: Int, roomNumber: Int)
+
+        fun onMenuCancelClicked(orderId: Int)
+
+        fun onMenuStartClicked(orderId: Int)
     }
 }

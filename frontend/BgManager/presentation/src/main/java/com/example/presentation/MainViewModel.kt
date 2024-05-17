@@ -3,11 +3,14 @@ package com.example.presentation
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.DeliverClass
-import com.example.domain.usecase.CancelUseCase
+import com.example.domain.usecase.GameCancelUseCase
 import com.example.domain.usecase.DeliverUseCase
 import com.example.domain.usecase.GameUseCase
+import com.example.domain.usecase.MenuCancelUseCase
+import com.example.domain.usecase.MenuStartUseCase
 import com.example.domain.usecase.OrderUseCase
 import com.example.domain.usecase.TurtleUseCase
 import com.example.presentation.base.BaseViewModel
@@ -26,7 +29,9 @@ class MainViewModel @Inject constructor(
     private val orderUseCase: OrderUseCase,
     private val gameUseCase: GameUseCase,
     private val deliverUseCase: DeliverUseCase,
-    private val cancelUseCase : CancelUseCase
+    private val gameCancelUseCase : GameCancelUseCase,
+    private val menuCancelUseCase : MenuCancelUseCase,
+    private val menuStartUseCase : MenuStartUseCase
 ) :BaseViewModel<Unit>() {
     private val _uiStateLiveData = MutableLiveData<UiState>()
     val uiStateFlow: LiveData<UiState>
@@ -40,18 +45,42 @@ class MainViewModel @Inject constructor(
     private val _selectedMenu = MutableLiveData<Int>()
     private val _selectedGame = MutableLiveData<Int>()
     private val _selectedReturn = MutableLiveData<Int>()
-    private val _selectedRoom = MutableLiveData<Int>()
+//    private val _selectedRoom = MutableLiveData<Int>()
     val selectedTurtle: LiveData<Int> = _selectedTurtle
     val selectedMenu: LiveData<Int> = _selectedMenu
     val selectedGame: LiveData<Int> = _selectedGame
     val selectedReturn: LiveData<Int> = _selectedReturn
-    val selectedRoom: LiveData<Int> = _selectedRoom
+//    val selectedRoom: LiveData<Int> = _selectedRoom
 
-    var selectedTurtleString = "터틀봇 : ${selectedTurtle.value.toString()}"
-    var selectedMenuString = "음료 : ${selectedMenu.value.toString()}"
-    var selectedGameString = "게임 : ${selectedGame.value.toString()}"
-    var selectedReturnString = "반납 : ${selectedReturn.value.toString()}"
-    var selectedRoomString = "터틀봇 : ${selectedTurtle.value.toString()}"
+    var selectedTurtleString: LiveData<String> = _selectedTurtle.map { turtleId ->
+        if (turtleId == null) {
+            "배달로봇 : X"
+        } else {
+            "배달로봇 : $turtleId"
+        }
+    }
+    val selectedMenuString: LiveData<String> = _selectedMenu.map { menuId ->
+        if (menuId == null) {
+            "메뉴 : X"
+        } else {
+            "메뉴 : $menuId"
+        }
+    }
+    var selectedGameString: LiveData<String> = _selectedGame.map { gameId ->
+        if (gameId == null) {
+            "게임 : X"
+        } else {
+            "게임 : $gameId"
+        }
+    }
+    var selectedReturnString: LiveData<String> = _selectedReturn.map { returnId ->
+        if (returnId == null) {
+            "반납 : X"
+        } else {
+            "반납 : $returnId"
+        }
+    }
+//    var selectedRoomString = "터틀봇 : ${selectedTurtle.value.toString()}"
 
 
     private val _showAlertDialogEvent = MutableLiveData<Event<String>>()
@@ -113,7 +142,25 @@ class MainViewModel @Inject constructor(
 
     fun cancelGameOrder(gameOrderId: Int) {
         viewModelScope.launch {
-            val response = cancelUseCase.invoke(gameOrderId)
+            val response = gameCancelUseCase.invoke(gameOrderId)
+            if (response.isSuccess) {
+                println(response.getOrThrow())
+            }
+        }
+    }
+
+    fun cancelMenuOrder(menuId: Int) {
+        viewModelScope.launch {
+            val response = menuCancelUseCase.invoke(menuId)
+            if (response.isSuccess) {
+                println(response.getOrThrow())
+            }
+        }
+    }
+
+    fun startMenuOrder(menuId: Int) {
+        viewModelScope.launch {
+            val response = menuStartUseCase.invoke(menuId)
             if (response.isSuccess) {
                 println(response.getOrThrow())
             }
@@ -139,8 +186,9 @@ class MainViewModel @Inject constructor(
             val orderResponse = orderUseCase.invoke()
             if (orderResponse.isSuccess) {
                 val orderDataList = orderResponse.getOrThrow()
+                val filteredOrderDataList = orderDataList.filter { it.orderStatus != 3 && it.orderStatus != 4 }
                 _uiStateLiveData.value = _uiStateLiveData.value?.copy(
-                    orders = orderDataList.map { orderData ->
+                    orders = filteredOrderDataList .map { orderData ->
                         OrderUiState(
                             orderId = orderData.orderId,
                             customerId = orderData.customerId,
@@ -163,8 +211,9 @@ class MainViewModel @Inject constructor(
             val gameResponse = gameUseCase.invoke()
             if (gameResponse.isSuccess) {
                 val gameDataList = gameResponse.getOrThrow()
+                val filteredGameDataList = gameDataList.filter { it.orderStatus != 3 && it.orderStatus != 2 }
                 _uiStateLiveData.value = _uiStateLiveData.value?.copy(
-                    games = gameDataList.map { gameOrderData ->
+                    games = filteredGameDataList.map { gameOrderData ->
                         GameUiState(
                             gameOrderId = gameOrderData.gameOrderId,
                             customerId = gameOrderData.customerId,
@@ -179,19 +228,4 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-}
-
-open class Event<out T>(private val content: T) {
-    var hasBeenHandled = false
-        private set // Allow external read but not write
-
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) {
-            null
-        } else {
-            hasBeenHandled = true
-            content
-        }
-    }
-    fun peekContent(): T = content
 }

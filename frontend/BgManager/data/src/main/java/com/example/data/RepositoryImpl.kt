@@ -41,8 +41,19 @@ internal class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun cancelRepo(gameOrderId: Int): Result<RemoteResponseClass> {
-        return remote.cancelOrder(gameOrderId).map { data ->
+    override suspend fun cancelGameRepo(gameOrderId: Int): Result<RemoteResponseClass> {
+        return remote.cancelGameOrder(gameOrderId).map { data ->
+            data.toDomain()
+        }
+    }
+
+    override suspend fun startMenuRepo(menuOrderId: Int): Result<RemoteResponseClass> {
+        return remote.startMenuOrder(menuOrderId).map { data ->
+            data.toDomain()
+        }
+    }
+    override suspend fun cancelMenuRepo(menuOrderId: Int): Result<RemoteResponseClass> {
+        return remote.cancelMenuOrder(menuOrderId).map { data ->
             data.toDomain()
         }
     }

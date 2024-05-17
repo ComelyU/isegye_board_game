@@ -17,5 +17,9 @@ interface RemoteDataSource {
 
     suspend fun startDeliver(deliverData: DeliverData): Result<DeliverResponseData>
 
-    suspend fun cancelOrder(gameOrderId: Int) : Result<RemoteResponseData>
+    suspend fun cancelGameOrder(gameOrderId: Int) : Result<RemoteResponseData>
+
+    suspend fun startMenuOrder(menuOrderId: Int) : Result<RemoteResponseData>
+
+    suspend fun cancelMenuOrder(menuOrderId: Int) : Result<RemoteResponseData>
 }

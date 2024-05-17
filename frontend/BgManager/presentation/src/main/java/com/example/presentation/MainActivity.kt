@@ -1,6 +1,7 @@
 package com.example.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -36,10 +37,10 @@ class MainActivity :
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        if (!isLogined()) {
-//            val intent = Intent(this, LoginActivity::class.java)
-//            startActivity(intent)
-//        }
+        if (!isLogined()) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -70,11 +71,22 @@ class MainActivity :
                 showAlert(message)
             }
         })
+
+        binding.logoutButton.setOnClickListener{
+            logout()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun isLogined() : Boolean {
         val sharedPreferences = getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
-        return sharedPreferences.contains("roomId")
+        return sharedPreferences.contains("storeId")
+    }
+
+    private fun logout() {
+        val sharedPreferences = getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove("storeId").apply()
     }
 
     override fun onTurtleClicked(turtleId: Int) {
@@ -91,6 +103,14 @@ class MainActivity :
 
     override fun onGameCancelClicked(gameOrderId: Int) {
         viewModel.cancelGameOrder(gameOrderId)
+    }
+
+    override fun onMenuStartClicked(orderId: Int) {
+        viewModel.startMenuOrder(orderId)
+    }
+
+    override fun onMenuCancelClicked(orderId: Int) {
+        viewModel.cancelMenuOrder(orderId)
     }
 
     override fun onOrderClicked(orderId: Int, roomNumber: Int) {

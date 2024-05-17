@@ -4,5 +4,5 @@ data class TurtleUiState(
     val turtleId: Int,
 ) {
     val turtleIdString: String
-        get() = "$turtleId 호"
+        get() = "$turtleId 호 선택"
 }
