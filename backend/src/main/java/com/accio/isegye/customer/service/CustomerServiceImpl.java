@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -232,10 +233,12 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public List<GameResponse> getGameRecommendation(String theme, String difficulty, String tag, String time) {
+        int[] timeArr = {0, 30, 60, 120, 600};
+        int timeIdx = Arrays.binarySearch(timeArr, Integer.parseInt(time));
 
         List<GameResponse> gameList = gameRepository.findByFilter(
-            Integer.parseInt(time)-30,
-                Integer.parseInt(time),
+                timeArr[timeIdx-1],
+                timeArr[timeIdx],
                 Float.parseFloat(difficulty) - 0.5F,
                 Float.parseFloat(difficulty) + 0.5F,
                 theme,
@@ -245,6 +248,8 @@ public class CustomerServiceImpl implements CustomerService{
             .toList();
 
         if(gameList.isEmpty()){
+            log.info("필터에 해당되는 게임을 찾지 못했습니다.\n 태그와 일치하는 게임리스트를 반환합니다.");
+
             return gameRepository.findByCategory(tag)
                 .stream()
                 .map(GameResponse::new)
