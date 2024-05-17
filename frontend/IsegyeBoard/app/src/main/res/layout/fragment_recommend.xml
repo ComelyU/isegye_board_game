@@ -525,7 +525,7 @@
             android:id="@+id/coverImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/boardgameroom"
+            android:src="@drawable/isegye_logo"
             android:scaleType="centerCrop"
             />
 

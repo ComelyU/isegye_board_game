@@ -14,6 +14,7 @@ class Tutorial : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var imageView2: ImageView
     private lateinit var imageView3: ImageView
+    private lateinit var imageView4: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,9 +23,7 @@ class Tutorial : AppCompatActivity() {
         imageView = findViewById(R.id.tutorialImage)
         imageView2 = findViewById(R.id.tutorialImage2)
         imageView3 = findViewById(R.id.tutorialImage3)
-
-        imageView2.visibility = View.GONE
-        imageView3.visibility = View.GONE
+        imageView4 = findViewById(R.id.tutorialImage4)
 
         imageView.setOnClickListener{
             imageView.visibility = View.GONE
@@ -37,6 +36,11 @@ class Tutorial : AppCompatActivity() {
         }
 
         imageView3.setOnClickListener{
+            imageView3.visibility = View.GONE
+            imageView4.visibility = View.VISIBLE
+        }
+
+        imageView4.setOnClickListener{
             finish()
         }
     }
