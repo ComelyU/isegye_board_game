@@ -10,6 +10,9 @@ WORKDIR /app
 # package.json 및 package-lock.json 파일을 /app 디렉토리로 복사
 COPY package*.json ./
 
+# update npm version
+RUN npm install -g npm@10.8.0
+
 # 프로젝트 의존성 설치
 RUN npm install
 
