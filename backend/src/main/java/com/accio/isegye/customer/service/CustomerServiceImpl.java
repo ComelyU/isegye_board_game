@@ -16,8 +16,6 @@ import com.accio.isegye.store.repository.RoomRepository;
 import com.accio.isegye.store.repository.StoreRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,16 +27,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
@@ -233,5 +228,29 @@ public class CustomerServiceImpl implements CustomerService{
         }
 
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<GameResponse> getGameRecommendation(String theme, String difficulty, String tag, String time) {
+
+        List<GameResponse> gameList = gameRepository.findByFilter(
+            Integer.parseInt(time)-30,
+                Integer.parseInt(time),
+                Float.parseFloat(difficulty) - 0.5F,
+                Float.parseFloat(difficulty) + 0.5F,
+                theme,
+                tag)
+            .stream()
+            .map(GameResponse::new)
+            .toList();
+
+        if(gameList.isEmpty()){
+            return gameRepository.findByCategory(tag)
+                .stream()
+                .map(GameResponse::new)
+                .toList();
+        }
+
+        return gameList;
     }
 }

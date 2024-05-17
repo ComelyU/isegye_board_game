@@ -21,4 +21,6 @@ public interface CustomerService {
     String swapFace(int customerId, MultipartFile sourceFile);
 
     List<GameResponse> getGameRecommendation(int gameId);
+
+    List<GameResponse> getGameRecommendation(String theme, String difficulty, String tag, String time);
 }
