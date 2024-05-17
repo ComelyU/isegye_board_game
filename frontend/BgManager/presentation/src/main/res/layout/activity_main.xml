@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.presentation.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+        android:background="#FF9220"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/page_title"
+            android:textColor="#FFFFFF"
+            android:textSize="40sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/turtleIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/textView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="25sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="25dp"
+            android:text="@{viewModel.selectedTurtleString}"
+            />
+
+        <TextView
+            android:id="@+id/orderIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/textView"
+            app:layout_constraintTop_toBottomOf="@id/turtleIdShow"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="10dp"
+            android:text="@{viewModel.selectedMenuString}"
+            />
+
+        <TextView
+            android:id="@+id/gameOrderIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/orderIdShow"
+            app:layout_constraintTop_toBottomOf="@id/turtleIdShow"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="10dp"
+            android:text="@{viewModel.selectedGameString}"
+            />
+
+        <TextView
+            android:id="@+id/gameReturnIdShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/gameOrderIdShow"
+            app:layout_constraintTop_toBottomOf="@id/turtleIdShow"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="10dp"
+            android:text="@{viewModel.selectedReturnString}"
+            />
+
+        <TextView
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="지점변경"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <Button
+            android:id="@+id/refreshTurtleButton"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_margin="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="196dp"
+            android:onClick="@{()->viewModel.loadData()}"
+            android:text="@string/refresh"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/pushTurtleButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/pushTurtleButton"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:text="@string/push_turtle"
+            android:textSize="20sp"
+            android:onClick="@{()->viewModel.pushTurtle()}"
+            android:layout_margin="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/turtleRvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pushTurtleButton"
+            android:text="@string/turtle_list"
+            android:layout_marginStart="10dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/turtleRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/turtleRvTitle"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="10dp"
+            android:paddingHorizontal="20dp"
+            android:padding="8dp"
+            android:orientation="horizontal"
+            />
+
+        <TextView
+            android:id="@+id/orderRvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/turtleRV"
+            android:text="@string/order_title"
+            android:layout_margin="10dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mainRV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#FFFFFF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/orderRvTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="10dp"
+            android:paddingHorizontal="20dp"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        <View
+            android:id="@+id/blackLine"
+            android:layout_width="6dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orderRvTitle"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/gameRV"
+            app:layout_constraintTop_toBottomOf="@id/turtleRV"
+            android:text="@string/game_order_list"
+            android:layout_margin="10dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gameRV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#FFFFFF"
+            app:layout_constraintStart_toEndOf="@id/blackLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orderRvTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="10dp"
+            android:paddingHorizontal="20dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">IsegyeBoard</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="snack">Snack</string>
+    <string name="drink">Drink</string>
+    <string name="coffee">Coffee</string>
+</resources>

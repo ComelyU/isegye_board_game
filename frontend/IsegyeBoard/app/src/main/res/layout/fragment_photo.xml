@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".photo.Photo"
+    android:padding="10dp">
+
+    <!-- 카메라 미리보기를 보여줄 SurfaceView -->
+    <ImageView
+        android:id="@+id/ipadImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        app:layout_constraintBottom_toTopOf="@id/captureButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/photoGuideLine"
+        android:background="@drawable/white_rad"
+        />
+
+    <FrameLayout
+        android:id="@+id/cameraFrameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/black_border"
+        android:layout_marginVertical="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="74dp"
+        app:layout_constraintBottom_toBottomOf="@id/ipadImage"
+        app:layout_constraintTop_toTopOf="@id/ipadImage"
+        app:layout_constraintStart_toStartOf="@id/ipadImage"
+        app:layout_constraintEnd_toEndOf="@id/ipadImage">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/cameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/ipadButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toTopOf="@id/captureButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cameraFrameLayout"
+        app:layout_constraintEnd_toStartOf="@id/photoGuideLine"
+        android:src="@drawable/black_circle"
+        />
+
+    <!-- 사진을 촬영하는 버튼 -->
+    <TextView
+        android:background="@drawable/begie_rad"
+        android:id="@+id/captureButton"
+        android:layout_width="140sp"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:text="촬영"
+        android:textSize="35sp"
+        android:fontFamily="@font/jua"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/photoGuideLine"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/photoBack"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/black_back"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/photoGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.72"
+        />
+
+    <!-- 촬영한 사진을 보여주는 ImageView -->
+    <TextView
+        android:id="@+id/photoTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/photoGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="28dp"
+        android:text="기념사진"
+        android:textColor="@color/white"
+        android:fontFamily="@font/dnfbitbitv2"
+        android:textSize="60sp"/>
+
+    <TextView
+        android:id="@+id/photoDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/photoGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/photoTitle"
+        android:layout_marginTop="22dp"
+        android:textColor="@color/white"
+        android:text="이세계 보드게임만의 추억 남기기!"
+        android:fontFamily="@font/jua"
+        android:textSize="20sp"
+        />
+
+
+    <TextView
+        android:id="@+id/previewText"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:layout_constraintTop_toTopOf="@id/capturedImageView"
+        app:layout_constraintStart_toStartOf="@id/capturedImageView"
+        android:text="미리보기"
+        android:gravity="center"
+        android:background="@drawable/begie_rad"
+        android:textSize="30sp"
+        android:fontFamily="@font/dnfbitbitv2"
+        />
+
+    <ImageView
+        android:id="@+id/capturedImageView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/photoGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+         />
+
+    <TextView
+        android:id="@+id/sendPhotoButton"
+        android:layout_width="160dp"
+        android:layout_height="50sp"
+        android:background="@drawable/brown_rad"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="합성하기"
+        android:visibility="gone"
+        android:fontFamily="@font/jua"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/capturedImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/photoGuideLine"
+        />
+
+    <ImageView
+        android:id="@+id/loadingImagePhoto"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/loading"
+        android:visibility="gone"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

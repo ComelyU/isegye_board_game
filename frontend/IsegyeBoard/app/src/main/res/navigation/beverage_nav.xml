@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/beverage_nav"
+    app:startDestination="@id/coffeFragment">
+
+    <fragment
+        android:id="@+id/coffeFragment"
+        android:name="com.example.isegyeboard.beverage.menus.CoffeeFragment"
+        android:label="fragment_coffe"
+        tools:layout="@layout/fragment_coffee" >
+        <action
+            android:id="@+id/action_coffeeFragment_to_drinkFragment"
+            app:destination="@id/drinkFragment" />
+        <action
+            android:id="@+id/action_coffeeFragment_to_snackFragment"
+            app:destination="@id/snackFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/drinkFragment"
+        android:name="com.example.isegyeboard.beverage.menus.DrinkFragment"
+        android:label="fragment_drink"
+        tools:layout="@layout/fragment_drink" >
+        <action
+            android:id="@+id/action_drinkFragment_to_snackFragment"
+            app:destination="@id/snackFragment" />
+        <action
+            android:id="@+id/action_drinkFragment_to_coffeFragment"
+            app:destination="@id/coffeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/snackFragment"
+        android:name="com.example.isegyeboard.beverage.menus.SnackFragment"
+        android:label="fragment_snack"
+        tools:layout="@layout/fragment_snack" >
+        <action
+            android:id="@+id/action_snackFragment_to_drinkFragment"
+            app:destination="@id/drinkFragment" />
+        <action
+            android:id="@+id/action_snackFragment_to_coffeFragment"
+            app:destination="@id/coffeFragment" />
+    </fragment>
+</navigation>
