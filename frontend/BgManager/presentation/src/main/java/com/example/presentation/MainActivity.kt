@@ -3,6 +3,8 @@ package com.example.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -53,6 +55,17 @@ class MainActivity :
         binding.gameRV.adapter = gameAdapter
         binding.turtleRV.adapter = turtleAdapter
 
+        // Handler 생성
+        val handler = Handler(Looper.getMainLooper())
+
+        // Runnable 생성
+        val runnable = object : Runnable {
+            override fun run() {
+                viewModel.loadData()
+                handler.postDelayed(this, 5000) // 5초 후에 다시 실행
+            }
+        }
+        handler.post(runnable)
         viewModel.loadData()
 
         viewModel.uiStateFlow.observe(this, Observer { uiState ->

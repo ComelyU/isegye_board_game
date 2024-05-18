@@ -1,5 +1,5 @@
 package com.example.domain.model
 
-data class RemoteResponseClass (
+data class BasicResponseClass (
     val message: String
 )
