@@ -1,5 +1,5 @@
 package com.example.data.model
 
-data class RemoteResponseData(
+data class BasicResponseData(
     val message: String
 )

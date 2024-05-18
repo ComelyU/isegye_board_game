@@ -52,4 +52,9 @@ interface ApiService {
     suspend fun cancelMenuOrder(
         @Path("menuOrderId") menuOrderId : Int,
     ) : Response<Void>
+
+//    @GET("stores/{storeId}")
+//    suspend fun getStoreInfo(
+//        @Path("storeId") storeId: Int
+//    ) : Response<Void>
 }
