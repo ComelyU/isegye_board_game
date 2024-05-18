@@ -6,7 +6,7 @@ import com.example.data.model.DeliverResponseData
 import com.example.data.model.GameData
 import com.example.data.model.OrderData
 import com.example.data.model.OrderDetailData
-import com.example.data.model.RemoteResponseData
+import com.example.data.model.BasicResponseData
 import com.example.data.model.TurtleData
 import com.example.remote.model.request.DeliverRequestModel
 import com.example.remote.retrofit.ApiService
@@ -93,38 +93,50 @@ internal class RemoteDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun cancelGameOrder(gameOrderId: Int): Result<RemoteResponseData> = runCatching {
+    override suspend fun cancelGameOrder(gameOrderId: Int): Result<BasicResponseData> = runCatching {
         val response = apiService.cancelGameOrder(
             orderGameId = gameOrderId
         )
 
         if (!response.isSuccessful) throw Exception()
 
-        RemoteResponseData(
+        BasicResponseData(
             message = "Success"
         )
     }
 
-    override suspend fun startMenuOrder(menuOrderId: Int): Result<RemoteResponseData> = runCatching {
+    override suspend fun startMenuOrder(menuOrderId: Int): Result<BasicResponseData> = runCatching {
         val response = apiService.startMenuOrder(
             menuOrderId = menuOrderId
         )
 
         if (!response.isSuccessful) throw Exception()
 
-        RemoteResponseData(
+        BasicResponseData(
             message = "Success"
         )
     }
-    override suspend fun cancelMenuOrder(menuOrderId: Int): Result<RemoteResponseData> = runCatching {
+    override suspend fun cancelMenuOrder(menuOrderId: Int): Result<BasicResponseData> = runCatching {
         val response = apiService.cancelMenuOrder(
             menuOrderId = menuOrderId
         )
 
         if (!response.isSuccessful) throw Exception()
 
-        RemoteResponseData(
+        BasicResponseData(
             message = "Success"
         )
     }
+
+//    override suspend fun getStoreInfo(storeId: Int): Result<BasicResponseData> = runCatching {
+//        val response = apiService.getStoreInfo(
+//            storeId = storeId
+//        )
+//
+//        if (!response.isSuccessful) throw Exception()
+//
+//        BasicResponseData(
+//            message = "Success"
+//        )
+//    }
 }
