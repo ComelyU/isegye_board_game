@@ -137,7 +137,7 @@ class StartFragment : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences("RoomInfo", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("isOccupied", "1")
-        editor.putBoolean("theme", true)
+        editor.putBoolean("themeOn", true)
         editor.putInt("volume", 50)
         editor.putString("customerId", customerId.toString())
         editor.apply()

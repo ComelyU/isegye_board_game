@@ -44,7 +44,7 @@
         <Space
             android:id="@+id/selectSpace1"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="5dp"
             app:layout_constraintTop_toBottomOf="@id/searchTitle"
             />
 
@@ -80,7 +80,7 @@
                 android:id="@+id/theme1"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="ocean"
                 android:text="바다" />
 
@@ -88,7 +88,7 @@
                 android:id="@+id/theme2"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="middle"
                 android:text="중세" />
 
@@ -96,7 +96,7 @@
                 android:id="@+id/theme3"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="space"
                 android:text="우주" />
 
@@ -104,7 +104,7 @@
                 android:id="@+id/theme4"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="west"
                 android:text="서부" />
 
@@ -112,7 +112,7 @@
                 android:id="@+id/theme5"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="puzzle"
                 android:text="퍼즐" />
 
@@ -120,7 +120,7 @@
                 android:id="@+id/theme6"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="horror"
                 android:text="공포" />
 
@@ -128,7 +128,7 @@
                 android:id="@+id/theme7"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="jungle"
                 android:text="정글" />
         </RadioGroup>
@@ -245,7 +245,7 @@
                 android:id="@+id/player1"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="Abstract Strategy"
                 android:text="전략" />
 
@@ -253,7 +253,7 @@
                 android:id="@+id/player2"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="Deduction"
                 android:text="추리" />
 
@@ -261,7 +261,7 @@
                 android:id="@+id/player3"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="Party Game"
                 android:text="파티" />
 
@@ -269,7 +269,7 @@
                 android:id="@+id/player4"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="Card Game"
                 android:text="카드" />
 
@@ -277,7 +277,7 @@
                 android:id="@+id/player5"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="Real-time"
                 android:text="실시간" />
 
@@ -285,7 +285,7 @@
                 android:id="@+id/player6"
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="3dp"
                 android:tag="Bluffing"
                 android:text="속임수" />
 
