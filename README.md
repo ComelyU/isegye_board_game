@@ -193,19 +193,35 @@
 
 ### [점주용 앱]
 
-![메인](assets/manager_main.gif)
+<img src="assets/manager_main.gif" alt="점주 메인" width="500" />
 
-- 필요시 설명 추가
+- 음료메뉴, 게임배달, 게임회수 진행
 
 ### [고객용 앱]
 
-![메인](assets/customer_main.gif)
+<img src="assets/gamelist&order.gif" alt="메인" width="500" />
 
-- 필요시 설명 추가
+- 보드게임검색 및 주문
+- 테마 재생여부, 테마 음량 조절
+
+<img src="assets/menuorder.gif" alt="음료" width="500" />
+
+- 음료 주문
+
+<img src="assets/recommend.gif" alt="추천" width="500" />
+
+- 보드게임 추천 기능
+
+<img src="assets/ai_image.jpg" alt="QR" width="500" />
+
+- 게임 플레이 후 기념사진 QR제공
 
 ### [웹]
 
-![메인](assets/web_main.gif)
+<img src="assets/web_main.gif" alt="빈자리" width="500" />
+
+- 고객용 앱, 점주용 앱 설치링크 QR제공
+- 지점별 빈자리 확인
 
 ## 📄 설계 문서
 
