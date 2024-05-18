@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".photo.PhotoCheckFragment">
 
-    <FrameLayout
-        android:id="@+id/photoCheckFrame"
+    <ImageView
+        android:id="@+id/photoCheckView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="22dp"
@@ -15,19 +15,9 @@
         app:layout_constraintBottom_toTopOf="@id/reCaptureButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/photoCheckGuideLine">
+        app:layout_constraintEnd_toStartOf="@id/photoCheckGuideLine"
+        />
 
-        <ImageView
-            android:id="@+id/photoCheckView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-
-    </FrameLayout>
-
-
-
-    <!-- 사진을 촬영하는 버튼 -->
     <TextView
         android:background="@drawable/begie_rad"
         android:id="@+id/reCaptureButton"

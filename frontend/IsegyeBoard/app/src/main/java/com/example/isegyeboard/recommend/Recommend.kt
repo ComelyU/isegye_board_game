@@ -83,30 +83,35 @@ class Recommend : Fragment() {
 
 
         gameResponseLiveData.observe(viewLifecycleOwner) { gameResponse ->
-            // gameResponse가 변경될 때마다 UI를 업데이트
-            binding.recTitle.text = gameResponse?.gameName
-            binding.recDescription.text = gameResponse?.gameDetail
-            binding.recPlayer.text = if (gameResponse?.minPlayer == gameResponse?.maxPlayer) {
-                "인원 : ${gameResponse?.maxPlayer}명"
-            } else {
-                "인원 : ${gameResponse?.minPlayer} ~ ${gameResponse?.maxPlayer}명"
-            }
-            binding.recPlaytime.text = if (gameResponse?.minPlaytime == gameResponse?.maxPlaytime) {
-                "플레이타임 : ${gameResponse?.maxPlaytime}분"
-            } else {
-                "플레이타임 : ${gameResponse?.minPlaytime} ~ ${gameResponse?.maxPlaytime}분"
-            }
-            binding.recDifficulty.text = "난이도 : ${"★".repeat(gameResponse?.gameDifficulty!!.toInt())}"
-            val theme = gameResponse.gameTagCategory.joinToString(", ") { category ->
-                category.codeItemName
-            }
-            binding.recTheme.text = "장르 : $theme"
-            gameResponse.gameImgUrl.let {
-                Glide.with(requireContext())
-                    .load(it)
-                    .placeholder(R.drawable.ipad) // 로딩 중에 표시할 이미지
-                    .error(R.drawable.chess_black) // 로딩 실패 시 표시할 이미지
-                    .into(binding.recImage)
+            if (gameResponse != null) {
+                binding.recTitle.text = gameResponse.gameName
+                binding.recDescription.text = if (gameResponse.gameDetail.length > 20) {
+                    gameResponse.gameDetail.substring(0, 20) + "..."
+                } else {
+                    gameResponse.gameDetail
+                }
+                binding.recPlayer.text = if (gameResponse.minPlayer == gameResponse.maxPlayer) {
+                    "인원 : ${gameResponse.maxPlayer}명"
+                } else {
+                    "인원 : ${gameResponse.minPlayer} ~ ${gameResponse.maxPlayer}명"
+                }
+                binding.recPlaytime.text = if (gameResponse.minPlaytime == gameResponse.maxPlaytime) {
+                    "플레이타임 : ${gameResponse.maxPlaytime}분"
+                } else {
+                    "플레이타임 : ${gameResponse.minPlaytime} ~ ${gameResponse.maxPlaytime}분"
+                }
+                binding.recDifficulty.text = "난이도 : ${"★".repeat(gameResponse.gameDifficulty!!.toInt())}"
+                val theme = gameResponse.gameTagCategory.joinToString(", ") { category ->
+                    category.codeItemName
+                }
+                binding.recTheme.text = "장르 : $theme"
+                gameResponse.gameImgUrl.let {
+                    Glide.with(requireContext())
+                        .load(it)
+                        .placeholder(R.drawable.ipad) // 로딩 중에 표시할 이미지
+                        .error(R.drawable.chess_black) // 로딩 실패 시 표시할 이미지
+                        .into(binding.recImage)
+                }
             }
         }
     }

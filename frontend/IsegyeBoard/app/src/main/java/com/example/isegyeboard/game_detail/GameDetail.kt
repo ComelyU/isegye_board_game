@@ -180,15 +180,15 @@ class GameDetail : Fragment() {
     }
 
     private fun orderButtonToggle(gameId: String, savedGameId: String?, view: View) {
-        val returnButton = view.findViewById<TextView>(R.id.returnButton)
-        val startButton = view.findViewById<TextView>(R.id.startButton)
 
         if (gameId == savedGameId) {
-            returnButton.visibility = View.VISIBLE
-            startButton.visibility = View.GONE
+            binding.returnButton.visibility = View.VISIBLE
+            binding.photoButton.visibility = View.VISIBLE
+            binding.startButton.visibility = View.GONE
         } else {
-            returnButton.visibility = View.GONE
-            startButton.visibility = View.VISIBLE
+            binding.returnButton.visibility = View.GONE
+            binding.photoButton.visibility = View.GONE
+            binding.startButton.visibility = View.VISIBLE
         }
     }
 
