@@ -30,8 +30,8 @@
         <div class="carousel-item" data-bs-interval="10000">
           <img src="@/assets/caro3.png" class="d-block w-100" alt="...">
           <div class="carousel-caption d-none d-md-block">
-              <!-- <h1>테마와 함께 플레이 하고 기념사진까지</h1>
-              <p>Some representative placeholder content for the third slide.</p> -->
+              <h1 style="color: black;">테마와 함께 플레이 하고 기념사진까지</h1>
+              <!-- <p>Some representative placeholder content for the third slide.</p> -->
           </div>
         </div>
       </div>
@@ -48,42 +48,34 @@
       <h1 class="text-center mt-5">전용앱</h1>
       <img src="@/assets/orange_line.png" alt="밑줄" class="orange-line mb-5">
       <div class="qr-container">
-        <h1 class="text-center mt-5">고객용 키오스크</h1>
-        <img src="@/assets/app_intro1.png" alt="고객앱1" class="intro-image m-2">
-        <img src="@/assets/app_intro2.png" alt="고객앱2" class="intro-image m-2">
+        <h1 class="text-center m-2 mb-4">고객용 키오스크</h1>
+        <img src="@/assets/app_intro1.png" alt="고객앱1" class="intro-image m-3">
+        <!-- <img src="@/assets/app_intro2.png" alt="고객앱2" class="intro-image m-2"> -->
         
         <div class="grid-container">
           <div class="left-column d-flex justify-content-center align-items-center">
             <img src="@/assets/qr_cu.png" alt="qr코드 고객용" class="qr-image">
           </div>          
           <div class="right-column">
-            <ul class="m-5 p-2">
-              <li>
-                <h2>직관적이고 편리한 앱</h2>
-              </li>
-              <li>
-                <h2>음료주문, 테마 조정도 한번에</h2>
-              </li>
-            </ul>
+            <h2 class="dodum m-4">직관적이고 편리한 앱</h2>
+            <h2 class="dodum m-4">추천, 검색 기능과 상세한 설명까지</h2>
+            <h2 class="dodum m-4">음료주문, 테마 조정도 한번에</h2>
+            <h2 class="dodum m-4">주문기록 확인과 주문 취소기능</h2>
           </div>
         </div>
       </div>
       <div class="qr-container mt-5">
-        <h1 class="text-center mt-5">점주용 키오스크</h1>
-        <img src="@/assets/app_intro3.png" alt="앱소개3" class="intro-image m-2">
+        <h1 class="text-center m-2 mb-4">점주용 키오스크</h1>
+        <img src="@/assets/app_intro3.png" alt="앱소개3" class="intro-image m-3">
         <div class="grid-container">
           <div class="left-column d-flex justify-content-center align-items-center">
             <img src="@/assets/qr_ma.png" alt="qr코드 점주용" class="qr-image">
           </div>          
           <div class="right-column">
-            <ul class="m-5 p-2">
-              <li>
-                <h2>한페이지에서 모든주문을 확인가능</h2>
-              </li>
-              <li>
-                <h2>카운터 내에서 효율적인 업무</h2>
-              </li>
-            </ul>
+            <h2 class="dodum m-4">한페이지에서 모든주문을 확인가능</h2>
+            <h2 class="dodum m-4">자동갱신이 되지 않을땐 갱신버튼 클릭</h2>
+            <h2 class="dodum m-4">하나의 목적지에 최대 3가지 배달 주문</h2>
+            <h2 class="dodum m-4">카운터 내에서 효율적인 업무</h2>
           </div>
         </div>
       </div>
@@ -95,10 +87,13 @@
       <img src="@/assets/service_system.png" alt="통신이미지" class="intro-image">
       <ul class="m-5 p-2">
         <li>
-          <h2>음료부터 게임까지 모든 배송 자동화</h2>
+          <h2 class="dodum m-4">음료부터 게임까지 모든 배송 자동화</h2>
         </li>
         <li>
-          <h2>보드게임과 어울리는 테마 제공</h2>
+          <h2 class="dodum m-4" >보드게임과 어울리는 테마 제공</h2>
+        </li>
+        <li>
+          <h2 class="dodum m-4" >매장별 빈자리 확인</h2>
         </li>
       </ul>
         
@@ -118,6 +113,10 @@ export default {
   grid-template-columns: 1fr 2fr;
 }
 
+.dodum {
+  font-family: 'dodum';
+
+}
 .banner {
   padding: 120px;
   background-image: url('@/assets/bgcard_dark.png');

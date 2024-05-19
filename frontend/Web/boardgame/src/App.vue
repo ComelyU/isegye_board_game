@@ -69,6 +69,11 @@ export default {
   src: url('assets/fonts/YeonSung.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'dodum';
+  src: url('assets/fonts/GowunDodum-Regular.ttf') format('truetype');
+}
+
 .brand-text {
   font-family: 'bitbit';
   font-size: 40px;
