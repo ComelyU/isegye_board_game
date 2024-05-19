@@ -279,7 +279,7 @@ public class TurtleServiceImpl implements TurtleService{
                     if(customer.getIsTheme() == 1){ // 테마를 사용한다
                         Room themeRoom = roomRepository.findRoomByOrderGameId(turtleOrderLog.getOrderGame().getId());
                         String theme = turtleOrderLog.getOrderGame().getStock().getGame().getTheme().getThemeType();
-                        mqttGateway.sendToMqtt(theme, "display"+themeRoom.getId());
+                        mqttGateway.sendToMqtt(theme, "display1");
                     }
 
                 }
