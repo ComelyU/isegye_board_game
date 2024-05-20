@@ -100,7 +100,8 @@ a {
   top: 0;
   left: -30%;
   width: 70%;
-  min-height: 150vh;
+  min-height: inherit;
+  height: 100%;
   background: rgba(255, 255, 255, 0.8); /* 흰색이면서 반투명한 배경색 */
   transform: skew(20deg); /* 평행사변형 만들기 위해 기울이기 */
   z-index: 1; 
