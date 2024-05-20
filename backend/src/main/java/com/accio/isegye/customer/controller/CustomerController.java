@@ -67,11 +67,13 @@ public class CustomerController {
         int roomId = customerService.findRoom(customerId);
         if(themeUsed == 0){ // turn off
             //디폴트 혹은 소리 제거
-            mqttGateway.sendToMqtt("Default", "display/" + roomId);
+//            mqttGateway.sendToMqtt("Default", "display/" + roomId);
+            mqttGateway.sendToMqtt("Default", "display1");
         }else{
             //테마를 가져온다
             String themeType = customerService.getTheme(customerId);
-            mqttGateway.sendToMqtt(themeType, "display/" + roomId);
+//            mqttGateway.sendToMqtt(themeType, "display/" + roomId);
+            mqttGateway.sendToMqtt(themeType, "display1");
         }
         return new ResponseEntity<>(themeUsed, HttpStatus.OK);
     }
@@ -86,8 +88,10 @@ public class CustomerController {
     @PostMapping("/{customerId}/sound")
     public ResponseEntity<?> changeVolume(@PathVariable int customerId, @RequestParam @NotBlank String volume){
         int roomId = customerService.findRoom(customerId);
-        mqttGateway.sendToMqtt(volume, "display/" + roomId);
+//        mqttGateway.sendToMqtt(volume, "display/" + roomId);
+        mqttGateway.sendToMqtt(volume, "display1");
         return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     @Operation(
