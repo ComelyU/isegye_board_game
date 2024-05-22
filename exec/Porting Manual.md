@@ -2384,6 +2384,7 @@ opencv-python==4.9.0.80
 opencv-python-headless==4.9.0.80
 orjson==3.10.3
 packaging==24.0
+pandas==2.2.2
 pillow==10.3.0
 prettytable==3.10.0
 protobuf==5.26.1
@@ -2395,6 +2396,7 @@ pyreadline3==3.4.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-multipart==0.0.9
+pytz==2024.1
 PyYAML==6.0.1
 requests==2.31.0
 rich==13.7.1
@@ -2411,6 +2413,7 @@ tifffile==2024.5.10
 tqdm==4.66.4
 typer==0.12.3
 typing_extensions==4.11.0
+tzdata==2024.1
 ujson==5.10.0
 urllib3==2.2.1
 uvicorn==0.29.0
