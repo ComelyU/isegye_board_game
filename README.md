@@ -183,7 +183,7 @@
 
 ### 4. 이미지 합성을 통한 기념사진 제공
 
-- ONNX의 InsightFace를 사용하여 이미지 합성
+- InsightFace의 inswapper_128.onnx 모델을 사용하여 이미지 합성
 
 ## 🌐 포팅 매뉴얼
 
